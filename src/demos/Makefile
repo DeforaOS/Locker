@@ -1,13 +1,13 @@
-TARGETS	= gtk-demo.so logo.so template.so xscreensaver.so xterm.so
+TARGETS	= colors.so gtk-demo.so logo.so template.so xscreensaver.so xterm.so
 PREFIX	= /usr/local
 DESTDIR	=
 LIBDIR	= $(PREFIX)/lib
 CC	?= cc
 CPPFLAGSF= -I ../../include
 CPPFLAGS=
-CFLAGSF	= -W `pkg-config --cflags libSystem x11 gtk+-2.0`
+CFLAGSF	= -W `pkg-config --cflags libSystem gtk+-2.0 x11`
 CFLAGS	= -Wall -g -O2 -pedantic -fPIC
-LDFLAGSF= -W `pkg-config --libs libSystem x11 gtk+-2.0`
+LDFLAGSF= -W `pkg-config --libs libSystem gtk+-2.0 x11`
 AR	?= ar
 RANLIB	?= ranlib
 CCSHARED?= $(CC) -shared
@@ -18,6 +18,13 @@ INSTALL	?= install
 
 
 all: $(TARGETS)
+
+colors_OBJS = colors.o
+colors_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+colors_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+colors.so: $(colors_OBJS)
+	$(CCSHARED) -o colors.so $(colors_OBJS) $(colors_LDFLAGS)
 
 gtk-demo_OBJS = gtk-demo.o
 gtk-demo_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
@@ -54,6 +61,9 @@ xterm_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 xterm.so: $(xterm_OBJS)
 	$(CCSHARED) -o xterm.so $(xterm_OBJS) $(xterm_LDFLAGS)
 
+colors.o: colors.c ../../include/Locker.h ../../config.h
+	$(CC) -D PREFIX=\"$(PREFIX)\" $(colors_CFLAGS) -c colors.c
+
 gtk-demo.o: gtk-demo.c ../../include/Locker/demo.h ../../config.h
 	$(CC) -D PREFIX=\"$(PREFIX)\" $(gtk-demo_CFLAGS) -c gtk-demo.c
 
@@ -70,12 +80,14 @@ xterm.o: xterm.c ../../include/Locker.h ../../config.h
 	$(CC) -D PREFIX=\"$(PREFIX)\" $(xterm_CFLAGS) -c xterm.c
 
 clean:
-	$(RM) -- $(gtk-demo_OBJS) $(logo_OBJS) $(template_OBJS) $(xscreensaver_OBJS) $(xterm_OBJS)
+	$(RM) -- $(colors_OBJS) $(gtk-demo_OBJS) $(logo_OBJS) $(template_OBJS) $(xscreensaver_OBJS) $(xterm_OBJS)
 
 distclean: clean
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)
+	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
+	$(INSTALL) -m 0644 -- colors.so $(DESTDIR)$(LIBDIR)/Locker/demos/colors.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
 	$(INSTALL) -m 0644 -- gtk-demo.so $(DESTDIR)$(LIBDIR)/Locker/demos/gtk-demo.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
@@ -86,6 +98,7 @@ install: $(TARGETS)
 	$(INSTALL) -m 0644 -- xterm.so $(DESTDIR)$(LIBDIR)/Locker/demos/xterm.so
 
 uninstall:
+	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/demos/colors.so
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/demos/gtk-demo.so
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/demos/logo.so
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/demos/xscreensaver.so

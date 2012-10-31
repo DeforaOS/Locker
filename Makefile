@@ -54,6 +54,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/auth/template.c \
 		$(PACKAGE)-$(VERSION)/src/auth/Makefile \
 		$(PACKAGE)-$(VERSION)/src/auth/project.conf \
+		$(PACKAGE)-$(VERSION)/src/demos/colors.c \
 		$(PACKAGE)-$(VERSION)/src/demos/gtk-demo.c \
 		$(PACKAGE)-$(VERSION)/src/demos/logo.c \
 		$(PACKAGE)-$(VERSION)/src/demos/template.c \
