@@ -15,6 +15,9 @@
 
 
 
+#ifdef DEBUG
+# include <stdio.h>
+#endif
 #include <System.h>
 #include "Locker/demo.h"
 
