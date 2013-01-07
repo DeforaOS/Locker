@@ -91,6 +91,7 @@ struct _Locker
 
 	/* preferences */
 	GtkWidget * pr_window;
+	GtkWidget * pr_alock;
 	GtkListStore * pr_astore;
 	GtkWidget * pr_acombo;
 	GtkListStore * pr_dstore;
@@ -184,6 +185,7 @@ static gboolean _locker_on_lock(gpointer data);
 static gboolean _locker_on_map_event(gpointer data);
 static int _locker_on_message(void * data, uint32_t value1, uint32_t value2,
 		uint32_t value3);
+static void _locker_on_preferences_lock_toggled(gpointer data);
 static void _locker_on_realize(GtkWidget * widget, gpointer data);
 
 
@@ -458,9 +460,15 @@ static GtkWidget * _preferences_window_auth(Locker * locker)
 	GtkCellRenderer * renderer;
 
 	vbox = gtk_vbox_new(FALSE, 4);
+	/* checkbox */
+	locker->pr_alock = gtk_check_button_new_with_label(_(
+				"Lock the screen automatically"));
+	g_signal_connect_swapped(locker->pr_alock, "toggled", G_CALLBACK(
+				_locker_on_preferences_lock_toggled), locker);
+	gtk_box_pack_start(GTK_BOX(vbox), locker->pr_alock, FALSE, TRUE, 0);
 	/* selector */
 	hbox = gtk_hbox_new(FALSE, 4);
-	widget = gtk_label_new(_("Plug-in: "));
+	widget = gtk_label_new(_("Method: "));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_astore = gtk_list_store_new(LPC_COUNT, G_TYPE_POINTER,
 			G_TYPE_BOOLEAN, G_TYPE_STRING, GDK_TYPE_PIXBUF,
@@ -572,6 +580,9 @@ static void _preferences_on_apply(gpointer data)
 	String * sep = "";
 
 	/* authentication */
+	enabled = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+			locker->pr_alock));
+	config_set(locker->config, NULL, "lock", enabled ? "" : NULL);
 	p = NULL;
 	if(gtk_combo_box_get_active_iter(GTK_COMBO_BOX(locker->pr_acombo),
 				&iter))
@@ -655,6 +666,9 @@ static void _cancel_auth(Locker * locker, GtkListStore * store)
 	LockerAuthDefinition * lad;
 	gint size = 24;
 
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(locker->pr_alock),
+			(config_get(locker->config, NULL, "lock") != NULL)
+			? TRUE : FALSE);
 	theme = gtk_icon_theme_get_default();
 	gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &size, &size);
 	gtk_list_store_clear(store);
@@ -1799,6 +1813,18 @@ static int _locker_on_message(void * data, uint32_t value1, uint32_t value2,
 			break;
 	}
 	return 0;
+}
+
+
+/* locker_on_preferences_lock_toggled */
+static void _locker_on_preferences_lock_toggled(gpointer data)
+{
+	Locker * locker = data;
+	gboolean active;
+
+	active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+				locker->pr_alock));
+	gtk_widget_set_sensitive(locker->pr_acombo, active);
 }
 
 
