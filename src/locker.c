@@ -1,6 +1,6 @@
 /* $Id$ */
 static char const _copyright[] =
-"Copyright (c) 2010-2012 Pierre Pronchery <khorben@defora.org>";
+"Copyright (c) 2010-2013 Pierre Pronchery <khorben@defora.org>";
 /* This file is part of DeforaOS Desktop Locker */
 static char const _license[] =
 "This program is free software: you can redistribute it and/or modify\n"
@@ -61,8 +61,8 @@ struct _Locker
 	Config * config;
 
 	/* internal */
-	int enabled;
-	int locked;
+	gboolean enabled;
+	gboolean locked;
 
 	GdkDisplay * display;
 	int screen;
@@ -122,7 +122,7 @@ static char const * _authors[] =
 
 /* prototypes */
 /* accessors */
-static int _locker_is_locked(Locker * locker);
+static gboolean _locker_is_locked(Locker * locker);
 static gboolean _locker_plugin_is_enabled(Locker * locker, char const * plugin);
 
 /* useful */
@@ -207,8 +207,8 @@ Locker * locker_new(char const * demo, char const * auth)
 		return NULL;
 	}
 	_new_helpers(locker);
-	locker->enabled = 1;
-	locker->locked = 0;
+	locker->enabled = TRUE;
+	locker->locked = FALSE;
 	screen = gdk_screen_get_default();
 	locker->display = gdk_screen_get_display(screen);
 	locker->screen = gdk_x11_get_default_screen();
@@ -878,7 +878,7 @@ static void _preferences_on_response(GtkWidget * widget, gint response,
 /* functions */
 /* accessors */
 /* locker_is_locked */
-static int _locker_is_locked(Locker * locker)
+static gboolean _locker_is_locked(Locker * locker)
 {
 	return locker->locked;
 }
@@ -1034,7 +1034,7 @@ static int _locker_action_disable(Locker * locker)
 #endif
 	if(locker->locked)
 		return 0;
-	locker->enabled = 0;
+	locker->enabled = FALSE;
 	return 0;
 }
 
@@ -1045,7 +1045,7 @@ static int _locker_action_enable(Locker * locker)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
 #endif
-	locker->enabled = 1;
+	locker->enabled = TRUE;
 	return 0;
 }
 
@@ -1060,7 +1060,7 @@ static int _locker_action_lock(Locker * locker, int force)
 #endif
 	if(force == 0 && _locker_event(locker, LOCKER_EVENT_LOCKING) != 0)
 		return -1;
-	locker->locked = 1;
+	locker->locked = TRUE;
 	_locker_action_activate(locker, 1);
 	ret = locker->adefinition->action(locker->auth, LOCKER_ACTION_LOCK);
 	_locker_event(locker, LOCKER_EVENT_LOCKED);
@@ -1176,7 +1176,7 @@ static int _locker_action_unlock(Locker * locker)
 	if(locker->adefinition->action(locker->auth, LOCKER_ACTION_UNLOCK) != 0)
 		return -1;
 	_locker_event(locker, LOCKER_EVENT_UNLOCKED);
-	locker->locked = 0;
+	locker->locked = FALSE;
 	_locker_action_deactivate(locker, 1);
 	/* ungrab keyboard and mouse */
 	if(locker->windows == NULL)
@@ -1673,7 +1673,7 @@ static GdkFilterReturn _filter_xscreensaver_notify(Locker * locker,
 			_locker_action_deactivate(locker, 0);
 			break;
 		case ScreenSaverOn:
-			if(locker->enabled && locker->locked == 0)
+			if(locker->enabled != FALSE && locker->locked == FALSE)
 				_locker_action_lock(locker, 0);
 			break;
 		case ScreenSaverDisabled:
