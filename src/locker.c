@@ -646,7 +646,11 @@ static void _cancel_auth(Locker * locker, GtkListStore * store)
 	DIR * dir;
 	struct dirent * de;
 	size_t len;
+#ifdef __APPLE__
+	char const ext[] = ".dylib";
+#else
 	char const ext[] = ".so";
+#endif
 	Plugin * p;
 	LockerAuthDefinition * lad;
 	gint size = 24;
@@ -711,7 +715,11 @@ static void _cancel_demo(Locker * locker, GtkListStore * store)
 	DIR * dir;
 	struct dirent * de;
 	size_t len;
+#ifdef __APPLE__
+	char const ext[] = ".dylib";
+#else
 	char const ext[] = ".so";
+#endif
 	Plugin * p;
 	LockerDemoDefinition * ldd;
 	gint size = 24;
