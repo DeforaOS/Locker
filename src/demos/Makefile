@@ -2,19 +2,19 @@ TARGETS	= colors.so gtk-demo.so logo.so template.so xscreensaver.so xterm.so
 PREFIX	= /usr/local
 DESTDIR	=
 LIBDIR	= $(PREFIX)/lib
-CC	?= cc
+CC	= cc
 CPPFLAGSF= -I ../../include
 CPPFLAGS=
 CFLAGSF	= -W `pkg-config --cflags libSystem gtk+-2.0 x11`
 CFLAGS	= -Wall -g -O2 -pedantic -fPIC
 LDFLAGSF= -W `pkg-config --libs libSystem gtk+-2.0 x11`
-AR	?= ar
-RANLIB	?= ranlib
-CCSHARED?= $(CC) -shared
-RM	?= rm -f
-LN	?= ln -f
-MKDIR	?= mkdir -p
-INSTALL	?= install
+AR	= ar
+RANLIB	= ranlib
+CCSHARED= $(CC) -shared
+RM	= rm -f
+LN	= ln -f
+MKDIR	= mkdir -p
+INSTALL	= install
 
 
 all: $(TARGETS)
