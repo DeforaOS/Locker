@@ -23,6 +23,7 @@ lockerctl.html: lockerctl.xml
 
 clean:
 	$(RM) -- $(locker.1_OBJS) $(locker.html_OBJS) $(lockerctl.1_OBJS) $(lockerctl.html_OBJS)
+	./docbook.sh -c -P "$(PREFIX)" -- "lockerctl.html"
 
 distclean: clean
 	$(RM) -- $(TARGETS)
