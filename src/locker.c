@@ -92,6 +92,7 @@ struct _Locker
 	/* preferences */
 	GtkWidget * pr_window;
 	GtkWidget * pr_alock;
+	GtkWidget * pr_adelay;
 	GtkListStore * pr_astore;
 	GtkWidget * pr_acombo;
 	GtkListStore * pr_dstore;
@@ -466,6 +467,16 @@ static GtkWidget * _preferences_window_auth(Locker * locker)
 	g_signal_connect_swapped(locker->pr_alock, "toggled", G_CALLBACK(
 				_locker_on_preferences_lock_toggled), locker);
 	gtk_box_pack_start(GTK_BOX(vbox), locker->pr_alock, FALSE, TRUE, 0);
+	/* spinner */
+	hbox = gtk_hbox_new(FALSE, 4);
+	widget = gtk_label_new(_("Lock after "));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	locker->pr_adelay = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(locker->pr_adelay), 0);
+	gtk_box_pack_start(GTK_BOX(hbox), locker->pr_adelay, FALSE, TRUE, 0);
+	widget = gtk_label_new(_(" second(s)"));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	/* selector */
 	hbox = gtk_hbox_new(FALSE, 4);
 	widget = gtk_label_new(_("Method: "));
@@ -569,20 +580,30 @@ static GtkWidget * _preferences_window_plugins(Locker * locker)
 static void _preferences_on_apply(gpointer data)
 {
 	Locker * locker = data;
+	char buf[16] = "";
 	GtkTreeModel * model = GTK_TREE_MODEL(locker->pr_plstore);
 	GtkTreeIter iter;
 	gchar * p;
 	GtkWidget * widget;
 	gboolean valid;
 	gboolean enabled;
-	int res = 0;
+	int res;
 	String * value = string_new("");
 	String * sep = "";
 
 	/* authentication */
-	enabled = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
-			locker->pr_alock));
-	config_set(locker->config, NULL, "lock", enabled ? "" : NULL);
+	if((enabled = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+						locker->pr_alock))) == TRUE)
+	{
+		if((res = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+							locker->pr_adelay)))
+				>= 0)
+			snprintf(buf, sizeof(buf), "%d", res);
+		config_set(locker->config, NULL, "lock", buf);
+	}
+	else
+		config_set(locker->config, NULL, "lock", NULL);
+	res = 0;
 	p = NULL;
 	if(gtk_combo_box_get_active_iter(GTK_COMBO_BOX(locker->pr_acombo),
 				&iter))
@@ -651,6 +672,7 @@ static void _preferences_on_cancel(gpointer data)
 
 static void _cancel_auth(Locker * locker, GtkListStore * store)
 {
+	char const * q;
 	GtkIconTheme * theme;
 	GtkTreeIter iter;
 	GdkPixbuf * icon;
@@ -666,9 +688,20 @@ static void _cancel_auth(Locker * locker, GtkListStore * store)
 	LockerAuthDefinition * lad;
 	gint size = 24;
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(locker->pr_alock),
-			(config_get(locker->config, NULL, "lock") != NULL)
-			? TRUE : FALSE);
+	if((q = config_get(locker->config, NULL, "lock")) != NULL)
+	{
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
+					locker->pr_alock), TRUE);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_adelay),
+				strtol(q, NULL, 10));
+	}
+	else
+	{
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
+					locker->pr_alock), FALSE);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_adelay),
+				0.0);
+	}
 	theme = gtk_icon_theme_get_default();
 	gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &size, &size);
 	gtk_list_store_clear(store);
@@ -1824,6 +1857,7 @@ static void _locker_on_preferences_lock_toggled(gpointer data)
 
 	active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 				locker->pr_alock));
+	gtk_widget_set_sensitive(locker->pr_adelay, active);
 	gtk_widget_set_sensitive(locker->pr_acombo, active);
 }
 
