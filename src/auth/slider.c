@@ -109,8 +109,8 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
 	gtk_misc_set_padding(GTK_MISC(widget), 0, 96);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_widget_show_all(hbox);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
-	gtk_widget_show_all(vbox);
 	return slider;
 }
 
@@ -141,17 +141,19 @@ static int _slider_action(Slider * slider, LockerAction action)
 	switch(action)
 	{
 		case LOCKER_ACTION_DEACTIVATE:
-			gtk_widget_grab_focus(slider->scale);
-			gtk_widget_show(slider->widget);
 			if(slider->source != 0)
 				g_source_remove(slider->source);
 			slider->source = 0;
 			if(slider->locked)
+			{
+				gtk_widget_show(slider->widget);
+				gtk_widget_grab_focus(slider->scale);
 				slider->source = g_timeout_add(3000,
 						_slider_on_timeout, slider);
+			}
 			break;
 		case LOCKER_ACTION_LOCK:
-			gtk_widget_hide(slider->widget);
+			gtk_widget_show(slider->widget);
 			gtk_range_set_value(GTK_RANGE(slider->scale), 0.0);
 			if(slider->source != 0)
 				g_source_remove(slider->source);
