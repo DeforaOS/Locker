@@ -29,6 +29,7 @@ static char const _license[] =
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 #include <errno.h>
 #include <libintl.h>
 #include <gdk/gdkx.h>
@@ -61,6 +62,7 @@ struct _Locker
 	Config * config;
 
 	/* internal */
+	guint source;
 	gboolean enabled;
 	gboolean locked;
 
@@ -178,6 +180,7 @@ static void _locker_window_register(Locker * locker, size_t i);
 static gboolean _lock_on_closex(void);
 static GdkFilterReturn _locker_on_filter(GdkXEvent * xevent, GdkEvent * event,
 		gpointer data);
+static gboolean _locker_on_lock(gpointer data);
 static gboolean _locker_on_map_event(gpointer data);
 static int _locker_on_message(void * data, uint32_t value1, uint32_t value2,
 		uint32_t value3);
@@ -207,6 +210,7 @@ Locker * locker_new(char const * demo, char const * auth)
 		return NULL;
 	}
 	_new_helpers(locker);
+	locker->source = 0;
 	locker->enabled = TRUE;
 	locker->locked = FALSE;
 	screen = gdk_screen_get_default();
@@ -341,6 +345,8 @@ void locker_delete(Locker * locker)
 	size_t i;
 	LockerPlugins * p;
 
+	if(locker->source != 0)
+		g_source_remove(locker->source);
 	/* destroy the generic plug-ins */
 	for(i = 0; i < locker->plugins_cnt; i++)
 	{
@@ -1015,8 +1021,10 @@ static int _locker_action_deactivate(Locker * locker, int reset)
 #endif
 	if(_locker_event(locker, LOCKER_EVENT_DEACTIVATING) != 0)
 		return -1;
-	if(locker->adefinition->action(locker->auth, LOCKER_ACTION_DEACTIVATE)
-			!= 0)
+	if(locker->locked == FALSE)
+		_locker_action_unlock(locker);
+	else if(locker->adefinition->action(locker->auth,
+				LOCKER_ACTION_DEACTIVATE) != 0)
 		return -1;
 	_locker_action_stop(locker);
 	_locker_event(locker, LOCKER_EVENT_DEACTIVATED);
@@ -1100,6 +1108,9 @@ static int _locker_action_stop(Locker * locker)
 		gdk_window_invalidate_rect(window, NULL, TRUE);
 	}
 #endif
+	if(locker->source != 0)
+		g_source_remove(locker->source);
+	locker->source = 0;
 	return 0;
 }
 
@@ -1177,7 +1188,6 @@ static int _locker_action_unlock(Locker * locker)
 		return -1;
 	_locker_event(locker, LOCKER_EVENT_UNLOCKED);
 	locker->locked = FALSE;
-	_locker_action_deactivate(locker, 1);
 	/* ungrab keyboard and mouse */
 	if(locker->windows == NULL)
 		return 0;
@@ -1586,6 +1596,7 @@ static gboolean _lock_on_closex(void)
 static GdkFilterReturn _filter_configure(Locker * locker);
 static GdkFilterReturn _filter_xscreensaver_notify(Locker * locker,
 		XScreenSaverNotifyEvent * xssne);
+static void _filter_xscreensaver_notify_on(Locker * locker);
 
 static GdkFilterReturn _locker_on_filter(GdkXEvent * xevent, GdkEvent * event,
 		gpointer data)
@@ -1673,14 +1684,48 @@ static GdkFilterReturn _filter_xscreensaver_notify(Locker * locker,
 			_locker_action_deactivate(locker, 0);
 			break;
 		case ScreenSaverOn:
-			if(locker->enabled != FALSE && locker->locked == FALSE)
-				_locker_action_lock(locker, 0);
+			_filter_xscreensaver_notify_on(locker);
 			break;
 		case ScreenSaverDisabled:
 			_locker_action_disable(locker);
 			break;
 	}
 	return GDK_FILTER_CONTINUE;
+}
+
+static void _filter_xscreensaver_notify_on(Locker * locker)
+{
+	char const * p;
+	long delay;
+
+	_locker_action_enable(locker);
+	if(locker->locked != FALSE)
+		/* we are already locked */
+		return;
+	if((p = config_get(locker->config, NULL, "lock")) == NULL)
+		/* do not lock at all */
+		return;
+	if((delay = strtol(p, NULL, 10)) <= 0)
+	{
+		/* lock immediately */
+		_locker_action_lock(locker, 0);
+		return;
+	}
+	/* lock after a delay */
+	if(locker->source != 0)
+		g_source_remove(locker->source);
+	locker->source = g_timeout_add(delay * 1000, _locker_on_lock, locker);
+}
+
+
+/* locker_on_lock */
+static gboolean _locker_on_lock(gpointer data)
+{
+	Locker * locker = data;
+
+	locker->source = 0;
+	_locker_action_lock(locker, 1);
+	return FALSE;
 }
 
 
