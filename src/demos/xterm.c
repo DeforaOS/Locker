@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@
 
 #ifndef PREFIX
 # define PREFIX		"/usr/local"
+#endif
+#ifndef BINDIR
+# define BINDIR		PREFIX "/bin"
 #endif
 
 
@@ -129,7 +132,7 @@ static int _xterm_add(XTerm * xterm, GdkWindow * window)
 	if((p = helper->config_get(helper->locker, "xterm", "xterm")) != NULL)
 		argv[0] = strdup(p);
 	else
-		argv[0] = strdup(PREFIX "/bin/xterm");
+		argv[0] = strdup(BINDIR "/xterm");
 	if((p = helper->config_get(helper->locker, "xterm", "command")) != NULL)
 		argv[4] = strdup(p);
 	else
