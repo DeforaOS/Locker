@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include <System.h>
 #include <unistd.h>
+#include <pwd.h>
 #ifdef __linux__
 # include <crypt.h>
 #endif
@@ -85,6 +86,8 @@ static Password * _password_init(LockerAuthHelper * helper)
 	GtkWidget * hbox;
 	GtkWidget * widget;
 	char buf[256];
+	struct passwd * pw;
+	char const * username;
 
 	if((password = object_new(sizeof(*password))) == NULL)
 		return NULL;
@@ -106,8 +109,13 @@ static Password * _password_init(LockerAuthHelper * helper)
 	gtk_widget_modify_font(widget, bold);
 	gtk_box_pack_start(GTK_BOX(password->widget), widget, FALSE, TRUE, 0);
 	/* screen */
-	snprintf(buf, sizeof(buf), "%s %s", _("This screen is locked by"),
-			getenv("USER")); /* XXX better source? */
+	if((pw = getpwuid(getuid())) != NULL)
+		username = pw->pw_name;
+	else
+		username = getenv("USER");
+	snprintf(buf, sizeof(buf), (username != NULL)
+			? _("This screen is locked by %s")
+			: _("This screen is locked"), username);
 	widget = gtk_label_new(buf);
 	gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &white);
 	gtk_box_pack_start(GTK_BOX(password->widget), widget, FALSE, TRUE, 0);
