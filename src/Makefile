@@ -13,14 +13,14 @@ LDFLAGSF= `pkg-config --libs libDesktop`
 LDFLAGS	= 
 RM	= rm -f
 LN	= ln -f
-MKDIR	= mkdir -p
+MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 
 
 all: subdirs $(TARGETS)
 
 subdirs:
-	@for i in $(SUBDIRS); do (cd $$i && $(MAKE)) || exit; done
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE)) || exit; done
 
 locker_OBJS = locker.o main.o
 locker_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS) `pkg-config --cflags x11 xscrnsaver`
@@ -46,23 +46,23 @@ lockerctl.o: lockerctl.c ../include/Locker.h ../config.h
 	$(CC) -D PREFIX=\"$(PREFIX)\" $(lockerctl_CFLAGS) -c lockerctl.c
 
 clean:
-	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) clean) || exit; done
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) clean) || exit; done
 	$(RM) -- $(locker_OBJS) $(lockerctl_OBJS)
 
 distclean:
-	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) distclean) || exit; done
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) distclean) || exit; done
 	$(RM) -- $(locker_OBJS) $(lockerctl_OBJS)
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)
-	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) install) || exit; done
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) install) || exit; done
 	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 -- locker $(DESTDIR)$(BINDIR)/locker
 	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 -- lockerctl $(DESTDIR)$(BINDIR)/lockerctl
 
 uninstall:
-	@for i in $(SUBDIRS); do (cd $$i && $(MAKE) uninstall) || exit; done
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) uninstall) || exit; done
 	$(RM) -- $(DESTDIR)$(BINDIR)/locker
 	$(RM) -- $(DESTDIR)$(BINDIR)/lockerctl
 
