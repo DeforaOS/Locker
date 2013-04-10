@@ -260,8 +260,10 @@ Locker * locker_new(char const * demo, char const * auth)
 			GDK_WINDOW_XID(root), ScreenSaverNotifyMask);
 	gdk_x11_register_standard_event_type(locker->display, locker->event, 1);
 	gdk_window_add_filter(root, _locker_on_filter, locker);
-	desktop_message_register(LOCKER_CLIENT_MESSAGE, _locker_on_message,
-			locker);
+	/* listen to desktop messages */
+	gtk_widget_realize(locker->windows[0]);
+	desktop_message_register(locker->windows[0], LOCKER_CLIENT_MESSAGE,
+			_locker_on_message, locker);
 	return locker;
 }
 
