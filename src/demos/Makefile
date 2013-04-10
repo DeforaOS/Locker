@@ -87,15 +87,15 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 -- colors.so $(DESTDIR)$(LIBDIR)/Locker/demos/colors.so
+	$(INSTALL) -m 0644 colors.so $(DESTDIR)$(LIBDIR)/Locker/demos/colors.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 -- gtk-demo.so $(DESTDIR)$(LIBDIR)/Locker/demos/gtk-demo.so
+	$(INSTALL) -m 0644 gtk-demo.so $(DESTDIR)$(LIBDIR)/Locker/demos/gtk-demo.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 -- logo.so $(DESTDIR)$(LIBDIR)/Locker/demos/logo.so
+	$(INSTALL) -m 0644 logo.so $(DESTDIR)$(LIBDIR)/Locker/demos/logo.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 -- xscreensaver.so $(DESTDIR)$(LIBDIR)/Locker/demos/xscreensaver.so
+	$(INSTALL) -m 0644 xscreensaver.so $(DESTDIR)$(LIBDIR)/Locker/demos/xscreensaver.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 -- xterm.so $(DESTDIR)$(LIBDIR)/Locker/demos/xterm.so
+	$(INSTALL) -m 0644 xterm.so $(DESTDIR)$(LIBDIR)/Locker/demos/xterm.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/demos/colors.so

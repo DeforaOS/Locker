@@ -57,9 +57,9 @@ distclean:
 install: $(TARGETS)
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) install) || exit; done
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- locker $(DESTDIR)$(BINDIR)/locker
+	$(INSTALL) -m 0755 locker $(DESTDIR)$(BINDIR)/locker
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- lockerctl $(DESTDIR)$(BINDIR)/lockerctl
+	$(INSTALL) -m 0755 lockerctl $(DESTDIR)$(BINDIR)/lockerctl
 
 uninstall:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) uninstall) || exit; done

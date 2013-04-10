@@ -13,7 +13,7 @@ distclean: clean
 
 install:
 	$(MKDIR) $(DESTDIR)$(PREFIX)/share/applications
-	$(INSTALL) -m 0644 -- locker-settings.desktop $(DESTDIR)$(PREFIX)/share/applications/locker-settings.desktop
+	$(INSTALL) -m 0644 locker-settings.desktop $(DESTDIR)$(PREFIX)/share/applications/locker-settings.desktop
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(PREFIX)/share/applications/locker-settings.desktop

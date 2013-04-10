@@ -57,9 +57,9 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/auth
-	$(INSTALL) -m 0644 -- password.so $(DESTDIR)$(LIBDIR)/Locker/auth/password.so
+	$(INSTALL) -m 0644 password.so $(DESTDIR)$(LIBDIR)/Locker/auth/password.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/auth
-	$(INSTALL) -m 0644 -- slider.so $(DESTDIR)$(LIBDIR)/Locker/auth/slider.so
+	$(INSTALL) -m 0644 slider.so $(DESTDIR)$(LIBDIR)/Locker/auth/slider.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/auth/password.so
