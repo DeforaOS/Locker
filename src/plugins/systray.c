@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,8 +107,9 @@ static void _systray_destroy(Systray * systray)
 static void _systray_on_activate(gpointer data)
 {
 	Systray * systray = data;
+	LockerPluginHelper * helper = systray->helper;
 
-	systray->helper->about_dialog(systray->helper->locker);
+	helper->about_dialog(helper->locker);
 }
 
 
@@ -116,6 +117,7 @@ static void _systray_on_activate(gpointer data)
 static void _popup_menu_on_help(gpointer data);
 static void _popup_menu_on_lock(gpointer data);
 static void _popup_menu_on_quit(gpointer data);
+static void _popup_menu_on_about(gpointer data);
 static void _popup_menu_on_show_settings(gpointer data);
 
 static void _systray_on_popup_menu(GtkStatusIcon * icon, guint button,
@@ -139,6 +141,11 @@ static void _systray_on_popup_menu(GtkStatusIcon * icon, guint button,
 		{ NULL, NULL, NULL },
 		{ "help-contents", "_Help contents",
 			_popup_menu_on_help },
+#if GTK_CHECK_VERSION(2, 6, 0)
+		{ GTK_STOCK_ABOUT, "_About", _popup_menu_on_about },
+#else
+		{ NULL, "_About", _popup_menu_on_about },
+#endif
 		{ NULL, NULL, NULL },
 		{ "gtk-quit", "_Quit", _popup_menu_on_quit },
 	};
@@ -164,6 +171,14 @@ static void _systray_on_popup_menu(GtkStatusIcon * icon, guint button,
 	}
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, button, time);
+}
+
+static void _popup_menu_on_about(gpointer data)
+{
+	Systray * systray = data;
+	LockerPluginHelper * helper = systray->helper;
+
+	helper->about_dialog(helper->locker);
 }
 
 static void _popup_menu_on_help(gpointer data)
