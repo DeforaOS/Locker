@@ -1,5 +1,6 @@
 [Desktop Entry]
-Name=Screensaver settings
+Name=Screensaver
+Comment=Preferences for the screensaver
 Exec=lockerctl -S
 Icon=preferences-desktop-screensaver
 Type=Application
