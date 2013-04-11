@@ -1,4 +1,4 @@
-TARGETS	= locker.1 locker.html lockerctl.1 lockerctl.html
+TARGETS	= index.html locker.1 locker.html lockerctl.1 lockerctl.html
 PREFIX	= /usr/local
 DESTDIR	=
 RM	= rm -f
@@ -8,6 +8,9 @@ INSTALL	= install
 
 
 all: $(TARGETS)
+
+index.html: index.xml index.xsl locker.xml lockerctl.xml
+	./docbook.sh -P "$(PREFIX)" -- "index.html"
 
 locker.1: locker.xml
 	./docbook.sh -P "$(PREFIX)" -- "locker.1"
@@ -22,7 +25,7 @@ lockerctl.html: lockerctl.xml
 	./docbook.sh -P "$(PREFIX)" -- "lockerctl.html"
 
 clean:
-	$(RM) -- $(locker.1_OBJS) $(locker.html_OBJS) $(lockerctl.1_OBJS) $(lockerctl.html_OBJS)
+	$(RM) -- $(index.html_OBJS) $(locker.1_OBJS) $(locker.html_OBJS) $(lockerctl.1_OBJS) $(lockerctl.html_OBJS)
 	./docbook.sh -c -P "$(PREFIX)" -- "lockerctl.html"
 
 distclean: clean

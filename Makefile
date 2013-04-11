@@ -26,6 +26,8 @@ dist:
 		$(PACKAGE)-$(VERSION)/data/project.conf \
 		$(PACKAGE)-$(VERSION)/doc/Makefile \
 		$(PACKAGE)-$(VERSION)/doc/docbook.sh \
+		$(PACKAGE)-$(VERSION)/doc/index.xml \
+		$(PACKAGE)-$(VERSION)/doc/index.xsl \
 		$(PACKAGE)-$(VERSION)/doc/locker.xml \
 		$(PACKAGE)-$(VERSION)/doc/lockerctl.xml \
 		$(PACKAGE)-$(VERSION)/doc/project.conf \

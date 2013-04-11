@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY firstname  "Pierre">
+<!ENTITY surname    "Pronchery">
+<!ENTITY username   "khorben">
+<!ENTITY email      "khorben@defora.org">
+<!ENTITY package    "DeforaOS Locker">
+<!ENTITY locker1    "locker.xml">
+<!ENTITY lockerctl1 "lockerctl.xml">
+]>
+<book><?dbhtml filename="index.html"?>
+	<bookinfo>
+		<authorgroup>
+			<author>
+				<firstname>&firstname;</firstname>
+				<surname>&surname;</surname>
+				<contrib>Code and documentation.</contrib>
+				<address>
+					<email>&email;</email>
+				</address>
+			</author>
+		</authorgroup>
+		<copyright>
+			<year>2013</year>
+			<holder>&firstname; &surname; &lt;&email;&gt;</holder>
+		</copyright>
+		<legalnotice>
+			<para>This documentation was written for the DeforaOS project (and may be
+				used by others).</para>
+			<para>Permission is granted to copy, distribute and/or modify this
+				document under the terms of the GNU General Public License,
+				Version 3 as published by the Free Software Foundation.</para>
+		</legalnotice>
+	</bookinfo>
+	<title>&package;</title>
+	<para>Screensaver for the DeforaOS desktop environment.</para>
+	<chapter>
+		<title>User manual</title>
+		<section>
+			<title>Authentication</title>
+			<section>
+				<title>Password authentication</title>
+			</section>
+			<section>
+				<title>Slider authentication</title>
+			</section>
+		</section>
+		<section>
+			<title>Demos</title>
+			<section>
+				<title>Gtk+ demo</title>
+			</section>
+			<section>
+				<title>xscreensaver integration</title>
+			</section>
+		</section>
+		<section>
+			<title>Plug-ins</title>
+		</section>
+	</chapter>
+	<chapter>
+		<title>Manual pages</title>
+		<section>
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="&locker1;"/>
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="&lockerctl1;"/>
+		</section>
+	</chapter>
+</book>
+<!-- vim: set noet ts=1 sw=1 sts=1 tw=80: -->
