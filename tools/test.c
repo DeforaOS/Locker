@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2012-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,8 @@ struct _Locker
 
 
 /* prototypes */
-static int _test(int root, int width, int height, char const * demo);
+static int _test(int desktop, int root, int width, int height,
+		char const * demo);
 static int _usage(void);
 
 /* helpers */
@@ -74,7 +75,8 @@ static void _test_on_stop(gpointer data);
 /* test */
 static Config * _test_config(void);
 
-static int _test(int root, int width, int height, char const * demo)
+static int _test(int desktop, int root, int width, int height,
+		char const * demo)
 {
 	int ret = 0;
 	Locker * locker;
@@ -170,6 +172,9 @@ static int _test(int root, int width, int height, char const * demo)
 	{
 		dwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_default_size(GTK_WINDOW(dwindow), width, height);
+		if(desktop)
+			gtk_window_set_type_hint(GTK_WINDOW(dwindow),
+					GDK_WINDOW_TYPE_HINT_DESKTOP);
 		g_signal_connect(dwindow, "delete-event", G_CALLBACK(
 					_test_on_closex), NULL);
 		gtk_widget_show_all(dwindow);
@@ -226,7 +231,8 @@ static Config * _test_config(void)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: locker-test [-r ][-w width][-h height] demo\n"
+	fputs("Usage: locker-test [-d][-r][-w width][-h height] demo\n"
+"  -d	Display the demo as a desktop window\n"
 "  -r	Display the demo on the root window\n"
 "  -w	Set the width of the test window\n"
 "  -h	Set the height of the test window\n", stderr);
@@ -337,16 +343,22 @@ static void _test_on_stop(gpointer data)
 int main(int argc, char * argv[])
 {
 	int o;
+	int desktop = 0;
 	int root = 0;
 	int width = 640;
 	int height = 480;
 	char const * demo = NULL;
 
 	gtk_init(&argc, &argv);
-	while((o = getopt(argc, argv, "rw:h:")) != -1)
+	while((o = getopt(argc, argv, "drw:h:")) != -1)
 		switch(o)
 		{
+			case 'd':
+				desktop = 1;
+				root = 0;
+				break;
 			case 'r':
+				desktop = 0;
 				root = 1;
 				break;
 			case 'w':
@@ -361,5 +373,5 @@ int main(int argc, char * argv[])
 	if(width == 0 || height == 0 || optind + 1 != argc)
 		return _usage();
 	demo = argv[optind];
-	return (_test(root, width, height, demo) == 0) ? 2 : 0;
+	return (_test(desktop, root, width, height, demo) == 0) ? 2 : 0;
 }
