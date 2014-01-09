@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011-2013 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,9 @@ static void _systray_destroy(Systray * systray);
 
 /* callbacks */
 #if GTK_CHECK_VERSION(2, 10, 0)
+# ifndef EMBEDDED
 static void _systray_on_activate(gpointer data);
+# endif
 static void _systray_on_popup_menu(GtkStatusIcon * icon, guint button,
 		guint time, gpointer data);
 #endif
@@ -81,8 +83,10 @@ static Systray * _systray_init(LockerPluginHelper * helper)
 # if GTK_CHECK_VERSION(2, 16, 0)
 	gtk_status_icon_set_tooltip_text(systray->icon, "Screensaver");
 # endif
+# ifndef EMBEDDED
 	g_signal_connect_swapped(systray->icon, "activate", G_CALLBACK(
 				_systray_on_activate), systray);
+# endif
 	g_signal_connect(systray->icon, "popup-menu", G_CALLBACK(
 				_systray_on_popup_menu), systray);
 	systray->ab_window = NULL;
@@ -103,6 +107,7 @@ static void _systray_destroy(Systray * systray)
 
 #if GTK_CHECK_VERSION(2, 10, 0)
 /* callbacks */
+# ifndef EMBEDDED
 /* systray_on_activate */
 static void _systray_on_activate(gpointer data)
 {
@@ -111,6 +116,7 @@ static void _systray_on_activate(gpointer data)
 
 	helper->about_dialog(helper->locker);
 }
+# endif
 
 
 /* systray_on_popup_menu */
