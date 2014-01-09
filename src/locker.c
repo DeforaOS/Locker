@@ -1,6 +1,6 @@
 /* $Id$ */
 static char const _copyright[] =
-"Copyright © 2010-2013 Pierre Pronchery <khorben@defora.org>";
+"Copyright © 2010-2014 Pierre Pronchery <khorben@defora.org>";
 /* This file is part of DeforaOS Desktop Locker */
 static char const _license[] =
 "This program is free software: you can redistribute it and/or modify\n"
@@ -1440,7 +1440,7 @@ static int _locker_demo_load(Locker * locker, char const * demo)
 #else
 		window = locker->windows[i]->window;
 #endif
-		if(window != NULL)
+		if(window != NULL && locker->ddefinition->add != NULL)
 			locker->ddefinition->add(locker->demo, window);
 	}
 	return 0;
@@ -1710,7 +1710,10 @@ static GdkFilterReturn _filter_configure(Locker * locker)
 #else
 			window = locker->windows[i]->window;
 #endif
-			locker->ddefinition->remove(locker->demo, window);
+			if(locker->ddefinition != NULL
+					&& locker->ddefinition->remove != NULL)
+				locker->ddefinition->remove(locker->demo,
+						window);
 			gtk_widget_destroy(locker->windows[i]);
 			locker->windows[i] = NULL;
 		}
