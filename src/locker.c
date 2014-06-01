@@ -1631,6 +1631,8 @@ static void _locker_window_register(Locker * locker, size_t i)
 	gtk_window_move(GTK_WINDOW(locker->windows[i]), rect.x, rect.y);
 	gtk_window_resize(GTK_WINDOW(locker->windows[i]), rect.width,
 			rect.height);
+	gtk_window_set_focus_on_map(GTK_WINDOW(locker->windows[i]), (i == 0)
+			? TRUE : FALSE);
 	gtk_window_set_keep_above(GTK_WINDOW(locker->windows[i]), TRUE);
 	gtk_window_stick(GTK_WINDOW(locker->windows[i]));
 	gtk_widget_modify_bg(locker->windows[i], GTK_STATE_NORMAL, &black);
