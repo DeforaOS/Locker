@@ -1064,6 +1064,8 @@ static int _locker_action_activate(Locker * locker, int force)
 		gtk_widget_show(locker->windows[i]);
 		gtk_window_fullscreen(GTK_WINDOW(locker->windows[i]));
 	}
+	/* force focus on the first window */
+	gdk_window_focus(locker->windows[0]->window, GDK_CURRENT_TIME);
 	_locker_action_start(locker);
 	_locker_event(locker, LOCKER_EVENT_ACTIVATED);
 	return 0;
