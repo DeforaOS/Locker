@@ -1695,15 +1695,16 @@ static GdkFilterReturn _filter_configure(Locker * locker)
 	if((cnt = gdk_screen_get_n_monitors(screen)) < 1)
 		cnt = 1;
 	for(i = 0; i < locker->windows_cnt && i < cnt; i++)
-	{
 		if(locker->windows[i] == NULL)
-			/* FIXME implement this case too */
-			continue;
-		gdk_screen_get_monitor_geometry(screen, i, &rect);
-		gtk_window_move(GTK_WINDOW(locker->windows[i]), rect.x, rect.y);
-		gtk_window_resize(GTK_WINDOW(locker->windows[i]), rect.width,
-				rect.height);
-	}
+			_locker_window_register(locker, i);
+		else
+		{
+			gdk_screen_get_monitor_geometry(screen, i, &rect);
+			gtk_window_move(GTK_WINDOW(locker->windows[i]), rect.x,
+					rect.y);
+			gtk_window_resize(GTK_WINDOW(locker->windows[i]),
+					rect.width, rect.height);
+		}
 	if(i == cnt)
 		/* remove windows */
 		for(; i < locker->windows_cnt; i++)
