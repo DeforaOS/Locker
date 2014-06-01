@@ -1062,6 +1062,7 @@ static int _locker_action_activate(Locker * locker, int force)
 	for(i = 0; i < locker->windows_cnt; i++)
 	{
 		gtk_widget_show(locker->windows[i]);
+		/* XXX is this really necessary? */
 		gtk_window_fullscreen(GTK_WINDOW(locker->windows[i]));
 	}
 	/* force focus on the first window */
