@@ -179,7 +179,7 @@ static int _locker_plugin_unload(Locker * locker, char const * plugin);
 static void _locker_window_register(Locker * locker, size_t i);
 
 /* callbacks */
-static gboolean _lock_on_closex(void);
+static gboolean _locker_on_closex(void);
 static GdkFilterReturn _locker_on_filter(GdkXEvent * xevent, GdkEvent * event,
 		gpointer data);
 static gboolean _locker_on_lock(gpointer data);
@@ -1640,7 +1640,7 @@ static void _locker_window_register(Locker * locker, size_t i)
 	gtk_window_stick(GTK_WINDOW(locker->windows[i]));
 	gtk_widget_modify_bg(locker->windows[i], GTK_STATE_NORMAL, &black);
 	g_signal_connect_swapped(locker->windows[i], "delete-event",
-			G_CALLBACK(_lock_on_closex), NULL);
+			G_CALLBACK(_locker_on_closex), NULL);
 	g_signal_connect(locker->windows[i], "realize", G_CALLBACK(
 				_locker_on_realize), locker);
 }
@@ -1648,7 +1648,7 @@ static void _locker_window_register(Locker * locker, size_t i)
 
 /* callbacks */
 /* locker_on_closex */
-static gboolean _lock_on_closex(void)
+static gboolean _locker_on_closex(void)
 {
 	return TRUE;
 }
