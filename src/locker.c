@@ -180,6 +180,8 @@ static void _locker_window_register(Locker * locker, size_t i);
 
 /* callbacks */
 static gboolean _locker_on_closex(void);
+static gboolean _locker_on_configure(GtkWidget * widget, GdkEvent * event,
+		gpointer data);
 static GdkFilterReturn _locker_on_filter(GdkXEvent * xevent, GdkEvent * event,
 		gpointer data);
 static gboolean _locker_on_lock(gpointer data);
@@ -1623,22 +1625,17 @@ static int _locker_plugin_unload(Locker * locker, char const * plugin)
 /* locker_window_register */
 static void _locker_window_register(Locker * locker, size_t i)
 {
-	GdkScreen * screen;
 	GdkColor black;
-	GdkRectangle rect;
 
-	screen = gdk_screen_get_default();
 	memset(&black, 0, sizeof(black));
 	locker->windows[i] = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gdk_screen_get_monitor_geometry(screen, i, &rect);
-	gtk_window_move(GTK_WINDOW(locker->windows[i]), rect.x, rect.y);
-	gtk_window_resize(GTK_WINDOW(locker->windows[i]), rect.width,
-			rect.height);
 	gtk_window_set_focus_on_map(GTK_WINDOW(locker->windows[i]), (i == 0)
 			? TRUE : FALSE);
 	gtk_window_set_keep_above(GTK_WINDOW(locker->windows[i]), TRUE);
 	gtk_window_stick(GTK_WINDOW(locker->windows[i]));
 	gtk_widget_modify_bg(locker->windows[i], GTK_STATE_NORMAL, &black);
+	g_signal_connect(locker->windows[i], "configure-event", G_CALLBACK(
+				_locker_on_configure), locker);
 	g_signal_connect_swapped(locker->windows[i], "delete-event",
 			G_CALLBACK(_locker_on_closex), NULL);
 	g_signal_connect(locker->windows[i], "realize", G_CALLBACK(
@@ -1651,6 +1648,31 @@ static void _locker_window_register(Locker * locker, size_t i)
 static gboolean _locker_on_closex(void)
 {
 	return TRUE;
+}
+
+
+/* locker_on_configure */
+static gboolean _locker_on_configure(GtkWidget * widget, GdkEvent * event,
+		gpointer data)
+{
+	Locker * locker = data;
+	size_t i;
+	GdkScreen * screen;
+	GdkRectangle rect;
+
+	/* detect the window affected */
+	for(i = 0; i < locker->windows_cnt; i++)
+		if(locker->windows[i] == widget)
+			break;
+	if(i == locker->windows_cnt)
+		return FALSE;
+	/* configure the window */
+	screen = gdk_screen_get_default();
+	gdk_screen_get_monitor_geometry(screen, i, &rect);
+	gtk_window_move(GTK_WINDOW(locker->windows[i]), rect.x, rect.y);
+	gtk_window_resize(GTK_WINDOW(locker->windows[i]), rect.width,
+			rect.height);
+	return FALSE;
 }
 
 
@@ -1683,7 +1705,6 @@ static GdkFilterReturn _filter_configure(Locker * locker)
 	GdkScreen * screen;
 	size_t cnt;
 	size_t i;
-	GdkRectangle rect;
 	GdkWindow * window;
 	GtkWidget ** p;
 	GdkColor black;
@@ -1697,14 +1718,6 @@ static GdkFilterReturn _filter_configure(Locker * locker)
 	for(i = 0; i < locker->windows_cnt && i < cnt; i++)
 		if(locker->windows[i] == NULL)
 			_locker_window_register(locker, i);
-		else
-		{
-			gdk_screen_get_monitor_geometry(screen, i, &rect);
-			gtk_window_move(GTK_WINDOW(locker->windows[i]), rect.x,
-					rect.y);
-			gtk_window_resize(GTK_WINDOW(locker->windows[i]),
-					rect.width, rect.height);
-		}
 	if(i == cnt)
 		/* remove windows */
 		for(; i < locker->windows_cnt; i++)
