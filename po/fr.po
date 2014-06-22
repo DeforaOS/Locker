@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Locker 0.1.0\n"
+"Project-Id-Version: Locker 0.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-14 18:20+0200\n"
+"POT-Creation-Date: 2014-06-23 00:18+0200\n"
 "PO-Revision-Date: 2011-10-17 16:32+0200\n"
 "Last-Translator: Pierre Pronchery <khorben@defora.org>\n"
 "Language-Team: French\n"
@@ -15,51 +15,67 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../src/locker.c:348
+#: ../src/locker.c:344
 msgid "Could not register as screensaver"
 msgstr "Impossible de déclarer l'économiseur d'écran"
 
-#: ../src/locker.c:427
+#: ../src/locker.c:425
 msgid "Screensaver preferences"
 msgstr "Préférences de l'économiseur d'écran"
 
-#: ../src/locker.c:443
+#: ../src/locker.c:441
 msgid "Authentication"
 msgstr "Authentification"
 
-#: ../src/locker.c:447
+#: ../src/locker.c:445
 msgid "Demos"
 msgstr "Démos"
 
-#: ../src/locker.c:451
+#: ../src/locker.c:449
 msgid "Plug-ins"
 msgstr "Greffons"
 
-#: ../src/locker.c:472 ../src/locker.c:503
+#: ../src/locker.c:470
+msgid "Lock the screen automatically"
+msgstr "Verrouiller l'écran automatiquement"
+
+#: ../src/locker.c:476
+msgid "Lock after "
+msgstr "Verrouiller au bout de "
+
+#: ../src/locker.c:481
+msgid " second(s)"
+msgstr " seconde(s)"
+
+#: ../src/locker.c:486
+msgid "Method: "
+msgstr "Méthode : "
+
+#: ../src/locker.c:517
 msgid "Plug-in: "
 msgstr "Greffon : "
 
-#: ../src/locker.c:552
+#: ../src/locker.c:566
 msgid "Enabled"
 msgstr "Activé"
 
-#: ../src/locker.c:562
+#: ../src/locker.c:576
 msgid "Name"
 msgstr "Nom"
 
-#: ../src/locker.c:739
+#: ../src/locker.c:789
 msgid "Disabled"
 msgstr "Désactivé"
 
-#: ../src/locker.c:935
+#: ../src/locker.c:985
 msgid "Screensaver for the DeforaOS desktop"
 msgstr "Économiseur d'écran pour l'environnement DeforaOS"
 
-#: ../src/locker.c:940
+#: ../src/locker.c:990
 msgid "translator-credits"
 msgstr "Pierre Pronchery <khorben@defora.org>"
 
-#: ../src/locker.c:1438 ../src/locker.c:1442
+#: ../src/locker.c:1495 ../src/locker.c:1499
 msgid "Error"
 msgstr "Erreur"
 
@@ -74,6 +90,14 @@ msgid ""
 "  -u\tUnlock the screen\n"
 "  -z\tSuspend the device\n"
 msgstr ""
+"Usage: lockerctl [-D | -E | -S | -l | -s | -u | -z]\n"
+"  -D\tDésactiver l'économiseur d'écran temporairement\n"
+"  -E\tRéactiver l'économiseur d'écran\n"
+"  -S\tAfficher ou changer les paramètres\n"
+"  -l\tVerrouiller l'écran\n"
+"  -s\tActiver l'économiseur d'écran\n"
+"  -u\tDéverrouiller l'écran\n"
+"  -z\tSuspendre l'appareil\n"
 
 #: ../src/lockerctl.c:66
 msgid ""
@@ -86,6 +110,14 @@ msgid ""
 "  -u\tUnlock the screen\n"
 "  -z\tSuspend the computer\n"
 msgstr ""
+"Usage: lockerctl [-D|-E|-S|-l|-s|-u|-z]\n"
+"  -D\tDésactiver l'économiseur d'écran temporairement\n"
+"  -E\tRéactiver l'économiseur d'écran\n"
+"  -S\tAfficher ou changer les paramètres\n"
+"  -l\tVerrouiller l'écran\n"
+"  -s\tActiver l'économiseur d'écran\n"
+"  -u\tDéverrouiller l'écran\n"
+"  -z\tSuspendre l'appareil\n"
 
 #: ../src/main.c:44
 msgid ""
@@ -97,26 +129,32 @@ msgstr ""
 "  -d\tGreffon d'animation à charger\n"
 "  -p\tGreffon d'authentification à charger\n"
 
-#: ../src/auth/password.c:109
-msgid "This screen is locked by"
-msgstr "Cette session est vérouillée par"
+#: ../src/auth/password.c:120
+#, c-format
+msgid "This screen is locked by %s"
+msgstr "Cette session est verrouillée par %s"
 
-#: ../src/auth/password.c:115
+#: ../src/auth/password.c:121
+#, c-format
+msgid "This screen is locked"
+msgstr "Cette session est verrouillée"
+
+#: ../src/auth/password.c:126
 msgid "Enter password: "
 msgstr "Mot de passe : "
 
-#: ../src/auth/password.c:138
+#: ../src/auth/password.c:155
 msgid "Wrong password!"
 msgstr "Mot de passe erroné !"
 
-#: ../src/auth/password.c:192 ../src/auth/password.c:238
+#: ../src/auth/password.c:209 ../src/auth/password.c:255
 msgid "No password was set"
 msgstr "Aucun mot de passe n'est configuré"
 
-#: ../src/auth/password.c:251
+#: ../src/auth/password.c:268
 msgid "Authentication failed"
 msgstr "Échec de l'authentification"
 
-#: ../src/auth/password.c:280
+#: ../src/auth/password.c:308
 msgid "Timed out"
 msgstr "Temps écoulé"
