@@ -719,8 +719,7 @@ static void _cancel_auth(Locker * locker, GtkListStore * store)
 			continue;
 		de->d_name[len - sizeof(ext) + 1] = '\0';
 #ifdef DEBUG
-		fprintf(stderr, "DEBUG: %s() \"%s\"\n", __func__,
-				de->d_name);
+		fprintf(stderr, "DEBUG: %s() \"%s\"\n", __func__, de->d_name);
 #endif
 		if((p = plugin_new(LIBDIR, PACKAGE, "auth", de->d_name))
 				== NULL)
