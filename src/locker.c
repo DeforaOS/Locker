@@ -1269,6 +1269,13 @@ static int _locker_action_suspend(Locker * locker)
 static int _locker_action_unlock(Locker * locker)
 {
 	size_t i;
+#if GTK_CHECK_VERSION(3, 0, 0)
+	GdkWindow * window;
+	GdkDisplay * display;
+	GdkDeviceManager * manager;
+	GdkDevice * pointer;
+	GdkDevice * keyboard;
+#endif
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
@@ -1282,7 +1289,16 @@ static int _locker_action_unlock(Locker * locker)
 	/* ungrab keyboard and mouse */
 	if(locker->windows == NULL)
 		return 0;
+#if GTK_CHECK_VERSION(3, 0, 0)
+	window = gtk_widget_get_window(locker->windows[0]);
+	display = gdk_window_get_display(window);
+	manager = gdk_display_get_device_manager(display);
+	pointer = gdk_device_manager_get_client_pointer(manager);
+	keyboard = gdk_device_get_associated_device(pointer);
+	gdk_device_ungrab(keyboard, GDK_CURRENT_TIME);
+#else
 	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
+#endif
 	gdk_pointer_ungrab(GDK_CURRENT_TIME);
 	for(i = 0; i < locker->windows_cnt; i++)
 		gtk_widget_hide(locker->windows[i]);
@@ -1843,6 +1859,12 @@ static gboolean _locker_on_map_event(gpointer data)
 	Locker * locker = data;
 	GdkWindow * window;
 	GdkGrabStatus status;
+#if GTK_CHECK_VERSION(3, 0, 0)
+	GdkDisplay * display;
+	GdkDeviceManager * manager;
+	GdkDevice * pointer;
+	GdkDevice * keyboard;
+#endif
 
 	/* FIXME detect if this is the first window */
 	/* FIXME the mouse may already be grabbed (Panel's lock button...) */
@@ -1856,9 +1878,21 @@ static gboolean _locker_on_map_event(gpointer data)
 		_locker_error(NULL, "Failed to grab input", 1);
 	else
 	{
+#if GTK_CHECK_VERSION(3, 0, 0)
+		display = gdk_window_get_display(window);
+		manager = gdk_display_get_device_manager(display);
+		pointer = gdk_device_manager_get_client_pointer(manager);
+		keyboard = gdk_device_get_associated_device(pointer);
+		if((status = gdk_device_grab(keyboard, window,
+						GDK_OWNERSHIP_WINDOW, FALSE, 0,
+						NULL, GDK_CURRENT_TIME))
+				!= GDK_GRAB_SUCCESS)
+			_locker_error(NULL, "Failed to grab keyboard", 1);
+#else
 		if((status = gdk_keyboard_grab(window, TRUE, GDK_CURRENT_TIME))
 				!= GDK_GRAB_SUCCESS)
 			_locker_error(NULL, "Failed to grab keyboard", 1);
+#endif
 #ifdef DEBUG
 		fprintf(stderr, "DEBUG: keyboard grab status=%u\n", status);
 #endif
