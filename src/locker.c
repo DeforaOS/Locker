@@ -1290,16 +1290,18 @@ static int _locker_action_unlock(Locker * locker)
 	if(locker->windows == NULL)
 		return 0;
 #if GTK_CHECK_VERSION(3, 0, 0)
+	/* FIXME untested */
 	window = gtk_widget_get_window(locker->windows[0]);
 	display = gdk_window_get_display(window);
 	manager = gdk_display_get_device_manager(display);
 	pointer = gdk_device_manager_get_client_pointer(manager);
 	keyboard = gdk_device_get_associated_device(pointer);
 	gdk_device_ungrab(keyboard, GDK_CURRENT_TIME);
+	gdk_device_ungrab(pointer, GDK_CURRENT_TIME);
 #else
 	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
-#endif
 	gdk_pointer_ungrab(GDK_CURRENT_TIME);
+#endif
 	for(i = 0; i < locker->windows_cnt; i++)
 		gtk_widget_hide(locker->windows[i]);
 	return 0;
@@ -1879,6 +1881,7 @@ static gboolean _locker_on_map_event(gpointer data)
 	else
 	{
 #if GTK_CHECK_VERSION(3, 0, 0)
+		/* FIXME untested */
 		display = gdk_window_get_display(window);
 		manager = gdk_display_get_device_manager(display);
 		pointer = gdk_device_manager_get_client_pointer(manager);
@@ -1888,18 +1891,26 @@ static gboolean _locker_on_map_event(gpointer data)
 						NULL, GDK_CURRENT_TIME))
 				!= GDK_GRAB_SUCCESS)
 			_locker_error(NULL, "Failed to grab keyboard", 1);
+# ifdef DEBUG
+		fprintf(stderr, "DEBUG: keyboard grab status=%u\n", status);
+# endif
+		if((status = gdk_device_grab(pointer, window,
+						GDK_OWNERSHIP_WINDOW, FALSE, 0,
+						NULL, GDK_CURRENT_TIME))
+				!= GDK_GRAB_SUCCESS)
+			_locker_error(NULL, "Failed to grab mouse", 1);
 #else
 		if((status = gdk_keyboard_grab(window, TRUE, GDK_CURRENT_TIME))
 				!= GDK_GRAB_SUCCESS)
 			_locker_error(NULL, "Failed to grab keyboard", 1);
-#endif
-#ifdef DEBUG
+# ifdef DEBUG
 		fprintf(stderr, "DEBUG: keyboard grab status=%u\n", status);
-#endif
+# endif
 		if((status = gdk_pointer_grab(window, TRUE, 0, window, NULL,
 						GDK_CURRENT_TIME))
 				!= GDK_GRAB_SUCCESS)
 			_locker_error(NULL, "Failed to grab mouse", 1);
+#endif
 #ifdef DEBUG
 		fprintf(stderr, "DEBUG: mouse grab status=%u\n", status);
 #endif
