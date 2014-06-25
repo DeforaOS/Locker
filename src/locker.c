@@ -464,7 +464,11 @@ static GtkWidget * _preferences_window_auth(Locker * locker)
 	GtkWidget * widget;
 	GtkCellRenderer * renderer;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
 	vbox = gtk_vbox_new(FALSE, 4);
+#endif
 	/* checkbox */
 	locker->pr_alock = gtk_check_button_new_with_label(_(
 				"Lock the screen automatically"));
@@ -472,7 +476,11 @@ static GtkWidget * _preferences_window_auth(Locker * locker)
 				_locker_on_preferences_lock_toggled), locker);
 	gtk_box_pack_start(GTK_BOX(vbox), locker->pr_alock, FALSE, TRUE, 0);
 	/* spinner */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
 	hbox = gtk_hbox_new(FALSE, 4);
+#endif
 	widget = gtk_label_new(_("Lock after "));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_adelay = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
@@ -482,7 +490,11 @@ static GtkWidget * _preferences_window_auth(Locker * locker)
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	/* selector */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
 	hbox = gtk_hbox_new(FALSE, 4);
+#endif
 	widget = gtk_label_new(_("Method: "));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_astore = gtk_list_store_new(LPC_COUNT, G_TYPE_POINTER,
@@ -511,9 +523,17 @@ static GtkWidget * _preferences_window_demo(Locker * locker)
 	GtkWidget * widget;
 	GtkCellRenderer * renderer;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
 	vbox = gtk_vbox_new(FALSE, 4);
+#endif
 	/* selector */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
 	hbox = gtk_hbox_new(FALSE, 4);
+#endif
 	widget = gtk_label_new(_("Plug-in: "));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_dstore = gtk_list_store_new(LPC_COUNT, G_TYPE_POINTER,
@@ -542,7 +562,11 @@ static GtkWidget * _preferences_window_plugins(Locker * locker)
 	GtkCellRenderer * renderer;
 	GtkTreeViewColumn * column;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+#else
 	vbox = gtk_vbox_new(FALSE, 0);
+#endif
 	widget = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(widget),
 			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
