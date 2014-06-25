@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011-2013 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,11 @@ static Password * _password_init(LockerAuthHelper * helper)
 	password->source = 0;
 	bold = pango_font_description_new();
 	pango_font_description_set_weight(bold, PANGO_WEIGHT_BOLD);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	password->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
 	password->widget = gtk_vbox_new(FALSE, 4);
+#endif
 	/* centering */
 	widget = gtk_label_new(NULL);
 	gtk_box_pack_start(GTK_BOX(password->widget), widget, TRUE, TRUE, 0);
@@ -126,7 +130,11 @@ static Password * _password_init(LockerAuthHelper * helper)
 	widget = gtk_label_new(_("Enter password: "));
 	gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &white);
 	gtk_box_pack_start(GTK_BOX(password->widget), widget, FALSE, TRUE, 0);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
 	hbox = gtk_hbox_new(FALSE, 4);
+#endif
 	/* left padding (centering) */
 	widget = gtk_label_new(NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
