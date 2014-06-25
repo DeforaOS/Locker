@@ -1075,6 +1075,7 @@ static int _locker_action(Locker * locker, LockerAction action)
 static int _locker_action_activate(Locker * locker, int force)
 {
 	size_t i;
+	GdkWindow * window;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
@@ -1091,7 +1092,12 @@ static int _locker_action_activate(Locker * locker, int force)
 		gtk_window_fullscreen(GTK_WINDOW(locker->windows[i]));
 	}
 	/* force focus on the first window */
-	gdk_window_focus(locker->windows[0]->window, GDK_CURRENT_TIME);
+#if GTK_CHECK_VERSION(2, 14, 0)
+	window = gtk_widget_get_window(locker->windows[0]);
+#else
+	window = locker->windows[0]->window;
+#endif
+	gdk_window_focus(window, GDK_CURRENT_TIME);
 	_locker_action_start(locker);
 	_locker_event(locker, LOCKER_EVENT_ACTIVATED);
 	return 0;
