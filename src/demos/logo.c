@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2012-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,11 @@ static void _logo_destroy(Logo * logo)
 static int _logo_add(Logo * logo, GdkWindow * window)
 {
 	LogoWindow * p;
+#if GTK_CHECK_VERSION(3, 4, 0)
+	GdkRGBA color = { 0.0, 0.0, 0.0, 0.0 };
+#else
 	GdkColor color = { 0x0, 0x0, 0x0, 0x0 };
+#endif
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() window=%p\n", __func__, (void *)window);
@@ -169,8 +173,12 @@ static int _logo_add(Logo * logo, GdkWindow * window)
 		return -1;
 	logo->windows = p;
 	/* set the default color */
+#if GTK_CHECK_VERSION(3, 4, 0)
+	gdk_window_set_background_rgba(window, &color);
+#else
 	gdk_window_set_background(window, &color);
 	gdk_window_clear(window);
+#endif
 	logo->windows[logo->windows_cnt].window = window;
 	logo->windows[logo->windows_cnt].frame = NULL;
 	logo->windows[logo->windows_cnt++].pixmap = NULL;

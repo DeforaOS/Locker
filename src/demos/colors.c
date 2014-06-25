@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2012-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,16 +162,24 @@ static void _colors_stop(Colors * colors)
 static gboolean _colors_on_timeout(gpointer data)
 {
 	Colors * colors = data;
+#if GTK_CHECK_VERSION(3, 4, 0)
+	GdkRGBA color;
+#else
 	GdkColormap * colormap;
 	GdkColor color;
+#endif
 	size_t i;
 
-	color.pixel = 0;
+	memset(&color, 0, sizeof(color));
 	color.red = rand();
 	color.green = rand();
 	color.blue = rand();
 	for(i = 0; i < colors->windows_cnt; i++)
 	{
+#if GTK_CHECK_VERSION(3, 4, 0)
+		/* FIXME untested */
+		gdk_window_set_background_rgba(colors->windows[i], &color);
+#else
 		if((colormap = gdk_drawable_get_colormap(colors->windows[i]))
 				== NULL)
 			colormap = gdk_screen_get_default_colormap(
@@ -180,6 +188,7 @@ static gboolean _colors_on_timeout(gpointer data)
 		gdk_window_set_background(colors->windows[i], &color);
 		gdk_window_clear(colors->windows[i]);
 		gdk_colormap_free_colors(colormap, &color, 1);
+#endif
 	}
 	return TRUE;
 }
