@@ -173,6 +173,11 @@ static gboolean _colors_on_timeout(gpointer data)
 	color.red = rand();
 	color.green = rand();
 	color.blue = rand();
+#if GTK_CHECK_VERSION(3, 4, 0)
+	color.red /= RAND_MAX;
+	color.green /= RAND_MAX;
+	color.blue /= RAND_MAX;
+#endif
 	for(i = 0; i < colors->windows_cnt; i++)
 	{
 #if GTK_CHECK_VERSION(3, 4, 0)
