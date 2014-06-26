@@ -163,14 +163,13 @@ static gboolean _colors_on_timeout(gpointer data)
 {
 	Colors * colors = data;
 #if GTK_CHECK_VERSION(3, 4, 0)
-	GdkRGBA color;
+	GdkRGBA color = { 0.0, 0.0, 0.0, 0.0 };
 #else
 	GdkColormap * colormap;
-	GdkColor color;
+	GdkColor color = { 0x0, 0x0, 0x0, 0x0 };
 #endif
 	size_t i;
 
-	memset(&color, 0, sizeof(color));
 	color.red = rand();
 	color.green = rand();
 	color.blue = rand();
