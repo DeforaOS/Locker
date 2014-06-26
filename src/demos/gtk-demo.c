@@ -184,7 +184,9 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 	GdkPixmap * pixmap;
 	GdkPixbuf * background = gtkdemo->images[GDI_BACKGROUND];
 	GdkRectangle rect;
+#if !GTK_CHECK_VERSION(3, 0, 0)
 	int depth;
+#endif
 	int width;
 	int height;
 
@@ -196,10 +198,19 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 		return -1;
 	gtkdemo->windows = p;
 	gdk_window_get_geometry(window, &rect.x, &rect.y, &rect.width,
-			&rect.height, &depth);
+			&rect.height
+#if !GTK_CHECK_VERSION(3, 0, 0)
+			, &depth
+#endif
+			);
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() (%dx%d), (%dx%d)@%dbpp\n", __func__,
-			rect.x, rect.y, rect.width, rect.height, depth);
+			rect.x, rect.y, rect.width, rect.height,
+# if GTK_CHECK_VERSION(3, 0, 0)
+			0);
+# else
+			depth);
+# endif
 #endif
 	/* set the default color */
 #if GTK_CHECK_VERSION(3, 4, 0)
@@ -328,7 +339,9 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 	int src_y;
 	int width;
 	int height;
+#if !GTK_CHECK_VERSION(3, 0, 0)
 	int depth;
+#endif
 	GdkPixmap * pixmap;
 	int j;
 #define CYCLE_LEN 60
@@ -342,8 +355,11 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 	if(window->window == NULL)
 		return;
 	w = window->window;
-	gdk_window_get_geometry(w, &rect.x, &rect.y, &rect.width, &rect.height,
-			&depth);
+	gdk_window_get_geometry(w, &rect.x, &rect.y, &rect.width, &rect.height
+#if !GTK_CHECK_VERSION(3, 0, 0)
+			, &depth
+#endif
+			);
 	/* reallocate the frame and background if necessary */
 	if(gdk_pixbuf_get_width(window->frame) != rect.width
 			|| gdk_pixbuf_get_height(window->frame) != rect.height)
