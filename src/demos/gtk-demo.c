@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,7 +176,11 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 {
 	int ret = 0;
 	GtkDemoWindow * p;
+#if GTK_CHECK_VERSION(3, 4, 0)
+	GdkRGBA color = { 0.0, 0.0, 0.0, 0.0 };
+#else
 	GdkColor color = { 0x0, 0x0, 0x0, 0x0 };
+#endif
 	GdkPixmap * pixmap;
 	GdkPixbuf * background = gtkdemo->images[GDI_BACKGROUND];
 	GdkRectangle rect;
@@ -198,7 +202,11 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 			rect.x, rect.y, rect.width, rect.height, depth);
 #endif
 	/* set the default color */
+#if GTK_CHECK_VERSION(3, 4, 0)
+	gdk_window_set_background_rgba(window, &color);
+#else
 	gdk_window_set_background(window, &color);
+#endif
 	/* draw background */
 	width = (background != NULL) ? gdk_pixbuf_get_width(background) : 0;
 	height = (background != NULL) ? gdk_pixbuf_get_height(background) : 0;
