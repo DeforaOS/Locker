@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,9 +86,17 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 	slider->helper = helper;
 	slider->source = 0;
 	slider->locked = FALSE;
+#if GTK_CHECK_VERSION(3, 0, 0)
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
 	vbox = gtk_vbox_new(FALSE, 4);
+#endif
 	slider->widget = vbox;
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
 	hbox = gtk_hbox_new(FALSE, 4);
+#endif
 	/* left image */
 	widget = gtk_image_new_from_icon_name("stock_lock",
 			GTK_ICON_SIZE_LARGE_TOOLBAR);
@@ -96,7 +104,12 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 	gtk_misc_set_padding(GTK_MISC(widget), 0, 96);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	/* scale */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	slider->scale = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL,
+			0.0, 100.0, 1.0);
+#else
 	slider->scale = gtk_hscale_new_with_range(0.0, 100.0, 1.0);
+#endif
 	gtk_range_set_value(GTK_RANGE(slider->scale), 0.0);
 	gtk_scale_set_draw_value(GTK_SCALE(slider->scale), FALSE);
 	gtk_widget_set_size_request(slider->scale, 240, -1);
