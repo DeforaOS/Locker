@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Locker */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -297,7 +297,7 @@ static void _dialog_on_shutdown(gpointer data)
 	gtk_widget_show_all(widget);
 	gtk_dialog_add_action_widget(GTK_DIALOG(window), widget, RES_SHUTDOWN);
 	gtk_window_set_keep_above(GTK_WINDOW(window), TRUE);
-	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ALWAYS);
+	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 	gtk_window_set_title(GTK_WINDOW(window), "Shutdown");
 	res = gtk_dialog_run(GTK_DIALOG(window));
 	gtk_widget_destroy(window);
