@@ -15,13 +15,13 @@ index.html: index.xml index.xsl locker.xml lockerctl.xml
 locker.1: locker.xml
 	./docbook.sh -P "$(PREFIX)" -- "locker.1"
 
-locker.html: locker.xml
+locker.html: locker.css.xml locker.xml manual.css.xml
 	./docbook.sh -P "$(PREFIX)" -- "locker.html"
 
 lockerctl.1: lockerctl.xml
 	./docbook.sh -P "$(PREFIX)" -- "lockerctl.1"
 
-lockerctl.html: lockerctl.xml
+lockerctl.html: lockerctl.css.xml lockerctl.xml manual.css.xml
 	./docbook.sh -P "$(PREFIX)" -- "lockerctl.html"
 
 clean:

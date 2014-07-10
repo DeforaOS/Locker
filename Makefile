@@ -28,8 +28,11 @@ dist:
 		$(PACKAGE)-$(VERSION)/doc/docbook.sh \
 		$(PACKAGE)-$(VERSION)/doc/index.xml \
 		$(PACKAGE)-$(VERSION)/doc/index.xsl \
+		$(PACKAGE)-$(VERSION)/doc/locker.css.xml \
 		$(PACKAGE)-$(VERSION)/doc/locker.xml \
+		$(PACKAGE)-$(VERSION)/doc/lockerctl.css.xml \
 		$(PACKAGE)-$(VERSION)/doc/lockerctl.xml \
+		$(PACKAGE)-$(VERSION)/doc/manual.css.xml \
 		$(PACKAGE)-$(VERSION)/doc/project.conf \
 		$(PACKAGE)-$(VERSION)/include/Locker.h \
 		$(PACKAGE)-$(VERSION)/include/Makefile \
