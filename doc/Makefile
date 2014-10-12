@@ -26,6 +26,10 @@ lockerctl.html: lockerctl.css.xml lockerctl.xml manual.css.xml
 
 clean:
 	$(RM) -- $(index.html_OBJS) $(locker.1_OBJS) $(locker.html_OBJS) $(lockerctl.1_OBJS) $(lockerctl.html_OBJS)
+	./docbook.sh -c -P "$(PREFIX)" -- "index.html"
+	./docbook.sh -c -P "$(PREFIX)" -- "locker.1"
+	./docbook.sh -c -P "$(PREFIX)" -- "locker.html"
+	./docbook.sh -c -P "$(PREFIX)" -- "lockerctl.1"
 	./docbook.sh -c -P "$(PREFIX)" -- "lockerctl.html"
 
 distclean: clean

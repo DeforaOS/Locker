@@ -17,6 +17,7 @@ fr.mo: Locker.pot fr.po
 
 clean:
 	$(RM) -- $(Locker.pot_OBJS) $(fr.mo_OBJS)
+	./gettext.sh -c -P "$(PREFIX)" -- "Locker.pot"
 	./gettext.sh -c -P "$(PREFIX)" -- "fr.mo"
 
 distclean: clean
