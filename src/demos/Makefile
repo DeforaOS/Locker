@@ -1,4 +1,5 @@
-TARGETS	= colors.so gtk-demo.so logo.so template.so xscreensaver.so xterm.so
+TARGETS	= $(OBJDIR)colors.so $(OBJDIR)gtk-demo.so $(OBJDIR)logo.so $(OBJDIR)template.so $(OBJDIR)xscreensaver.so $(OBJDIR)xterm.so
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 LIBDIR	= $(PREFIX)/lib
@@ -19,65 +20,65 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-colors_OBJS = colors.o
+colors_OBJS = $(OBJDIR)colors.o
 colors_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 colors_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-colors.so: $(colors_OBJS)
-	$(CCSHARED) -o colors.so $(colors_OBJS) $(colors_LDFLAGS)
+$(OBJDIR)colors.so: $(colors_OBJS)
+	$(CCSHARED) -o $(OBJDIR)colors.so $(colors_OBJS) $(colors_LDFLAGS)
 
-gtk-demo_OBJS = gtk-demo.o
+gtk-demo_OBJS = $(OBJDIR)gtk-demo.o
 gtk-demo_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 gtk-demo_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-gtk-demo.so: $(gtk-demo_OBJS)
-	$(CCSHARED) -o gtk-demo.so $(gtk-demo_OBJS) $(gtk-demo_LDFLAGS)
+$(OBJDIR)gtk-demo.so: $(gtk-demo_OBJS)
+	$(CCSHARED) -o $(OBJDIR)gtk-demo.so $(gtk-demo_OBJS) $(gtk-demo_LDFLAGS)
 
-logo_OBJS = logo.o
+logo_OBJS = $(OBJDIR)logo.o
 logo_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 logo_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-logo.so: $(logo_OBJS)
-	$(CCSHARED) -o logo.so $(logo_OBJS) $(logo_LDFLAGS)
+$(OBJDIR)logo.so: $(logo_OBJS)
+	$(CCSHARED) -o $(OBJDIR)logo.so $(logo_OBJS) $(logo_LDFLAGS)
 
-template_OBJS = template.o
+template_OBJS = $(OBJDIR)template.o
 template_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 template_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-template.so: $(template_OBJS)
-	$(CCSHARED) -o template.so $(template_OBJS) $(template_LDFLAGS)
+$(OBJDIR)template.so: $(template_OBJS)
+	$(CCSHARED) -o $(OBJDIR)template.so $(template_OBJS) $(template_LDFLAGS)
 
-xscreensaver_OBJS = xscreensaver.o
+xscreensaver_OBJS = $(OBJDIR)xscreensaver.o
 xscreensaver_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 xscreensaver_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-xscreensaver.so: $(xscreensaver_OBJS)
-	$(CCSHARED) -o xscreensaver.so $(xscreensaver_OBJS) $(xscreensaver_LDFLAGS)
+$(OBJDIR)xscreensaver.so: $(xscreensaver_OBJS)
+	$(CCSHARED) -o $(OBJDIR)xscreensaver.so $(xscreensaver_OBJS) $(xscreensaver_LDFLAGS)
 
-xterm_OBJS = xterm.o
+xterm_OBJS = $(OBJDIR)xterm.o
 xterm_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 xterm_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-xterm.so: $(xterm_OBJS)
-	$(CCSHARED) -o xterm.so $(xterm_OBJS) $(xterm_LDFLAGS)
+$(OBJDIR)xterm.so: $(xterm_OBJS)
+	$(CCSHARED) -o $(OBJDIR)xterm.so $(xterm_OBJS) $(xterm_LDFLAGS)
 
-colors.o: colors.c ../../include/Locker.h ../../config.h
-	$(CC) -D PREFIX=\"$(PREFIX)\" $(colors_CFLAGS) -c colors.c
+$(OBJDIR)colors.o: colors.c ../../include/Locker.h ../../config.h
+	$(CC) -D PREFIX=\"$(PREFIX)\" $(colors_CFLAGS) -o $(OBJDIR)colors.o -c colors.c
 
-gtk-demo.o: gtk-demo.c ../../include/Locker/demo.h ../../config.h
-	$(CC) -D PREFIX=\"$(PREFIX)\" $(gtk-demo_CFLAGS) -c gtk-demo.c
+$(OBJDIR)gtk-demo.o: gtk-demo.c ../../include/Locker/demo.h ../../config.h
+	$(CC) -D PREFIX=\"$(PREFIX)\" $(gtk-demo_CFLAGS) -o $(OBJDIR)gtk-demo.o -c gtk-demo.c
 
-logo.o: logo.c ../../include/Locker/demo.h ../../config.h
-	$(CC) -D PREFIX=\"$(PREFIX)\" $(logo_CFLAGS) -c logo.c
+$(OBJDIR)logo.o: logo.c ../../include/Locker/demo.h ../../config.h
+	$(CC) -D PREFIX=\"$(PREFIX)\" $(logo_CFLAGS) -o $(OBJDIR)logo.o -c logo.c
 
-template.o: template.c
-	$(CC) $(template_CFLAGS) -c template.c
+$(OBJDIR)template.o: template.c
+	$(CC) $(template_CFLAGS) -o $(OBJDIR)template.o -c template.c
 
-xscreensaver.o: xscreensaver.c ../../include/Locker.h ../../config.h
-	$(CC) -D PREFIX=\"$(PREFIX)\" $(xscreensaver_CFLAGS) -c xscreensaver.c
+$(OBJDIR)xscreensaver.o: xscreensaver.c ../../include/Locker.h ../../config.h
+	$(CC) -D PREFIX=\"$(PREFIX)\" $(xscreensaver_CFLAGS) -o $(OBJDIR)xscreensaver.o -c xscreensaver.c
 
-xterm.o: xterm.c ../../include/Locker.h ../../config.h
-	$(CC) -D PREFIX=\"$(PREFIX)\" $(xterm_CFLAGS) -c xterm.c
+$(OBJDIR)xterm.o: xterm.c ../../include/Locker.h ../../config.h
+	$(CC) -D PREFIX=\"$(PREFIX)\" $(xterm_CFLAGS) -o $(OBJDIR)xterm.o -c xterm.c
 
 clean:
 	$(RM) -- $(colors_OBJS) $(gtk-demo_OBJS) $(logo_OBJS) $(template_OBJS) $(xscreensaver_OBJS) $(xterm_OBJS)
@@ -87,15 +88,15 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 colors.so $(DESTDIR)$(LIBDIR)/Locker/demos/colors.so
+	$(INSTALL) -m 0644 $(OBJDIR)colors.so $(DESTDIR)$(LIBDIR)/Locker/demos/colors.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 gtk-demo.so $(DESTDIR)$(LIBDIR)/Locker/demos/gtk-demo.so
+	$(INSTALL) -m 0644 $(OBJDIR)gtk-demo.so $(DESTDIR)$(LIBDIR)/Locker/demos/gtk-demo.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 logo.so $(DESTDIR)$(LIBDIR)/Locker/demos/logo.so
+	$(INSTALL) -m 0644 $(OBJDIR)logo.so $(DESTDIR)$(LIBDIR)/Locker/demos/logo.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 xscreensaver.so $(DESTDIR)$(LIBDIR)/Locker/demos/xscreensaver.so
+	$(INSTALL) -m 0644 $(OBJDIR)xscreensaver.so $(DESTDIR)$(LIBDIR)/Locker/demos/xscreensaver.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/demos
-	$(INSTALL) -m 0644 xterm.so $(DESTDIR)$(LIBDIR)/Locker/demos/xterm.so
+	$(INSTALL) -m 0644 $(OBJDIR)xterm.so $(DESTDIR)$(LIBDIR)/Locker/demos/xterm.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/demos/colors.so

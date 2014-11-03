@@ -1,4 +1,5 @@
-TARGETS	= password.so slider.so template.so
+TARGETS	= $(OBJDIR)password.so $(OBJDIR)slider.so $(OBJDIR)template.so
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 LIBDIR	= $(PREFIX)/lib
@@ -19,35 +20,35 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-password_OBJS = password.o
+password_OBJS = $(OBJDIR)password.o
 password_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 password_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) -lcrypt
 
-password.so: $(password_OBJS)
-	$(CCSHARED) -o password.so $(password_OBJS) $(password_LDFLAGS)
+$(OBJDIR)password.so: $(password_OBJS)
+	$(CCSHARED) -o $(OBJDIR)password.so $(password_OBJS) $(password_LDFLAGS)
 
-slider_OBJS = slider.o
+slider_OBJS = $(OBJDIR)slider.o
 slider_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 slider_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-slider.so: $(slider_OBJS)
-	$(CCSHARED) -o slider.so $(slider_OBJS) $(slider_LDFLAGS)
+$(OBJDIR)slider.so: $(slider_OBJS)
+	$(CCSHARED) -o $(OBJDIR)slider.so $(slider_OBJS) $(slider_LDFLAGS)
 
-template_OBJS = template.o
+template_OBJS = $(OBJDIR)template.o
 template_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 template_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-template.so: $(template_OBJS)
-	$(CCSHARED) -o template.so $(template_OBJS) $(template_LDFLAGS)
+$(OBJDIR)template.so: $(template_OBJS)
+	$(CCSHARED) -o $(OBJDIR)template.so $(template_OBJS) $(template_LDFLAGS)
 
-password.o: password.c ../../include/Locker.h ../../config.h
-	$(CC) $(password_CFLAGS) -c password.c
+$(OBJDIR)password.o: password.c ../../include/Locker.h ../../config.h
+	$(CC) $(password_CFLAGS) -o $(OBJDIR)password.o -c password.c
 
-slider.o: slider.c ../../include/Locker.h
-	$(CC) $(slider_CFLAGS) -c slider.c
+$(OBJDIR)slider.o: slider.c ../../include/Locker.h
+	$(CC) $(slider_CFLAGS) -o $(OBJDIR)slider.o -c slider.c
 
-template.o: template.c ../../include/Locker.h
-	$(CC) $(template_CFLAGS) -c template.c
+$(OBJDIR)template.o: template.c ../../include/Locker.h
+	$(CC) $(template_CFLAGS) -o $(OBJDIR)template.o -c template.c
 
 clean:
 	$(RM) -- $(password_OBJS) $(slider_OBJS) $(template_OBJS)
@@ -57,9 +58,9 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/auth
-	$(INSTALL) -m 0644 password.so $(DESTDIR)$(LIBDIR)/Locker/auth/password.so
+	$(INSTALL) -m 0644 $(OBJDIR)password.so $(DESTDIR)$(LIBDIR)/Locker/auth/password.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/auth
-	$(INSTALL) -m 0644 slider.so $(DESTDIR)$(LIBDIR)/Locker/auth/slider.so
+	$(INSTALL) -m 0644 $(OBJDIR)slider.so $(DESTDIR)$(LIBDIR)/Locker/auth/slider.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/auth/password.so

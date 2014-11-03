@@ -1,4 +1,5 @@
-TARGETS	= debug.so openmoko.so panel.so suspend.so systray.so template.so
+TARGETS	= $(OBJDIR)debug.so $(OBJDIR)openmoko.so $(OBJDIR)panel.so $(OBJDIR)suspend.so $(OBJDIR)systray.so $(OBJDIR)template.so
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 LIBDIR	= $(PREFIX)/lib
@@ -19,65 +20,65 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-debug_OBJS = debug.o
+debug_OBJS = $(OBJDIR)debug.o
 debug_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 debug_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-debug.so: $(debug_OBJS)
-	$(CCSHARED) -o debug.so $(debug_OBJS) $(debug_LDFLAGS)
+$(OBJDIR)debug.so: $(debug_OBJS)
+	$(CCSHARED) -o $(OBJDIR)debug.so $(debug_OBJS) $(debug_LDFLAGS)
 
-openmoko_OBJS = openmoko.o
+openmoko_OBJS = $(OBJDIR)openmoko.o
 openmoko_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 openmoko_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-openmoko.so: $(openmoko_OBJS)
-	$(CCSHARED) -o openmoko.so $(openmoko_OBJS) $(openmoko_LDFLAGS)
+$(OBJDIR)openmoko.so: $(openmoko_OBJS)
+	$(CCSHARED) -o $(OBJDIR)openmoko.so $(openmoko_OBJS) $(openmoko_LDFLAGS)
 
-panel_OBJS = panel.o
+panel_OBJS = $(OBJDIR)panel.o
 panel_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS) `pkg-config --cflags Panel libDesktop`
 panel_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `pkg-config --libs Panel libDesktop`
 
-panel.so: $(panel_OBJS)
-	$(CCSHARED) -o panel.so $(panel_OBJS) $(panel_LDFLAGS)
+$(OBJDIR)panel.so: $(panel_OBJS)
+	$(CCSHARED) -o $(OBJDIR)panel.so $(panel_OBJS) $(panel_LDFLAGS)
 
-suspend_OBJS = suspend.o
+suspend_OBJS = $(OBJDIR)suspend.o
 suspend_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 suspend_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-suspend.so: $(suspend_OBJS)
-	$(CCSHARED) -o suspend.so $(suspend_OBJS) $(suspend_LDFLAGS)
+$(OBJDIR)suspend.so: $(suspend_OBJS)
+	$(CCSHARED) -o $(OBJDIR)suspend.so $(suspend_OBJS) $(suspend_LDFLAGS)
 
-systray_OBJS = systray.o
+systray_OBJS = $(OBJDIR)systray.o
 systray_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS) `pkg-config --cflags libDesktop`
 systray_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `pkg-config --libs libDesktop`
 
-systray.so: $(systray_OBJS)
-	$(CCSHARED) -o systray.so $(systray_OBJS) $(systray_LDFLAGS)
+$(OBJDIR)systray.so: $(systray_OBJS)
+	$(CCSHARED) -o $(OBJDIR)systray.so $(systray_OBJS) $(systray_LDFLAGS)
 
-template_OBJS = template.o
+template_OBJS = $(OBJDIR)template.o
 template_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 template_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-template.so: $(template_OBJS)
-	$(CCSHARED) -o template.so $(template_OBJS) $(template_LDFLAGS)
+$(OBJDIR)template.so: $(template_OBJS)
+	$(CCSHARED) -o $(OBJDIR)template.so $(template_OBJS) $(template_LDFLAGS)
 
-debug.o: debug.c ../../include/Locker.h
-	$(CC) $(debug_CFLAGS) -c debug.c
+$(OBJDIR)debug.o: debug.c ../../include/Locker.h
+	$(CC) $(debug_CFLAGS) -o $(OBJDIR)debug.o -c debug.c
 
-openmoko.o: openmoko.c ../../include/Locker.h
-	$(CC) $(openmoko_CFLAGS) -c openmoko.c
+$(OBJDIR)openmoko.o: openmoko.c ../../include/Locker.h
+	$(CC) $(openmoko_CFLAGS) -o $(OBJDIR)openmoko.o -c openmoko.c
 
-panel.o: panel.c ../../include/Locker.h
-	$(CC) $(panel_CFLAGS) -c panel.c
+$(OBJDIR)panel.o: panel.c ../../include/Locker.h
+	$(CC) $(panel_CFLAGS) -o $(OBJDIR)panel.o -c panel.c
 
-suspend.o: suspend.c ../../include/Locker.h
-	$(CC) $(suspend_CFLAGS) -c suspend.c
+$(OBJDIR)suspend.o: suspend.c ../../include/Locker.h
+	$(CC) $(suspend_CFLAGS) -o $(OBJDIR)suspend.o -c suspend.c
 
-systray.o: systray.c ../../include/Locker.h
-	$(CC) $(systray_CFLAGS) -c systray.c
+$(OBJDIR)systray.o: systray.c ../../include/Locker.h
+	$(CC) $(systray_CFLAGS) -o $(OBJDIR)systray.o -c systray.c
 
-template.o: template.c ../../include/Locker.h
-	$(CC) $(template_CFLAGS) -c template.c
+$(OBJDIR)template.o: template.c ../../include/Locker.h
+	$(CC) $(template_CFLAGS) -o $(OBJDIR)template.o -c template.c
 
 clean:
 	$(RM) -- $(debug_OBJS) $(openmoko_OBJS) $(panel_OBJS) $(suspend_OBJS) $(systray_OBJS) $(template_OBJS)
@@ -87,13 +88,13 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
-	$(INSTALL) -m 0644 openmoko.so $(DESTDIR)$(LIBDIR)/Locker/plugins/openmoko.so
+	$(INSTALL) -m 0644 $(OBJDIR)openmoko.so $(DESTDIR)$(LIBDIR)/Locker/plugins/openmoko.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
-	$(INSTALL) -m 0644 panel.so $(DESTDIR)$(LIBDIR)/Locker/plugins/panel.so
+	$(INSTALL) -m 0644 $(OBJDIR)panel.so $(DESTDIR)$(LIBDIR)/Locker/plugins/panel.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
-	$(INSTALL) -m 0644 suspend.so $(DESTDIR)$(LIBDIR)/Locker/plugins/suspend.so
+	$(INSTALL) -m 0644 $(OBJDIR)suspend.so $(DESTDIR)$(LIBDIR)/Locker/plugins/suspend.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
-	$(INSTALL) -m 0644 systray.so $(DESTDIR)$(LIBDIR)/Locker/plugins/systray.so
+	$(INSTALL) -m 0644 $(OBJDIR)systray.so $(DESTDIR)$(LIBDIR)/Locker/plugins/systray.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/plugins/openmoko.so

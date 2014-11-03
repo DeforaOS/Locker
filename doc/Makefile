@@ -1,4 +1,5 @@
-TARGETS	= index.html locker.1 locker.html lockerctl.1 lockerctl.html
+TARGETS	= $(OBJDIR)index.html $(OBJDIR)locker.1 $(OBJDIR)locker.html $(OBJDIR)lockerctl.1 $(OBJDIR)lockerctl.html
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 RM	= rm -f
@@ -9,20 +10,20 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-index.html: index.xml index.xsl locker.xml lockerctl.xml
-	./docbook.sh -P "$(PREFIX)" -- "index.html"
+$(OBJDIR)index.html: index.xml index.xsl locker.xml lockerctl.xml
+	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)index.html"
 
-locker.1: locker.xml
-	./docbook.sh -P "$(PREFIX)" -- "locker.1"
+$(OBJDIR)locker.1: locker.xml
+	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)locker.1"
 
-locker.html: locker.css.xml locker.xml manual.css.xml
-	./docbook.sh -P "$(PREFIX)" -- "locker.html"
+$(OBJDIR)locker.html: locker.css.xml locker.xml manual.css.xml
+	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)locker.html"
 
-lockerctl.1: lockerctl.xml
-	./docbook.sh -P "$(PREFIX)" -- "lockerctl.1"
+$(OBJDIR)lockerctl.1: lockerctl.xml
+	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)lockerctl.1"
 
-lockerctl.html: lockerctl.css.xml lockerctl.xml manual.css.xml
-	./docbook.sh -P "$(PREFIX)" -- "lockerctl.html"
+$(OBJDIR)lockerctl.html: lockerctl.css.xml lockerctl.xml manual.css.xml
+	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)lockerctl.html"
 
 clean:
 	$(RM) -- $(index.html_OBJS) $(locker.1_OBJS) $(locker.html_OBJS) $(lockerctl.1_OBJS) $(lockerctl.html_OBJS)
@@ -36,10 +37,10 @@ distclean: clean
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)
-	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "locker.1"
-	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "locker.html"
-	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "lockerctl.1"
-	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "lockerctl.html"
+	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)locker.1"
+	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)locker.html"
+	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)lockerctl.1"
+	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)lockerctl.html"
 
 uninstall:
 	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -u -- "locker.1"

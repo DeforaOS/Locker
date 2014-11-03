@@ -1,4 +1,5 @@
 SUBDIRS	= Locker
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 RM	= rm -f

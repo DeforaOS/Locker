@@ -1,4 +1,5 @@
-TARGETS	= locker-test
+TARGETS	= $(OBJDIR)locker-test
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 BINDIR	= $(PREFIX)/bin
@@ -17,15 +18,15 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-locker-test_OBJS = test.o
+locker-test_OBJS = $(OBJDIR)test.o
 locker-test_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) -D PREFIX=\"$(PREFIX)\" $(CFLAGSF) $(CFLAGS)
 locker-test_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-locker-test: $(locker-test_OBJS)
-	$(CC) -o locker-test $(locker-test_OBJS) $(locker-test_LDFLAGS)
+$(OBJDIR)locker-test: $(locker-test_OBJS)
+	$(CC) -o $(OBJDIR)locker-test $(locker-test_OBJS) $(locker-test_LDFLAGS)
 
-test.o: test.c ../src/locker.h ../config.h
-	$(CC) $(locker-test_CFLAGS) -c test.c
+$(OBJDIR)test.o: test.c ../src/locker.h ../config.h
+	$(CC) $(locker-test_CFLAGS) -o $(OBJDIR)test.o -c test.c
 
 clean:
 	$(RM) -- $(locker-test_OBJS)
