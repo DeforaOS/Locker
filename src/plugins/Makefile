@@ -88,13 +88,13 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
-	$(INSTALL) -m 0644 $(OBJDIR)openmoko.so $(DESTDIR)$(LIBDIR)/Locker/plugins/openmoko.so
+	$(INSTALL) -m 0755 $(OBJDIR)openmoko.so $(DESTDIR)$(LIBDIR)/Locker/plugins/openmoko.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
-	$(INSTALL) -m 0644 $(OBJDIR)panel.so $(DESTDIR)$(LIBDIR)/Locker/plugins/panel.so
+	$(INSTALL) -m 0755 $(OBJDIR)panel.so $(DESTDIR)$(LIBDIR)/Locker/plugins/panel.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
-	$(INSTALL) -m 0644 $(OBJDIR)suspend.so $(DESTDIR)$(LIBDIR)/Locker/plugins/suspend.so
+	$(INSTALL) -m 0755 $(OBJDIR)suspend.so $(DESTDIR)$(LIBDIR)/Locker/plugins/suspend.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
-	$(INSTALL) -m 0644 $(OBJDIR)systray.so $(DESTDIR)$(LIBDIR)/Locker/plugins/systray.so
+	$(INSTALL) -m 0755 $(OBJDIR)systray.so $(DESTDIR)$(LIBDIR)/Locker/plugins/systray.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/plugins/openmoko.so
