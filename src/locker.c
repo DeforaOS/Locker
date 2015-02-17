@@ -426,7 +426,6 @@ static void _preferences_window(Locker * locker)
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
 			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	gtk_window_set_default_size(GTK_WINDOW(locker->pr_window), 400, 300);
 	gtk_window_set_position(GTK_WINDOW(locker->pr_window),
 			GTK_WIN_POS_CENTER);
 	gtk_window_set_resizable(GTK_WINDOW(locker->pr_window), FALSE);
