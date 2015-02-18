@@ -1,83 +1,84 @@
 # $Id$
-# Copyright (c) 2011 Pierre Pronchery <khorben@defora.org>
+# Copyright (c) 2015 Pierre Pronchery <khorben@defora.org>
 # This file is part of DeforaOS Desktop Locker
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Locker 0.2.1\n"
+"Project-Id-Version: Locker 0.2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-02-18 01:27+0100\n"
-"PO-Revision-Date: 2011-10-17 16:32+0200\n"
+"PO-Revision-Date: 2015-02-18 01:25+0100\n"
 "Last-Translator: Pierre Pronchery <khorben@defora.org>\n"
-"Language-Team: French\n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/locker.c:345
 msgid "Could not register as screensaver"
-msgstr "Impossible de déclarer l'économiseur d'écran"
+msgstr ""
 
 #: ../src/locker.c:426
 msgid "Screensaver preferences"
-msgstr "Préférences de l'économiseur d'écran"
+msgstr ""
 
 #: ../src/locker.c:442
 msgid "Authentication"
-msgstr "Authentification"
+msgstr ""
 
 #: ../src/locker.c:446
+#, fuzzy
 msgid "Demos"
-msgstr "Démos"
+msgstr "Demos"
 
 #: ../src/locker.c:450
 msgid "Plug-ins"
-msgstr "Greffons"
+msgstr ""
 
 #: ../src/locker.c:475
 msgid "Lock the screen automatically"
-msgstr "Verrouiller l'écran automatiquement"
+msgstr ""
 
 #: ../src/locker.c:485
 msgid "Lock after "
-msgstr "Verrouiller au bout de "
+msgstr ""
 
 #: ../src/locker.c:490
 msgid " second(s)"
-msgstr " seconde(s)"
+msgstr ""
 
 #: ../src/locker.c:499
 msgid "Method: "
-msgstr "Méthode : "
+msgstr ""
 
 #: ../src/locker.c:538
 msgid "Plug-in: "
-msgstr "Greffon : "
+msgstr ""
 
 #: ../src/locker.c:591
 msgid "Enabled"
-msgstr "Activé"
+msgstr ""
 
 #: ../src/locker.c:601
 msgid "Name"
-msgstr "Nom"
+msgstr ""
 
 #: ../src/locker.c:813
 msgid "Disabled"
-msgstr "Désactivé"
+msgstr ""
 
 #: ../src/locker.c:1010
 msgid "Screensaver for the DeforaOS desktop"
-msgstr "Économiseur d'écran pour l'environnement DeforaOS"
+msgstr ""
 
 #: ../src/locker.c:1015
 msgid "translator-credits"
-msgstr "Pierre Pronchery <khorben@defora.org>"
+msgstr ""
 
 #: ../src/locker.c:1544 ../src/locker.c:1548
 msgid "Error"
-msgstr "Erreur"
+msgstr ""
 
 #: ../src/lockerctl.c:57
 msgid ""
@@ -90,14 +91,6 @@ msgid ""
 "  -u\tUnlock the screen\n"
 "  -z\tSuspend the device\n"
 msgstr ""
-"Usage: lockerctl [-D|-E|-S|-l|-s|-u|-z]\n"
-"  -D\tDésactiver l'économiseur d'écran temporairement\n"
-"  -E\tRéactiver l'économiseur d'écran\n"
-"  -S\tAfficher ou changer les paramètres\n"
-"  -l\tVerrouiller l'écran\n"
-"  -s\tActiver l'économiseur d'écran\n"
-"  -u\tDéverrouiller l'écran\n"
-"  -z\tSuspendre l'appareil\n"
 
 #: ../src/lockerctl.c:66
 msgid ""
@@ -110,52 +103,41 @@ msgid ""
 "  -u\tUnlock the screen\n"
 "  -z\tSuspend the computer\n"
 msgstr ""
-"Usage: lockerctl [-D|-E|-S|-l|-s|-u|-z]\n"
-"  -D\tDésactiver l'économiseur d'écran temporairement\n"
-"  -E\tRéactiver l'économiseur d'écran\n"
-"  -S\tAfficher ou changer les paramètres\n"
-"  -l\tVerrouiller l'écran\n"
-"  -s\tActiver l'économiseur d'écran\n"
-"  -u\tDéverrouiller l'écran\n"
-"  -z\tSuspendre l'ordinateur\n"
 
 #: ../src/main.c:62
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [-d demo][-p plug-in]\n"
 "  -d\tDemo sub-system to load\n"
 "  -p\tAuthentication plug-in to load\n"
 msgstr ""
-"Usage: locker [-d demo][-p greffon]\n"
-"  -d\tGreffon d'animation à charger\n"
-"  -p\tGreffon d'authentification à charger\n"
 
 #: ../src/auth/password.c:124
 #, c-format
 msgid "This screen is locked by %s"
-msgstr "Cette session est verrouillée par %s"
+msgstr ""
 
 #: ../src/auth/password.c:125
 #, c-format
 msgid "This screen is locked"
-msgstr "Cette session est verrouillée"
+msgstr ""
 
 #: ../src/auth/password.c:130
 msgid "Enter password: "
-msgstr "Mot de passe : "
+msgstr ""
 
 #: ../src/auth/password.c:163
 msgid "Wrong password!"
-msgstr "Mot de passe erroné !"
+msgstr ""
 
 #: ../src/auth/password.c:217 ../src/auth/password.c:263
 msgid "No password was set"
-msgstr "Aucun mot de passe n'est configuré"
+msgstr ""
 
 #: ../src/auth/password.c:276
 msgid "Authentication failed"
-msgstr "Échec de l'authentification"
+msgstr ""
 
 #: ../src/auth/password.c:316
 msgid "Timed out"
-msgstr "Temps écoulé"
+msgstr ""
