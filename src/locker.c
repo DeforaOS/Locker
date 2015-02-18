@@ -222,6 +222,7 @@ Locker * locker_new(char const * demo, char const * auth)
 	locker->display = gdk_screen_get_display(screen);
 	locker->screen = gdk_x11_get_default_screen();
 	if((cnt = gdk_screen_get_n_monitors(screen)) < 1)
+		/* XXX assume at least one monitor */
 		cnt = 1;
 	if((locker->windows = malloc(sizeof(*locker->windows) * cnt)) != NULL)
 		for(i = 0; i < cnt; i++)
@@ -1670,10 +1671,18 @@ static int _locker_plugin_unload(Locker * locker, char const * plugin)
 
 
 /* locker_window_register */
+static gboolean _window_register_clone(Locker * locker, size_t i);
+
 static void _locker_window_register(Locker * locker, size_t i)
 {
 	GdkColor black;
 
+	if(_window_register_clone(locker, i))
+	{
+		/* a clone was detected */
+		locker->windows[i] = NULL;
+		return;
+	}
 	memset(&black, 0, sizeof(black));
 	locker->windows[i] = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_focus_on_map(GTK_WINDOW(locker->windows[i]), (i == 0)
@@ -1687,6 +1696,29 @@ static void _locker_window_register(Locker * locker, size_t i)
 			G_CALLBACK(_locker_on_closex), NULL);
 	g_signal_connect(locker->windows[i], "realize", G_CALLBACK(
 				_locker_on_realize), locker);
+}
+
+static gboolean _window_register_clone(Locker * locker, size_t i)
+{
+	GdkScreen * screen;
+	size_t j;
+	GdkRectangle irect;
+	GdkRectangle jrect;
+
+	/* obtain the monitor geometry */
+	screen = gdk_screen_get_default();
+	gdk_screen_get_monitor_geometry(screen, i, &irect);
+	for(j = 1; j < i; j++)
+	{
+		/* compare with previous monitors */
+		gdk_screen_get_monitor_geometry(screen, j, &jrect);
+		if(irect.x == jrect.x && irect.y == jrect.y
+				&& irect.width == jrect.width
+				&& irect.height == jrect.height)
+			/* an exact clone was already registered */
+			return TRUE;
+	}
+	return FALSE;
 }
 
 
@@ -1761,12 +1793,13 @@ static GdkFilterReturn _filter_configure(Locker * locker)
 #endif
 	screen = gdk_screen_get_default();
 	if((cnt = gdk_screen_get_n_monitors(screen)) < 1)
+		/* XXX assume at least one monitor */
 		cnt = 1;
 	for(i = 0; i < locker->windows_cnt && i < cnt; i++)
 		if(locker->windows[i] == NULL)
 			_locker_window_register(locker, i);
 	if(i == cnt)
-		/* remove windows */
+		/* remove obsoleted windows */
 		for(; i < locker->windows_cnt; i++)
 		{
 			if(locker->windows[i] == NULL)
@@ -1786,7 +1819,7 @@ static GdkFilterReturn _filter_configure(Locker * locker)
 	else if(i == locker->windows_cnt)
 	{
 		memset(&black, 0, sizeof(black));
-		/* add windows */
+		/* add new windows */
 		if((p = realloc(locker->windows, sizeof(*p) * cnt)) == NULL)
 			/* XXX report the error */
 			return GDK_FILTER_CONTINUE;
