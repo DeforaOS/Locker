@@ -1697,6 +1697,7 @@ static void _locker_window_register(Locker * locker, size_t i)
 			G_CALLBACK(_locker_on_closex), NULL);
 	g_signal_connect(locker->windows[i], "realize", G_CALLBACK(
 				_locker_on_realize), locker);
+	_locker_on_configure(locker->windows[i], NULL, locker);
 }
 
 static gboolean _window_register_clone(Locker * locker, size_t i)
