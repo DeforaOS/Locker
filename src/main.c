@@ -34,6 +34,9 @@
 #ifndef LOCALEDIR
 # define LOCALEDIR	DATADIR "/locale"
 #endif
+#ifndef PROGNAME
+# define PROGNAME	"locker"
+#endif
 
 
 /* private */
@@ -41,9 +44,9 @@
 /* usage */
 static int _usage(void)
 {
-	fputs(_("Usage: locker [-d demo][-p plug-in]\n"
+	fprintf(stderr, _("Usage: %s [-d demo][-p plug-in]\n"
 "  -d	Demo sub-system to load\n"
-"  -p	Authentication plug-in to load\n"), stderr);
+"  -p	Authentication plug-in to load\n"), PROGNAME);
 	return 1;
 }
 
