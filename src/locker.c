@@ -680,8 +680,8 @@ static void _preferences_on_apply(gpointer data)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() value=\"%s\"\n", __func__, value);
 #endif
-	if(res == 0 && config_set(locker->config, NULL, "plugins", value) == 0)
-		_locker_config_save(locker);
+	if(res == 0)
+		config_set(locker->config, NULL, "plugins", value);
 	string_delete(value);
 	_cancel_plugins(locker, locker->pr_plstore); /* XXX */
 }
@@ -937,6 +937,7 @@ static void _preferences_on_ok(gpointer data)
 
 	gtk_widget_hide(locker->pr_window);
 	_preferences_on_apply(locker);
+	_locker_config_save(locker);
 }
 
 static void _preferences_on_plugins_toggled(GtkCellRendererToggle * renderer,
