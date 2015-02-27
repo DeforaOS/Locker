@@ -55,9 +55,6 @@ static int _password_action(Password * password, LockerAction action);
 
 /* callbacks */
 static void _password_on_password_activate(gpointer data);
-#if GTK_CHECK_VERSION(2, 16, 0)
-static void _password_on_password_clear(gpointer data);
-#endif
 static gboolean _password_on_password_wrong(gpointer data);
 static gboolean _password_on_timeout(gpointer data);
 
@@ -141,12 +138,6 @@ static Password * _password_init(LockerAuthHelper * helper)
 	/* entry */
 	password->password = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(password->password), FALSE);
-#if GTK_CHECK_VERSION(2, 16, 0)
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(password->password),
-			GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_CLEAR);
-	g_signal_connect_swapped(password->password, "icon-release", G_CALLBACK(
-				_password_on_password_clear), password);
-#endif
 	g_signal_connect_swapped(password->password, "activate", G_CALLBACK(
 				_password_on_password_activate), password);
 	gtk_box_pack_start(GTK_BOX(hbox), password->password, FALSE, TRUE, 0);
@@ -279,17 +270,6 @@ static void _password_on_password_activate(gpointer data)
 	password->source = g_timeout_add(3000, _password_on_password_wrong,
 			password);
 }
-
-
-/* password_on_password_clear */
-#if GTK_CHECK_VERSION(2, 16, 0)
-static void _password_on_password_clear(gpointer data)
-{
-	Password * password = data;
-
-	gtk_entry_set_text(GTK_ENTRY(password->password), "");
-}
-#endif
 
 
 /* password_on_password_wrong */
