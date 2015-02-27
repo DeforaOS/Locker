@@ -249,19 +249,18 @@ static void _password_on_password_activate(gpointer data)
 	text = gtk_entry_get_text(GTK_ENTRY(password->password));
 	if((p = helper->config_get(helper->locker, "password", "password"))
 			== NULL)
-	{
-		gtk_entry_set_text(GTK_ENTRY(password->password), "");
 		helper->error(NULL, _("No password was set"), 1);
-		return;
-	}
-	/* check if the password is hashed */
-	if(p[0] == '$' && (q = crypt(text, p)) != NULL)
-		text = q;
-	if(strcmp(text, p) == 0)
+	else
 	{
-		gtk_entry_set_text(GTK_ENTRY(password->password), "");
-		helper->action(helper->locker, LOCKER_ACTION_UNLOCK);
-		return;
+		/* check if the password is hashed */
+		if(p[0] == '$' && (q = crypt(text, p)) != NULL)
+			text = q;
+		if(strcmp(text, p) == 0)
+		{
+			gtk_entry_set_text(GTK_ENTRY(password->password), "");
+			helper->action(helper->locker, LOCKER_ACTION_UNLOCK);
+			return;
+		}
 	}
 	gtk_entry_set_text(GTK_ENTRY(password->password), "");
 	helper->error(NULL, _("Authentication failed"), 1);
