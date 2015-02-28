@@ -593,7 +593,6 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	GtkWidget * widget;
 	GtkSizeGroup * group;
 	GtkCellRenderer * renderer;
-	GtkTreeViewColumn * column;
 	struct {
 		int value;
 		char const * name;
