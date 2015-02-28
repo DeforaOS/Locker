@@ -1185,8 +1185,9 @@ static int _locker_action_lock(Locker * locker, int force)
 		return -1;
 	locker->locked = TRUE;
 	_locker_action_activate(locker, 1);
-	ret = locker->adefinition->action(locker->auth, LOCKER_ACTION_LOCK);
-	_locker_event(locker, LOCKER_EVENT_LOCKED);
+	if((ret = locker->adefinition->action(locker->auth, LOCKER_ACTION_LOCK))
+			== 0)
+		_locker_event(locker, LOCKER_EVENT_LOCKED);
 	return ret;
 }
 
