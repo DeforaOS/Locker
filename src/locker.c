@@ -1977,9 +1977,10 @@ static gboolean _window_register_contained(Locker * locker, size_t primary,
 static void _locker_window_register(Locker * locker, size_t i)
 {
 	GdkColor black;
+	size_t primary;
 
-	/* XXX hard-code the primary monitor for the moment */
-	if(_window_register_contained(locker, 0, i))
+	primary = _locker_get_primary_monitor(locker);
+	if(_window_register_contained(locker, primary, i))
 	{
 		/* a clone was detected */
 		locker->windows[i] = NULL;
