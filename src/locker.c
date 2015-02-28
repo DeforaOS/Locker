@@ -126,6 +126,7 @@ static char const * _authors[] =
 
 /* prototypes */
 /* accessors */
+static size_t _locker_get_primary_monitor(Locker * locker);
 static gboolean _locker_is_locked(Locker * locker);
 static gboolean _locker_plugin_is_enabled(Locker * locker, char const * plugin);
 
@@ -185,7 +186,8 @@ static gboolean _locker_on_configure(GtkWidget * widget, GdkEvent * event,
 static GdkFilterReturn _locker_on_filter(GdkXEvent * xevent, GdkEvent * event,
 		gpointer data);
 static gboolean _locker_on_lock(gpointer data);
-static gboolean _locker_on_map_event(gpointer data);
+static gboolean _locker_on_map_event(GtkWidget * widget, GdkEvent * event,
+		gpointer data);
 static int _locker_on_message(void * data, uint32_t value1, uint32_t value2,
 		uint32_t value3);
 static void _locker_on_preferences_lock_toggled(gpointer data);
@@ -253,11 +255,9 @@ Locker * locker_new(char const * demo, char const * auth)
 	/* create windows */
 	for(i = 0; i < locker->windows_cnt; i++)
 		_locker_window_register(locker, i);
-	/* automatically grab keyboard and mouse */
-	g_signal_connect_swapped(G_OBJECT(locker->windows[0]), "map-event",
-			G_CALLBACK(_locker_on_map_event), locker);
 	/* pack the authentication widget */
-	gtk_container_add(GTK_CONTAINER(locker->windows[0]), widget);
+	i = _locker_get_primary_monitor(locker);
+	gtk_container_add(GTK_CONTAINER(locker->windows[i]), widget);
 	root = gdk_get_default_root_window();
 	XScreenSaverSelectInput(GDK_DISPLAY_XDISPLAY(locker->display),
 			GDK_WINDOW_XID(root), ScreenSaverNotifyMask);
@@ -616,7 +616,7 @@ static void _preferences_on_apply(gpointer data)
 	GtkWidget * widget;
 	gboolean valid;
 	gboolean enabled;
-	int res;
+	int i;
 	String * value = string_new("");
 	String * sep = "";
 
@@ -624,15 +624,14 @@ static void _preferences_on_apply(gpointer data)
 	if((enabled = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 						locker->pr_alock))) == TRUE)
 	{
-		if((res = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+		if((i = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
 							locker->pr_adelay)))
 				>= 0)
-			snprintf(buf, sizeof(buf), "%d", res);
+			snprintf(buf, sizeof(buf), "%d", i);
 		config_set(locker->config, NULL, "lock", buf);
 	}
 	else
 		config_set(locker->config, NULL, "lock", NULL);
-	res = 0;
 	p = NULL;
 	if(gtk_combo_box_get_active_iter(GTK_COMBO_BOX(locker->pr_acombo),
 				&iter))
@@ -643,8 +642,9 @@ static void _preferences_on_apply(gpointer data)
 #endif
 	config_set(locker->config, NULL, "auth", p);
 	/* XXX report errors */
+	i = _locker_get_primary_monitor(locker);
 	if((widget = _locker_auth_load(locker, p)) != NULL)
-		gtk_container_add(GTK_CONTAINER(locker->windows[0]), widget);
+		gtk_container_add(GTK_CONTAINER(locker->windows[i]), widget);
 	g_free(p);
 	/* demos */
 	p = NULL;
@@ -660,6 +660,7 @@ static void _preferences_on_apply(gpointer data)
 	_locker_demo_load(locker, p);
 	g_free(p);
 	/* plug-ins */
+	i = 0;
 	for(valid = gtk_tree_model_get_iter_first(model, &iter); valid == TRUE;
 			valid = gtk_tree_model_iter_next(model, &iter))
 	{
@@ -669,8 +670,8 @@ static void _preferences_on_apply(gpointer data)
 		if(enabled)
 		{
 			_locker_plugin_load(locker, p);
-			res |= string_append(&value, sep);
-			res |= string_append(&value, p);
+			i |= string_append(&value, sep);
+			i |= string_append(&value, p);
 			sep = ",";
 		}
 		else
@@ -680,7 +681,7 @@ static void _preferences_on_apply(gpointer data)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() value=\"%s\"\n", __func__, value);
 #endif
-	if(res == 0)
+	if(i == 0)
 		config_set(locker->config, NULL, "plugins", value);
 	string_delete(value);
 	_cancel_plugins(locker, locker->pr_plstore); /* XXX */
@@ -967,6 +968,25 @@ static void _preferences_on_response(GtkWidget * widget, gint response,
 /* private */
 /* functions */
 /* accessors */
+/* locker_get_primary */
+static size_t _locker_get_primary_monitor(Locker * locker)
+{
+	int primary;
+#if GTK_CHECK_VERSION(2, 20, 0)
+	GdkScreen * screen;
+
+	screen = gdk_display_get_default_screen(locker->display);
+	primary = gdk_screen_get_primary_monitor(screen);
+#else
+	primary = 0;
+#endif
+	if(primary < 0 || (size_t)primary > locker->windows_cnt
+			|| locker->windows[primary] == NULL)
+		primary = 0;
+	return (size_t)primary;
+}
+
+
 /* locker_is_locked */
 static gboolean _locker_is_locked(Locker * locker)
 {
@@ -1078,6 +1098,7 @@ static int _locker_action_activate(Locker * locker, int force)
 {
 	size_t i;
 	GdkWindow * window;
+	int primary;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
@@ -1093,11 +1114,12 @@ static int _locker_action_activate(Locker * locker, int force)
 		/* XXX is this really necessary? */
 		gtk_window_fullscreen(GTK_WINDOW(locker->windows[i]));
 	}
-	/* force focus on the first window */
+	/* force focus on the primary monitor */
+	primary = _locker_get_primary_monitor(locker);
 #if GTK_CHECK_VERSION(2, 14, 0)
-	window = gtk_widget_get_window(locker->windows[0]);
+	window = gtk_widget_get_window(locker->windows[primary]);
 #else
-	window = locker->windows[0]->window;
+	window = locker->windows[primary]->window;
 #endif
 	gdk_window_focus(window, GDK_CURRENT_TIME);
 	_locker_action_start(locker);
@@ -1697,6 +1719,9 @@ static void _locker_window_register(Locker * locker, size_t i)
 				_locker_on_configure), locker);
 	g_signal_connect_swapped(locker->windows[i], "delete-event",
 			G_CALLBACK(_locker_on_closex), NULL);
+	/* automatically grab keyboard and mouse */
+	g_signal_connect(locker->windows[i], "map-event", G_CALLBACK(
+				_locker_on_map_event), locker);
 	g_signal_connect(locker->windows[i], "realize", G_CALLBACK(
 				_locker_on_realize), locker);
 	_locker_on_configure(locker->windows[i], NULL, locker);
@@ -1898,9 +1923,11 @@ static gboolean _locker_on_lock(gpointer data)
 
 
 /* locker_on_map_event */
-static gboolean _locker_on_map_event(gpointer data)
+static gboolean _locker_on_map_event(GtkWidget * widget, GdkEvent * event,
+		gpointer data)
 {
 	Locker * locker = data;
+	size_t primary;
 	GdkWindow * window;
 	GdkGrabStatus status;
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -1910,13 +1937,16 @@ static gboolean _locker_on_map_event(gpointer data)
 	GdkDevice * keyboard;
 #endif
 
-	/* FIXME detect if this is the first window */
+	/* detect if this is the primary window */
+	primary = _locker_get_primary_monitor(locker);
+	if(locker->windows[primary] != widget)
+		return FALSE;
 	/* FIXME the mouse may already be grabbed (Panel's lock button...) */
 	/* grab keyboard and mouse */
 #if GTK_CHECK_VERSION(2, 14, 0)
-	window = gtk_widget_get_window(locker->windows[0]);
+	window = gtk_widget_get_window(locker->windows[primary]);
 #else
-	window = locker->windows[0]->window;
+	window = locker->windows[primary]->window;
 #endif
 	if(window == NULL)
 		_locker_error(NULL, "Failed to grab input", 1);
