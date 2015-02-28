@@ -413,6 +413,7 @@ static void _preferences_on_cancel(gpointer data);
 static void _cancel_auth(Locker * locker, GtkListStore * store);
 static void _cancel_demo(Locker * locker, GtkListStore * store);
 static void _cancel_general(Locker * locker);
+static void _cancel_general_dpms(Locker * locker);
 static void _cancel_plugins(Locker * locker, GtkListStore * store);
 static void _preferences_on_apply(gpointer data);
 static gboolean _preferences_on_closex(gpointer data);
@@ -805,14 +806,17 @@ static void _preferences_on_apply(gpointer data)
 				LGC_VALUE, &prefer_blanking, -1);
 	XSetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), timeout,
 			interval, prefer_blanking, allow_exposures);
-	dpms1 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
-				locker->pr_gdpms1));
-	dpms2 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
-				locker->pr_gdpms2));
-	dpms3 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
-				locker->pr_gdpms3));
-	DPMSSetTimeouts(GDK_DISPLAY_XDISPLAY(locker->display), dpms1,
-			dpms2, dpms3);
+	if(DPMSCapable(GDK_DISPLAY_XDISPLAY(locker->display)))
+	{
+		dpms1 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+					locker->pr_gdpms1));
+		dpms2 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+					locker->pr_gdpms2));
+		dpms3 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+					locker->pr_gdpms3));
+		DPMSSetTimeouts(GDK_DISPLAY_XDISPLAY(locker->display), dpms1,
+				dpms2, dpms3);
+	}
 	/* authentication */
 	if((enabled = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 						locker->pr_alock))) == TRUE)
@@ -1069,9 +1073,6 @@ static void _cancel_general(Locker * locker)
 	int allow_exposures = 0;
 	gboolean valid;
 	int i;
-	CARD16 dpms1 = 0;
-	CARD16 dpms2 = 0;
-	CARD16 dpms3 = 0;
 
 	XGetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), &timeout,
 			&interval, &prefer_blanking, &allow_exposures);
@@ -1090,16 +1091,32 @@ static void _cancel_general(Locker * locker)
 			break;
 		}
 	}
-	if(DPMSGetTimeouts(GDK_DISPLAY_XDISPLAY(locker->display), &dpms1,
-				&dpms2, &dpms3) == TRUE)
+	/* DPMS */
+	if(DPMSCapable(GDK_DISPLAY_XDISPLAY(locker->display)))
+		_cancel_general_dpms(locker);
+	else
 	{
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gdpms1),
-				dpms1);
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gdpms2),
-				dpms2);
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gdpms3),
-				dpms3);
+		gtk_widget_set_sensitive(locker->pr_gdpms1, FALSE);
+		gtk_widget_set_sensitive(locker->pr_gdpms2, FALSE);
+		gtk_widget_set_sensitive(locker->pr_gdpms3, FALSE);
 	}
+}
+
+static void _cancel_general_dpms(Locker * locker)
+{
+	CARD16 dpms1 = 0;
+	CARD16 dpms2 = 0;
+	CARD16 dpms3 = 0;
+
+	gtk_widget_set_sensitive(locker->pr_gdpms1, TRUE);
+	gtk_widget_set_sensitive(locker->pr_gdpms2, TRUE);
+	gtk_widget_set_sensitive(locker->pr_gdpms3, TRUE);
+	if(DPMSGetTimeouts(GDK_DISPLAY_XDISPLAY(locker->display), &dpms1,
+				&dpms2, &dpms3) != TRUE)
+		return;
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gdpms1), dpms1);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gdpms2), dpms2);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gdpms3), dpms3);
 }
 
 static void _cancel_plugins(Locker * locker, GtkListStore * store)
