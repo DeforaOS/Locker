@@ -1121,9 +1121,10 @@ static void _cancel_general_dpms(Locker * locker)
 	CARD16 dpms3 = 0;
 
 	if(DPMSInfo(GDK_DISPLAY_XDISPLAY(locker->display), &power_level, &state)
-			== FALSE)
+			!= TRUE)
 		state = FALSE;
-	gtk_widget_set_sensitive(locker->pr_gdenabled, state);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(locker->pr_gdenabled),
+			state);
 	if(state == FALSE)
 		return;
 	if(DPMSGetTimeouts(GDK_DISPLAY_XDISPLAY(locker->display), &dpms1,
