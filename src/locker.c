@@ -653,6 +653,10 @@ static GtkWidget * _preferences_window_plugins(Locker * locker)
 static void _preferences_on_apply(gpointer data)
 {
 	Locker * locker = data;
+	int timeout = 0;
+	int interval = 0;
+	int prefer_blanking = 0;
+	int allow_exposures = 0;
 	char buf[16] = "";
 	GtkTreeModel * model = GTK_TREE_MODEL(locker->pr_plstore);
 	GtkTreeIter iter;
@@ -664,6 +668,15 @@ static void _preferences_on_apply(gpointer data)
 	String * value = string_new("");
 	String * sep = "";
 
+	/* general */
+	XGetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), &timeout,
+			&interval, &prefer_blanking, &allow_exposures);
+	timeout = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+				locker->pr_genabled))
+		? gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+					locker->pr_gtimeout)) : 0;
+	XSetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), timeout,
+			interval, prefer_blanking, allow_exposures);
 	/* authentication */
 	if((enabled = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 						locker->pr_alock))) == TRUE)
