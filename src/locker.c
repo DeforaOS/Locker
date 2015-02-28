@@ -676,6 +676,11 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	g_signal_connect_swapped(locker->pr_gdenabled, "toggled", G_CALLBACK(
 				_locker_on_preferences_general_dpms_toggled),
 			locker);
+#if GTK_CHECK_VERSION(2, 12, 0)
+	gtk_widget_set_tooltip_text(locker->pr_gdenabled,
+			_("DPMS manages the power supply of video monitors"
+				" for computers through the graphics card"));
+#endif
 	gtk_box_pack_start(GTK_BOX(vbox2), locker->pr_gdenabled, FALSE, TRUE,
 			0);
 	group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
