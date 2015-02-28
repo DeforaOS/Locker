@@ -1672,13 +1672,15 @@ static int _locker_plugin_unload(Locker * locker, char const * plugin)
 
 
 /* locker_window_register */
-static gboolean _window_register_contained(Locker * locker, size_t i);
+static gboolean _window_register_contained(Locker * locker, size_t primary,
+		size_t i);
 
 static void _locker_window_register(Locker * locker, size_t i)
 {
 	GdkColor black;
 
-	if(_window_register_contained(locker, i))
+	/* XXX hard-code the primary monitor for the moment */
+	if(_window_register_contained(locker, 0, i))
 	{
 		/* a clone was detected */
 		locker->windows[i] = NULL;
@@ -1700,7 +1702,8 @@ static void _locker_window_register(Locker * locker, size_t i)
 	_locker_on_configure(locker->windows[i], NULL, locker);
 }
 
-static gboolean _window_register_contained(Locker * locker, size_t i)
+static gboolean _window_register_contained(Locker * locker, size_t primary,
+		size_t i)
 {
 	GdkScreen * screen;
 	size_t j;
@@ -1710,8 +1713,10 @@ static gboolean _window_register_contained(Locker * locker, size_t i)
 	/* obtain the monitor geometry */
 	screen = gdk_screen_get_default();
 	gdk_screen_get_monitor_geometry(screen, i, &irect);
-	for(j = 1; j < i; j++)
+	for(j = 0; j < i; j++)
 	{
+		if(j == primary)
+			continue;
 		/* compare with previous monitors */
 		gdk_screen_get_monitor_geometry(screen, j, &jrect);
 		if(irect.x >= jrect.x && irect.y >= jrect.y
