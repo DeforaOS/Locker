@@ -587,6 +587,7 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	GtkWidget * hbox;
 	GtkWidget * frame;
 	GtkWidget * widget;
+	GtkSizeGroup * group;
 	GtkCellRenderer * renderer;
 	GtkTreeViewColumn * column;
 	struct {
@@ -666,6 +667,7 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	vbox2 = gtk_vbox_new(FALSE, 4);
 #endif
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 4);
+	group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	/* DPMS: standby */
 #if GTK_CHECK_VERSION(3, 0, 0)
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -673,6 +675,8 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	hbox = gtk_hbox_new(FALSE, 4);
 #endif
 	widget = gtk_label_new(_("Standby: "));
+	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
+	gtk_size_group_add_widget(group, widget);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_gdpms1 = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(locker->pr_gdpms1), 0);
@@ -687,6 +691,8 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	hbox = gtk_hbox_new(FALSE, 4);
 #endif
 	widget = gtk_label_new(_("Suspend: "));
+	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
+	gtk_size_group_add_widget(group, widget);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_gdpms2 = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(locker->pr_gdpms2), 0);
@@ -701,6 +707,8 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	hbox = gtk_hbox_new(FALSE, 4);
 #endif
 	widget = gtk_label_new(_("Off: "));
+	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
+	gtk_size_group_add_widget(group, widget);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_gdpms3 = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(locker->pr_gdpms3), 0);
