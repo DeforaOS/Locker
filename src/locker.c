@@ -1672,13 +1672,13 @@ static int _locker_plugin_unload(Locker * locker, char const * plugin)
 
 
 /* locker_window_register */
-static gboolean _window_register_clone(Locker * locker, size_t i);
+static gboolean _window_register_contained(Locker * locker, size_t i);
 
 static void _locker_window_register(Locker * locker, size_t i)
 {
 	GdkColor black;
 
-	if(_window_register_clone(locker, i))
+	if(_window_register_contained(locker, i))
 	{
 		/* a clone was detected */
 		locker->windows[i] = NULL;
@@ -1700,7 +1700,7 @@ static void _locker_window_register(Locker * locker, size_t i)
 	_locker_on_configure(locker->windows[i], NULL, locker);
 }
 
-static gboolean _window_register_clone(Locker * locker, size_t i)
+static gboolean _window_register_contained(Locker * locker, size_t i)
 {
 	GdkScreen * screen;
 	size_t j;
@@ -1714,10 +1714,12 @@ static gboolean _window_register_clone(Locker * locker, size_t i)
 	{
 		/* compare with previous monitors */
 		gdk_screen_get_monitor_geometry(screen, j, &jrect);
-		if(irect.x == jrect.x && irect.y == jrect.y
-				&& irect.width == jrect.width
-				&& irect.height == jrect.height)
-			/* an exact clone was already registered */
+		if(irect.x >= jrect.x && irect.y >= jrect.y
+				&& ((irect.x + irect.width)
+					<= (jrect.x + jrect.width))
+				&& ((irect.y + irect.height)
+					<= (jrect.y + jrect.height)))
+			/* a container was already registered */
 			return TRUE;
 	}
 	return FALSE;
