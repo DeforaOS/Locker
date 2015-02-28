@@ -572,9 +572,9 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	GtkWidget * widget;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 #else
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_vbox_new(FALSE, 4);
 #endif
 	/* enable */
 	locker->pr_genabled = gtk_check_button_new_with_label(
@@ -608,9 +608,9 @@ static GtkWidget * _preferences_window_plugins(Locker * locker)
 	GtkTreeViewColumn * column;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 #else
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_vbox_new(FALSE, 4);
 #endif
 	widget = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(widget),
