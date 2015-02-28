@@ -1,5 +1,5 @@
 PACKAGE	= Locker
-VERSION	= 0.2.2
+VERSION	= 0.3.0
 SUBDIRS	= data doc include po src tools
 RM	= rm -f
 LN	= ln -f

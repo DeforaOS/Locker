@@ -1,5 +1,5 @@
 #define PACKAGE "Locker"
-#define VERSION "0.2.2"
+#define VERSION "0.3.0"
 
 #ifndef PREFIX
 # define PREFIX "/usr/local"
