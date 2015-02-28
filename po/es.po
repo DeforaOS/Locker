@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Locker 0.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-18 01:27+0100\n"
+"POT-Creation-Date: 2015-02-28 04:25+0100\n"
 "PO-Revision-Date: 2015-02-18 01:25+0100\n"
 "Last-Translator: Pierre Pronchery <khorben@defora.org>\n"
 "Language-Team: Spanish\n"
@@ -15,68 +15,122 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/locker.c:345
+#: ../src/locker.c:365
 msgid "Could not register as screensaver"
 msgstr ""
 
-#: ../src/locker.c:426
+#: ../src/locker.c:449
 msgid "Screensaver preferences"
 msgstr ""
 
-#: ../src/locker.c:442
+#: ../src/locker.c:465
+msgid "General"
+msgstr ""
+
+#: ../src/locker.c:469
 msgid "Authentication"
 msgstr ""
 
-#: ../src/locker.c:446
-#, fuzzy
+#: ../src/locker.c:473
 msgid "Demos"
 msgstr "Demos"
 
-#: ../src/locker.c:450
+#: ../src/locker.c:477
 msgid "Plug-ins"
 msgstr ""
 
-#: ../src/locker.c:475
+#: ../src/locker.c:502
 msgid "Lock the screen automatically"
 msgstr ""
 
-#: ../src/locker.c:485
+#: ../src/locker.c:512
 msgid "Lock after "
 msgstr ""
 
-#: ../src/locker.c:490
+#: ../src/locker.c:517 ../src/locker.c:631 ../src/locker.c:700
+#: ../src/locker.c:716 ../src/locker.c:732
 msgid " second(s)"
 msgstr ""
 
-#: ../src/locker.c:499
+#: ../src/locker.c:526
 msgid "Method: "
 msgstr ""
 
-#: ../src/locker.c:538
+#: ../src/locker.c:565
 msgid "Plug-in: "
 msgstr ""
 
-#: ../src/locker.c:591
+#: ../src/locker.c:601
+msgid "Default"
+msgstr ""
+
+#: ../src/locker.c:602
+msgid "Do not blank"
+msgstr ""
+
+#: ../src/locker.c:603
+msgid "Blank screen"
+msgstr ""
+
+#: ../src/locker.c:615
+msgid "Enable screen saving"
+msgstr ""
+
+#: ../src/locker.c:626
+msgid "After: "
+msgstr ""
+
+#: ../src/locker.c:640
+msgid "Blanking: "
+msgstr ""
+
+#: ../src/locker.c:665
+msgid "Energy saving"
+msgstr ""
+
+#: ../src/locker.c:675
+msgid "Enable DPMS"
+msgstr ""
+
+#: ../src/locker.c:681
+msgid ""
+"DPMS manages the power supply of video monitors for computers through the "
+"graphics card"
+msgstr ""
+
+#: ../src/locker.c:693
+msgid "Standby: "
+msgstr ""
+
+#: ../src/locker.c:709
+msgid "Suspend: "
+msgstr ""
+
+#: ../src/locker.c:725
+msgid "Off: "
+msgstr ""
+
+#: ../src/locker.c:772
 msgid "Enabled"
 msgstr ""
 
-#: ../src/locker.c:601
+#: ../src/locker.c:782
 msgid "Name"
 msgstr ""
 
-#: ../src/locker.c:813
+#: ../src/locker.c:1031
 msgid "Disabled"
 msgstr ""
 
-#: ../src/locker.c:1010
+#: ../src/locker.c:1306
 msgid "Screensaver for the DeforaOS desktop"
 msgstr ""
 
-#: ../src/locker.c:1015
+#: ../src/locker.c:1311
 msgid "translator-credits"
 msgstr ""
 
-#: ../src/locker.c:1544 ../src/locker.c:1548
+#: ../src/locker.c:1843 ../src/locker.c:1847
 msgid "Error"
 msgstr ""
 
@@ -112,32 +166,32 @@ msgid ""
 "  -p\tAuthentication plug-in to load\n"
 msgstr ""
 
-#: ../src/auth/password.c:124
+#: ../src/auth/password.c:121
 #, c-format
 msgid "This screen is locked by %s"
 msgstr ""
 
-#: ../src/auth/password.c:125
+#: ../src/auth/password.c:122
 #, c-format
 msgid "This screen is locked"
 msgstr ""
 
-#: ../src/auth/password.c:130
+#: ../src/auth/password.c:127
 msgid "Enter password: "
 msgstr ""
 
-#: ../src/auth/password.c:163
+#: ../src/auth/password.c:154
 msgid "Wrong password!"
 msgstr ""
 
-#: ../src/auth/password.c:217 ../src/auth/password.c:263
+#: ../src/auth/password.c:208 ../src/auth/password.c:252
 msgid "No password was set"
 msgstr ""
 
-#: ../src/auth/password.c:276
+#: ../src/auth/password.c:266
 msgid "Authentication failed"
 msgstr ""
 
-#: ../src/auth/password.c:316
+#: ../src/auth/password.c:295
 msgid "Timed out"
 msgstr ""
