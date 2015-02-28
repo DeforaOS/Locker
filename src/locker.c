@@ -97,6 +97,8 @@ struct _Locker
 	GtkWidget * pr_acombo;
 	GtkListStore * pr_dstore;
 	GtkWidget * pr_dcombo;
+	GtkWidget * pr_genabled;
+	GtkWidget * pr_gtimeout;
 	GtkListStore * pr_plstore;
 	GtkWidget * pr_plview;
 
@@ -190,6 +192,7 @@ static gboolean _locker_on_map_event(GtkWidget * widget, GdkEvent * event,
 		gpointer data);
 static int _locker_on_message(void * data, uint32_t value1, uint32_t value2,
 		uint32_t value3);
+static void _locker_on_preferences_general_toggled(gpointer data);
 static void _locker_on_preferences_lock_toggled(gpointer data);
 static void _locker_on_realize(GtkWidget * widget, gpointer data);
 
@@ -388,11 +391,13 @@ void locker_delete(Locker * locker)
 static void _preferences_window(Locker * locker);
 static GtkWidget * _preferences_window_auth(Locker * locker);
 static GtkWidget * _preferences_window_demo(Locker * locker);
+static GtkWidget * _preferences_window_general(Locker * locker);
 static GtkWidget * _preferences_window_plugins(Locker * locker);
 /* callbacks */
 static void _preferences_on_cancel(gpointer data);
 static void _cancel_auth(Locker * locker, GtkListStore * store);
 static void _cancel_demo(Locker * locker, GtkListStore * store);
+static void _cancel_general(Locker * locker);
 static void _cancel_plugins(Locker * locker, GtkListStore * store);
 static void _preferences_on_apply(gpointer data);
 static gboolean _preferences_on_closex(gpointer data);
@@ -436,6 +441,10 @@ static void _preferences_window(Locker * locker)
 				_preferences_on_response), locker);
 	notebook = gtk_notebook_new();
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
+	/* general */
+	widget = _preferences_window_general(locker);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), widget, gtk_label_new(
+				_("General")));
 	/* authentication */
 	widget = _preferences_window_auth(locker);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), widget, gtk_label_new(
@@ -552,6 +561,41 @@ static GtkWidget * _preferences_window_demo(Locker * locker)
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(widget), renderer,
 			"text", LPC_NAME, NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
+	return vbox;
+}
+
+static GtkWidget * _preferences_window_general(Locker * locker)
+{
+	GtkWidget * vbox;
+	GtkWidget * hbox;
+	GtkWidget * widget;
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+#else
+	vbox = gtk_vbox_new(FALSE, 0);
+#endif
+	/* enable */
+	locker->pr_genabled = gtk_check_button_new_with_label(
+			_("Enable screen saving"));
+	g_signal_connect_swapped(locker->pr_genabled, "toggled", G_CALLBACK(
+				_locker_on_preferences_general_toggled),
+			locker);
+	gtk_box_pack_start(GTK_BOX(vbox), locker->pr_genabled, FALSE, TRUE, 0);
+	/* spinner */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
+	hbox = gtk_hbox_new(FALSE, 4);
+#endif
+	widget = gtk_label_new(_("After: "));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	locker->pr_gtimeout = gtk_spin_button_new_with_range(1.0, 3600.0, 1.0);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(locker->pr_gtimeout), 0);
+	gtk_box_pack_start(GTK_BOX(hbox), locker->pr_gtimeout, FALSE, TRUE, 0);
+	widget = gtk_label_new(_(" second(s)"));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	return vbox;
 }
@@ -692,6 +736,8 @@ static void _preferences_on_cancel(gpointer data)
 	Locker * locker = data;
 
 	gtk_widget_hide(locker->pr_window);
+	/* general */
+	_cancel_general(locker);
 	/* authentication */
 	_cancel_auth(locker, locker->pr_astore);
 	/* demos */
@@ -862,6 +908,21 @@ static void _cancel_demo(Locker * locker, GtkListStore * store)
 		plugin_delete(p);
 	}
 	closedir(dir);
+}
+
+static void _cancel_general(Locker * locker)
+{
+	int timeout = 0;
+	int interval = 0;
+	int prefer_blanking = 0;
+	int allow_exposures = 0;
+
+	XGetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), &timeout,
+			&interval, &prefer_blanking, &allow_exposures);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(locker->pr_genabled),
+			(timeout != 0) ? TRUE : FALSE);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gtimeout),
+			timeout);
 }
 
 static void _cancel_plugins(Locker * locker, GtkListStore * store)
@@ -2017,6 +2078,18 @@ static int _locker_on_message(void * data, uint32_t value1, uint32_t value2,
 			break;
 	}
 	return 0;
+}
+
+
+/* locker_on_preferences_general_toggled */
+static void _locker_on_preferences_general_toggled(gpointer data)
+{
+	Locker * locker = data;
+	gboolean active;
+
+	active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+				locker->pr_genabled));
+	gtk_widget_set_sensitive(locker->pr_gtimeout, active);
 }
 
 
