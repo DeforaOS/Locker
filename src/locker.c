@@ -785,6 +785,7 @@ static GtkWidget * _preferences_window_plugins(Locker * locker)
 static void _preferences_on_apply(gpointer data)
 {
 	Locker * locker = data;
+	Display * display = GDK_DISPLAY_XDISPLAY(locker->display);
 	int timeout = 0;
 	CARD16 dpms1 = 0;
 	CARD16 dpms2 = 0;
@@ -804,8 +805,8 @@ static void _preferences_on_apply(gpointer data)
 	String * sep = "";
 
 	/* general */
-	XGetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), &timeout,
-			&interval, &prefer_blanking, &allow_exposures);
+	XGetScreenSaver(display, &timeout, &interval, &prefer_blanking,
+			&allow_exposures);
 	timeout = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 				locker->pr_genabled))
 		? gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
@@ -814,22 +815,20 @@ static void _preferences_on_apply(gpointer data)
 				&iter))
 		gtk_tree_model_get(GTK_TREE_MODEL(locker->pr_gstore), &iter,
 				LGC_VALUE, &prefer_blanking, -1);
-	XSetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), timeout,
-			interval, prefer_blanking, allow_exposures);
-	if(DPMSCapable(GDK_DISPLAY_XDISPLAY(locker->display)))
+	XSetScreenSaver(display, timeout, interval, prefer_blanking,
+			allow_exposures);
+	if(DPMSCapable(display))
 	{
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 					locker->pr_gdenabled))
-			? DPMSEnable(GDK_DISPLAY_XDISPLAY(locker->display))
-			: DPMSDisable(GDK_DISPLAY_XDISPLAY(locker->display));
+			? DPMSEnable(display) : DPMSDisable(display);
 		dpms1 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
 					locker->pr_gdpms1));
 		dpms2 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
 					locker->pr_gdpms2));
 		dpms3 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
 					locker->pr_gdpms3));
-		DPMSSetTimeouts(GDK_DISPLAY_XDISPLAY(locker->display), dpms1,
-				dpms2, dpms3);
+		DPMSSetTimeouts(display, dpms1, dpms2, dpms3);
 	}
 	/* authentication */
 	if((enabled = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
