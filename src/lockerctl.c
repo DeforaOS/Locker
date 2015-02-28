@@ -36,6 +36,9 @@
 #ifndef LOCALEDIR
 # define LOCALEDIR	DATADIR "/locale"
 #endif
+#ifndef PROGNAME
+# define PROGNAME	"lockerctl"
+#endif
 
 
 /* lockerctl */
@@ -54,7 +57,7 @@ static int _lockerctl(int action)
 static int _usage(void)
 {
 #ifdef EMBEDDED
-	fputs(_("Usage: lockerctl [-D|-E|-S|-c|-l|-s|-u|-z]\n"
+	fprintf(stderr, _("Usage: %s [-D|-E|-S|-c|-l|-s|-u|-z]\n"
 "  -D	Temporarily disable the screensaver\n"
 "  -E	Enable the screensaver again\n"
 "  -S	Display or change settings\n"
@@ -62,9 +65,9 @@ static int _usage(void)
 "  -l	Lock the screen\n"
 "  -s	Activate the screen saver\n"
 "  -u	Unlock the screen\n"
-"  -z	Suspend the device\n"), stderr);
+"  -z	Suspend the device\n"), PROGNAME);
 #else
-	fputs(_("Usage: lockerctl [-D|-E|-S|-c|-l|-s|-u|-z]\n"
+	fprintf(stderr, _("Usage: %s [-D|-E|-S|-c|-l|-s|-u|-z]\n"
 "  -D	Temporarily disable the screensaver\n"
 "  -E	Enable the screensaver again\n"
 "  -S	Display or change settings\n"
@@ -72,7 +75,7 @@ static int _usage(void)
 "  -l	Lock the screen\n"
 "  -s	Activate the screen saver\n"
 "  -u	Unlock the screen\n"
-"  -z	Suspend the computer\n"), stderr);
+"  -z	Suspend the computer\n"), PROGNAME);
 #endif
 	return 1;
 }
