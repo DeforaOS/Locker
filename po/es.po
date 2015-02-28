@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Locker 0.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-28 08:12+0100\n"
+"POT-Creation-Date: 2015-02-28 08:16+0100\n"
 "PO-Revision-Date: 2015-02-18 01:25+0100\n"
 "Last-Translator: Pierre Pronchery <khorben@defora.org>\n"
 "Language-Team: Spanish\n"
@@ -134,9 +134,10 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: ../src/lockerctl.c:57
+#: ../src/lockerctl.c:60
+#, c-format
 msgid ""
-"Usage: lockerctl [-D|-E|-S|-c|-l|-s|-u|-z]\n"
+"Usage: %s [-D|-E|-S|-c|-l|-s|-u|-z]\n"
 "  -D\tTemporarily disable the screensaver\n"
 "  -E\tEnable the screensaver again\n"
 "  -S\tDisplay or change settings\n"
@@ -147,9 +148,10 @@ msgid ""
 "  -z\tSuspend the device\n"
 msgstr ""
 
-#: ../src/lockerctl.c:67
+#: ../src/lockerctl.c:70
+#, c-format
 msgid ""
-"Usage: lockerctl [-D|-E|-S|-c|-l|-s|-u|-z]\n"
+"Usage: %s [-D|-E|-S|-c|-l|-s|-u|-z]\n"
 "  -D\tTemporarily disable the screensaver\n"
 "  -E\tEnable the screensaver again\n"
 "  -S\tDisplay or change settings\n"
