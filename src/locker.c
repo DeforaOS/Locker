@@ -111,6 +111,7 @@ struct _Locker
 	GtkWidget * pr_gtimeout;
 	GtkListStore * pr_gstore;
 	GtkWidget * pr_gblanking;
+	GtkWidget * pr_gdenabled;
 	GtkWidget * pr_gdpms1;
 	GtkWidget * pr_gdpms2;
 	GtkWidget * pr_gdpms3;
@@ -207,6 +208,7 @@ static gboolean _locker_on_map_event(GtkWidget * widget, GdkEvent * event,
 		gpointer data);
 static int _locker_on_message(void * data, uint32_t value1, uint32_t value2,
 		uint32_t value3);
+static void _locker_on_preferences_general_dpms_toggled(gpointer data);
 static void _locker_on_preferences_general_toggled(gpointer data);
 static void _locker_on_preferences_lock_toggled(gpointer data);
 static void _locker_on_realize(GtkWidget * widget, gpointer data);
@@ -668,6 +670,14 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	vbox2 = gtk_vbox_new(FALSE, 4);
 #endif
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 4);
+	/* DPMS: enabled */
+	locker->pr_gdenabled = gtk_check_button_new_with_label(
+			_("Enable DPMS"));
+	g_signal_connect_swapped(locker->pr_gdenabled, "toggled", G_CALLBACK(
+				_locker_on_preferences_general_dpms_toggled),
+			locker);
+	gtk_box_pack_start(GTK_BOX(vbox2), locker->pr_gdenabled, FALSE, TRUE,
+			0);
 	group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	/* DPMS: standby */
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -808,6 +818,10 @@ static void _preferences_on_apply(gpointer data)
 			interval, prefer_blanking, allow_exposures);
 	if(DPMSCapable(GDK_DISPLAY_XDISPLAY(locker->display)))
 	{
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+					locker->pr_gdenabled))
+			? DPMSEnable(GDK_DISPLAY_XDISPLAY(locker->display))
+			: DPMSDisable(GDK_DISPLAY_XDISPLAY(locker->display));
 		dpms1 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
 					locker->pr_gdpms1));
 		dpms2 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
@@ -1095,22 +1109,23 @@ static void _cancel_general(Locker * locker)
 	if(DPMSCapable(GDK_DISPLAY_XDISPLAY(locker->display)))
 		_cancel_general_dpms(locker);
 	else
-	{
-		gtk_widget_set_sensitive(locker->pr_gdpms1, FALSE);
-		gtk_widget_set_sensitive(locker->pr_gdpms2, FALSE);
-		gtk_widget_set_sensitive(locker->pr_gdpms3, FALSE);
-	}
+		gtk_widget_set_sensitive(locker->pr_gdenabled, FALSE);
 }
 
 static void _cancel_general_dpms(Locker * locker)
 {
+	CARD16 power_level;
+	BOOL state;
 	CARD16 dpms1 = 0;
 	CARD16 dpms2 = 0;
 	CARD16 dpms3 = 0;
 
-	gtk_widget_set_sensitive(locker->pr_gdpms1, TRUE);
-	gtk_widget_set_sensitive(locker->pr_gdpms2, TRUE);
-	gtk_widget_set_sensitive(locker->pr_gdpms3, TRUE);
+	if(DPMSInfo(GDK_DISPLAY_XDISPLAY(locker->display), &power_level, &state)
+			== FALSE)
+		state = FALSE;
+	gtk_widget_set_sensitive(locker->pr_gdenabled, state);
+	if(state == FALSE)
+		return;
 	if(DPMSGetTimeouts(GDK_DISPLAY_XDISPLAY(locker->display), &dpms1,
 				&dpms2, &dpms3) != TRUE)
 		return;
@@ -2272,6 +2287,20 @@ static int _locker_on_message(void * data, uint32_t value1, uint32_t value2,
 			break;
 	}
 	return 0;
+}
+
+
+/* locker_on_preferences_general_dpms_toggled */
+static void _locker_on_preferences_general_dpms_toggled(gpointer data)
+{
+	Locker * locker = data;
+	gboolean active;
+
+	active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+				locker->pr_gdenabled));
+	gtk_widget_set_sensitive(locker->pr_gdpms1, active);
+	gtk_widget_set_sensitive(locker->pr_gdpms2, active);
+	gtk_widget_set_sensitive(locker->pr_gdpms3, active);
 }
 
 
