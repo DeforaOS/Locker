@@ -73,7 +73,8 @@ LockerDemoDefinition plugin =
 	_xscreensaver_add,
 	_xscreensaver_remove,
 	_xscreensaver_start,
-	_xscreensaver_stop
+	_xscreensaver_stop,
+	NULL
 };
 
 

@@ -39,6 +39,7 @@ static int _template_add(Template * template, GdkWindow * window);
 static void _template_remove(Template * template, GdkWindow * window);
 static void _template_start(Template * template);
 static void _template_stop(Template * template);
+static void _template_cycle(Template * template);
 
 
 /* public */
@@ -54,7 +55,8 @@ LockerDemoDefinition plugin =
 	_template_add,
 	_template_remove,
 	_template_start,
-	_template_stop
+	_template_stop,
+	_template_cycle
 };
 
 
@@ -104,6 +106,15 @@ static void _template_start(Template * template)
 
 /* template_stop */
 static void _template_stop(Template * template)
+{
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: %s()\n", __func__);
+#endif
+}
+
+
+/* template_cycle */
+static void _template_cycle(Template * template)
 {
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);

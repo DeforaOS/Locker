@@ -54,19 +54,21 @@ static int _lockerctl(int action)
 static int _usage(void)
 {
 #ifdef EMBEDDED
-	fputs(_("Usage: lockerctl [-D|-E|-S|-l|-s|-u|-z]\n"
+	fputs(_("Usage: lockerctl [-D|-E|-S|-c|-l|-s|-u|-z]\n"
 "  -D	Temporarily disable the screensaver\n"
 "  -E	Enable the screensaver again\n"
 "  -S	Display or change settings\n"
+"  -c	Cycle the screen saver\n"
 "  -l	Lock the screen\n"
 "  -s	Activate the screen saver\n"
 "  -u	Unlock the screen\n"
 "  -z	Suspend the device\n"), stderr);
 #else
-	fputs(_("Usage: lockerctl [-D|-E|-S|-l|-s|-u|-z]\n"
+	fputs(_("Usage: lockerctl [-D|-E|-S|-c|-l|-s|-u|-z]\n"
 "  -D	Temporarily disable the screensaver\n"
 "  -E	Enable the screensaver again\n"
 "  -S	Display or change settings\n"
+"  -c	Cycle the screen saver\n"
 "  -l	Lock the screen\n"
 "  -s	Activate the screen saver\n"
 "  -u	Unlock the screen\n"
@@ -88,7 +90,7 @@ int main(int argc, char * argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	gtk_init(&argc, &argv);
-	while((o = getopt(argc, argv, "DESlsuz")) != -1)
+	while((o = getopt(argc, argv, "DESclsuz")) != -1)
 		switch(o)
 		{
 			case 'D':
@@ -105,6 +107,11 @@ int main(int argc, char * argv[])
 				if(action != -1)
 					return _usage();
 				action = LOCKER_ACTION_SHOW_PREFERENCES;
+				break;
+			case 'c':
+				if(action != -1)
+					return _usage();
+				action = LOCKER_ACTION_CYCLE;
 				break;
 			case 'l':
 				if(action != -1)

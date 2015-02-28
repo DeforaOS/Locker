@@ -92,7 +92,8 @@ LockerDemoDefinition plugin =
 	_logo_add,
 	_logo_remove,
 	_logo_start,
-	_logo_stop
+	_logo_stop,
+	NULL
 };
 
 

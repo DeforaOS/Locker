@@ -35,8 +35,6 @@ typedef struct _LockerDemo
 
 	GdkWindow ** windows;
 	size_t windows_cnt;
-
-	unsigned int source;
 } Colors;
 
 
@@ -48,9 +46,7 @@ static int _colors_add(Colors * colors, GdkWindow * window);
 static void _colors_remove(Colors * colors, GdkWindow * window);
 static void _colors_start(Colors * colors);
 static void _colors_stop(Colors * colors);
-
-/* callbacks */
-static gboolean _colors_on_timeout(gpointer data);
+static void _colors_cycle(Colors * colors);
 
 
 /* public */
@@ -66,7 +62,8 @@ LockerDemoDefinition plugin =
 	_colors_add,
 	_colors_remove,
 	_colors_start,
-	_colors_stop
+	_colors_stop,
+	_colors_cycle
 };
 
 
@@ -83,7 +80,6 @@ static Colors * _colors_init(LockerDemoHelper * helper)
 	colors->helper = helper;
 	colors->windows = NULL;
 	colors->windows_cnt = 0;
-	colors->source = 0;
 	return colors;
 }
 
@@ -139,9 +135,7 @@ static void _colors_start(Colors * colors)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
 #endif
-	_colors_on_timeout(colors);
-	if(colors->source == 0)
-		colors->source = g_timeout_add(500, _colors_on_timeout, colors);
+	_colors_cycle(colors);
 }
 
 
@@ -151,17 +145,12 @@ static void _colors_stop(Colors * colors)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
 #endif
-	if(colors->source != 0)
-		g_source_remove(colors->source);
-	colors->source = 0;
 }
 
 
-/* callbacks */
-/* color_on_timeout */
-static gboolean _colors_on_timeout(gpointer data)
+/* colors_cycle */
+static void _colors_cycle(Colors * colors)
 {
-	Colors * colors = data;
 #if GTK_CHECK_VERSION(3, 4, 0)
 	GdkRGBA color = { 0.0, 0.0, 0.0, 0.0 };
 #else
@@ -194,5 +183,4 @@ static gboolean _colors_on_timeout(gpointer data)
 		gdk_colormap_free_colors(colormap, &color, 1);
 #endif
 	}
-	return TRUE;
 }

@@ -48,6 +48,7 @@ typedef const struct _LockerDemoDefinition
 	void (*remove)(LockerDemo * demo, GdkWindow * window);
 	void (*start)(LockerDemo * demo);
 	void (*stop)(LockerDemo * demo);
+	void (*cycle)(LockerDemo * demo);
 } LockerDemoDefinition;
 
 #endif /* !DESKTOP_LOCKER_DEMO_H */

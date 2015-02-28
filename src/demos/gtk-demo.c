@@ -123,7 +123,8 @@ LockerDemoDefinition plugin =
 	_gtkdemo_add,
 	_gtkdemo_remove,
 	_gtkdemo_start,
-	_gtkdemo_stop
+	_gtkdemo_stop,
+	NULL
 };
 
 

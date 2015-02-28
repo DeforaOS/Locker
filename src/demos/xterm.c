@@ -75,7 +75,8 @@ LockerDemoDefinition plugin =
 	_xterm_add,
 	_xterm_remove,
 	_xterm_start,
-	_xterm_stop
+	_xterm_stop,
+	NULL
 };
 
 
