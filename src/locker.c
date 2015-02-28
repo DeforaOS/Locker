@@ -34,6 +34,7 @@ static char const _license[] =
 #include <libintl.h>
 #include <gdk/gdkx.h>
 #include <X11/Xatom.h>
+#include <X11/extensions/dpms.h>
 #include <X11/extensions/scrnsaver.h>
 #include <System.h>
 #include <Desktop.h>
@@ -110,6 +111,9 @@ struct _Locker
 	GtkWidget * pr_gtimeout;
 	GtkListStore * pr_gstore;
 	GtkWidget * pr_gblanking;
+	GtkWidget * pr_gdpms1;
+	GtkWidget * pr_gdpms2;
+	GtkWidget * pr_gdpms3;
 	GtkListStore * pr_plstore;
 	GtkWidget * pr_plview;
 
@@ -579,7 +583,9 @@ static GtkWidget * _preferences_window_demo(Locker * locker)
 static GtkWidget * _preferences_window_general(Locker * locker)
 {
 	GtkWidget * vbox;
+	GtkWidget * vbox2;
 	GtkWidget * hbox;
+	GtkWidget * frame;
 	GtkWidget * widget;
 	GtkCellRenderer * renderer;
 	GtkTreeViewColumn * column;
@@ -607,7 +613,7 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 				_locker_on_preferences_general_toggled),
 			locker);
 	gtk_box_pack_start(GTK_BOX(vbox), locker->pr_genabled, FALSE, TRUE, 0);
-	/* spinner */
+	/* timeout */
 #if GTK_CHECK_VERSION(3, 0, 0)
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 #else
@@ -651,6 +657,59 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 			renderer, "text", LGC_DISPLAY, NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), locker->pr_gblanking, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
+	/* DPMS */
+	frame = gtk_frame_new(_("Energy saving"));
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 4);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
+	vbox2 = gtk_vbox_new(FALSE, 4);
+#endif
+	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 4);
+	/* DPMS: standby */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
+	hbox = gtk_hbox_new(FALSE, 4);
+#endif
+	widget = gtk_label_new(_("Standby: "));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	locker->pr_gdpms1 = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(locker->pr_gdpms1), 0);
+	gtk_box_pack_start(GTK_BOX(hbox), locker->pr_gdpms1, FALSE, TRUE, 0);
+	widget = gtk_label_new(_(" second(s)"));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, TRUE, 0);
+	/* DPMS: suspend */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
+	hbox = gtk_hbox_new(FALSE, 4);
+#endif
+	widget = gtk_label_new(_("Suspend: "));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	locker->pr_gdpms2 = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(locker->pr_gdpms2), 0);
+	gtk_box_pack_start(GTK_BOX(hbox), locker->pr_gdpms2, FALSE, TRUE, 0);
+	widget = gtk_label_new(_(" second(s)"));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, TRUE, 0);
+	/* DPMS: off */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
+	hbox = gtk_hbox_new(FALSE, 4);
+#endif
+	widget = gtk_label_new(_("Off: "));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	locker->pr_gdpms3 = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(locker->pr_gdpms3), 0);
+	gtk_box_pack_start(GTK_BOX(hbox), locker->pr_gdpms3, FALSE, TRUE, 0);
+	widget = gtk_label_new(_(" second(s)"));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), vbox2);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, TRUE, 0);
 	return vbox;
 }
 
@@ -708,6 +767,9 @@ static void _preferences_on_apply(gpointer data)
 {
 	Locker * locker = data;
 	int timeout = 0;
+	CARD16 dpms1 = 0;
+	CARD16 dpms2 = 0;
+	CARD16 dpms3 = 0;
 	int interval = 0;
 	int prefer_blanking = 0;
 	int allow_exposures = 0;
@@ -735,6 +797,14 @@ static void _preferences_on_apply(gpointer data)
 				LGC_VALUE, &prefer_blanking, -1);
 	XSetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), timeout,
 			interval, prefer_blanking, allow_exposures);
+	dpms1 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+				locker->pr_gdpms1));
+	dpms2 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+				locker->pr_gdpms2));
+	dpms3 = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+				locker->pr_gdpms3));
+	DPMSSetTimeouts(GDK_DISPLAY_XDISPLAY(locker->display), dpms1,
+			dpms2, dpms3);
 	/* authentication */
 	if((enabled = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 						locker->pr_alock))) == TRUE)
@@ -991,6 +1061,9 @@ static void _cancel_general(Locker * locker)
 	int allow_exposures = 0;
 	gboolean valid;
 	int i;
+	CARD16 dpms1 = 0;
+	CARD16 dpms2 = 0;
+	CARD16 dpms3 = 0;
 
 	XGetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), &timeout,
 			&interval, &prefer_blanking, &allow_exposures);
@@ -1008,6 +1081,16 @@ static void _cancel_general(Locker * locker)
 						locker->pr_gblanking), &iter);
 			break;
 		}
+	}
+	if(DPMSGetTimeouts(GDK_DISPLAY_XDISPLAY(locker->display), &dpms1,
+				&dpms2, &dpms3) == TRUE)
+	{
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gdpms1),
+				dpms1);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gdpms2),
+				dpms2);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gdpms3),
+				dpms3);
 	}
 }
 
