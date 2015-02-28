@@ -1091,6 +1091,7 @@ static void _cancel_general(Locker * locker)
 			&interval, &prefer_blanking, &allow_exposures);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(locker->pr_genabled),
 			(timeout != 0) ? TRUE : FALSE);
+	_locker_on_preferences_general_dpms_toggled(locker);
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gtimeout),
 			timeout);
 	for(valid = gtk_tree_model_get_iter_first(model, &iter); valid == TRUE;
