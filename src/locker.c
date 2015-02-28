@@ -280,7 +280,8 @@ Locker * locker_new(char const * demo, char const * auth)
 	gtk_container_add(GTK_CONTAINER(locker->windows[i]), widget);
 	root = gdk_get_default_root_window();
 	XScreenSaverSelectInput(GDK_DISPLAY_XDISPLAY(locker->display),
-			GDK_WINDOW_XID(root), ScreenSaverNotifyMask);
+			GDK_WINDOW_XID(root),
+			ScreenSaverNotifyMask | ScreenSaverCycleMask);
 	gdk_x11_register_standard_event_type(locker->display, locker->event, 1);
 	gdk_window_add_filter(root, _locker_on_filter, locker);
 	/* listen to desktop messages */
