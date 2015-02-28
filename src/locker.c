@@ -40,6 +40,7 @@ static char const _license[] =
 #include "locker.h"
 #include "../config.h"
 #define _(string) gettext(string)
+#define N_(string) (string)
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define min(a, b) ((a) < (b) ? (a) : (b))
@@ -48,6 +49,14 @@ static char const _license[] =
 /* Locker */
 /* private */
 /* types */
+typedef enum _LockerGeneralColumn
+{
+	LGC_VALUE = 0,
+	LGC_DISPLAY
+} LockerGeneralColumn;
+#define LGC_LAST LGC_DISPLAY
+#define LGC_COUNT (LGC_LAST + 1)
+
 typedef struct _LockerPlugins
 {
 	char * name;
@@ -99,6 +108,8 @@ struct _Locker
 	GtkWidget * pr_dcombo;
 	GtkWidget * pr_genabled;
 	GtkWidget * pr_gtimeout;
+	GtkListStore * pr_gstore;
+	GtkWidget * pr_gblanking;
 	GtkListStore * pr_plstore;
 	GtkWidget * pr_plview;
 
@@ -570,6 +581,19 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	GtkWidget * vbox;
 	GtkWidget * hbox;
 	GtkWidget * widget;
+	GtkCellRenderer * renderer;
+	GtkTreeViewColumn * column;
+	struct {
+		int value;
+		char const * name;
+	} blanking[] =
+	{
+		{ DefaultBlanking, N_("Default") },
+		{ DontPreferBlanking, N_("Do not blank") },
+		{ PreferBlanking, N_("Blank screen") }
+	};
+	size_t i;
+	GtkTreeIter iter;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -596,6 +620,36 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	gtk_box_pack_start(GTK_BOX(hbox), locker->pr_gtimeout, FALSE, TRUE, 0);
 	widget = gtk_label_new(_(" second(s)"));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
+	/* blanking */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
+	hbox = gtk_hbox_new(FALSE, 4);
+#endif
+	widget = gtk_label_new(_("Blanking: "));
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+	locker->pr_gstore = gtk_list_store_new(LGC_COUNT,
+			G_TYPE_INT, G_TYPE_STRING);
+	for(i = 0; i < sizeof(blanking) / sizeof(*blanking); i++)
+	{
+#if GTK_CHECK_VERSION(2, 6, 0)
+		gtk_list_store_insert_with_values(locker->pr_gstore, &iter, -1,
+#else
+		gtk_list_store_append(locker->pr_gstore, &iter);
+		gtk_list_store_set(locker->pr_gstore, &iter,
+#endif
+			LGC_VALUE, blanking[i].value,
+			LGC_DISPLAY, _(blanking[i].name), -1);
+	}
+	locker->pr_gblanking = gtk_combo_box_new_with_model(GTK_TREE_MODEL(
+				locker->pr_gstore));
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(locker->pr_gblanking),
+			renderer, TRUE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(locker->pr_gblanking),
+			renderer, "text", LGC_DISPLAY, NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), locker->pr_gblanking, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	return vbox;
 }
@@ -675,6 +729,10 @@ static void _preferences_on_apply(gpointer data)
 				locker->pr_genabled))
 		? gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
 					locker->pr_gtimeout)) : 0;
+	if(gtk_combo_box_get_active_iter(GTK_COMBO_BOX(locker->pr_gblanking),
+				&iter))
+		gtk_tree_model_get(GTK_TREE_MODEL(locker->pr_gstore), &iter,
+				LGC_VALUE, &prefer_blanking, -1);
 	XSetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), timeout,
 			interval, prefer_blanking, allow_exposures);
 	/* authentication */
@@ -925,10 +983,14 @@ static void _cancel_demo(Locker * locker, GtkListStore * store)
 
 static void _cancel_general(Locker * locker)
 {
+	GtkTreeModel * model = GTK_TREE_MODEL(locker->pr_gstore);
+	GtkTreeIter iter;
 	int timeout = 0;
 	int interval = 0;
 	int prefer_blanking = 0;
 	int allow_exposures = 0;
+	gboolean valid;
+	int i;
 
 	XGetScreenSaver(GDK_DISPLAY_XDISPLAY(locker->display), &timeout,
 			&interval, &prefer_blanking, &allow_exposures);
@@ -936,6 +998,17 @@ static void _cancel_general(Locker * locker)
 			(timeout != 0) ? TRUE : FALSE);
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_gtimeout),
 			timeout);
+	for(valid = gtk_tree_model_get_iter_first(model, &iter); valid == TRUE;
+			valid = gtk_tree_model_iter_next(model, &iter))
+	{
+		gtk_tree_model_get(model, &iter, LGC_VALUE, &i, -1);
+		if(i == prefer_blanking)
+		{
+			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(
+						locker->pr_gblanking), &iter);
+			break;
+		}
+	}
 }
 
 static void _cancel_plugins(Locker * locker, GtkListStore * store)
