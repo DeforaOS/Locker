@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Locker 0.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-28 08:16+0100\n"
+"POT-Creation-Date: 2015-03-16 01:13+0100\n"
 "PO-Revision-Date: 2015-02-18 01:25+0100\n"
-"Last-Translator: Pierre Pronchery <khorben@defora.org>\n"
+"Last-Translator: Carolina Rocha <carolina@defora.org>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,11 +17,11 @@ msgstr ""
 
 #: ../src/locker.c:375
 msgid "Could not register as screensaver"
-msgstr ""
+msgstr "No pudo ser registrado como protector de pantalla"
 
 #: ../src/locker.c:459
 msgid "Screensaver preferences"
-msgstr ""
+msgstr "Preferencias de protector de pantalla"
 
 #: ../src/locker.c:475
 msgid "General"
@@ -29,7 +29,7 @@ msgstr ""
 
 #: ../src/locker.c:479
 msgid "Authentication"
-msgstr ""
+msgstr "Autenticación"
 
 #: ../src/locker.c:483
 msgid "Demos"
@@ -37,28 +37,28 @@ msgstr "Demos"
 
 #: ../src/locker.c:487
 msgid "Plug-ins"
-msgstr ""
+msgstr "Plug-ins"
 
 #: ../src/locker.c:512
 msgid "Lock the screen automatically"
-msgstr ""
+msgstr "Bloquear la pantalla automáticamente"
 
 #: ../src/locker.c:522
 msgid "Lock after "
-msgstr ""
+msgstr "Bloquear luego de "
 
 #: ../src/locker.c:527 ../src/locker.c:640 ../src/locker.c:709
 #: ../src/locker.c:725 ../src/locker.c:741
 msgid " second(s)"
-msgstr ""
+msgstr " segundo(s)"
 
 #: ../src/locker.c:536
 msgid "Method: "
-msgstr ""
+msgstr "Método: "
 
 #: ../src/locker.c:575
 msgid "Plug-in: "
-msgstr ""
+msgstr "Plug-in: "
 
 #: ../src/locker.c:610
 msgid "Default"
@@ -112,27 +112,27 @@ msgstr ""
 
 #: ../src/locker.c:781
 msgid "Enabled"
-msgstr ""
+msgstr "Habilitar"
 
 #: ../src/locker.c:791
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #: ../src/locker.c:1040
 msgid "Disabled"
-msgstr ""
+msgstr "Deshabilitar"
 
 #: ../src/locker.c:1314
 msgid "Screensaver for the DeforaOS desktop"
-msgstr ""
+msgstr "Protector de pantalla para el escritorio de DeforaOS"
 
 #: ../src/locker.c:1319
 msgid "translator-credits"
-msgstr ""
+msgstr "Créditos de traducción"
 
 #: ../src/locker.c:1864 ../src/locker.c:1868
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #: ../src/lockerctl.c:60
 #, c-format
@@ -147,6 +147,15 @@ msgid ""
 "  -u\tUnlock the screen\n"
 "  -z\tSuspend the device\n"
 msgstr ""
+"Usage: %s [-D|-E|-S|-c|-l|-s|-u|-z]\n"
+"  -D\tDeshabilitar temporalmente del protector de pantalla\n"
+"  -E\tHabilitar el protector de pantalla nuevamente\n"
+"  -S\tVisualizar o cambiar ajustes\n"
+"  -c\tCycle the screen saver\n"
+"  -l\tLock the screen\n"
+"  -s\tActivar el protector de pantalla\n"
+"  -u\tDesbloquear la pantalla\n"
+"  -z\tSuspender el dispositivo\n"
 
 #: ../src/lockerctl.c:70
 #, c-format
@@ -161,6 +170,15 @@ msgid ""
 "  -u\tUnlock the screen\n"
 "  -z\tSuspend the computer\n"
 msgstr ""
+"Usage: %s [-D|-E|-S|-c|-l|-s|-u|-z]\n"
+"  -D\tDeshabilitar temporalmente la pantalla\n"
+"  -E\tHabilitar el protector de pantalla de nuevo\n"
+"  -S\tVisualizar o cambiar ajustes\n"
+"  -c\tCycle the screen saver\n"
+"  -l\tBloquear la pantalla\n"
+"  -s\tActivar el protector de pantalla\n"
+"  -u\tDesbloquear la pantalla\n"
+"  -z\tSuspender el ordenador\n"
 
 #: ../src/main.c:62
 #, c-format
@@ -173,29 +191,29 @@ msgstr ""
 #: ../src/auth/password.c:121
 #, c-format
 msgid "This screen is locked by %s"
-msgstr ""
+msgstr "Esta pantalla está bloqueada por %s"
 
 #: ../src/auth/password.c:122
 #, c-format
 msgid "This screen is locked"
-msgstr ""
+msgstr "Esta pantalla está bloqueada"
 
 #: ../src/auth/password.c:127
 msgid "Enter password: "
-msgstr ""
+msgstr "Introducir contraseña: "
 
 #: ../src/auth/password.c:154
 msgid "Wrong password!"
-msgstr ""
+msgstr "Contraseña incorrecta"
 
 #: ../src/auth/password.c:208 ../src/auth/password.c:252
 msgid "No password was set"
-msgstr ""
+msgstr "No se ha establecido una contraseña"
 
 #: ../src/auth/password.c:266
 msgid "Authentication failed"
-msgstr ""
+msgstr "Falló la autenticación"
 
 #: ../src/auth/password.c:295
 msgid "Timed out"
-msgstr ""
+msgstr "Tiempo de espera"
