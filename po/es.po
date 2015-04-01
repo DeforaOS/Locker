@@ -128,7 +128,7 @@ msgstr "Protector de pantalla para el escritorio de DeforaOS"
 
 #: ../src/locker.c:1319
 msgid "translator-credits"
-msgstr "Créditos de traducción"
+msgstr "Carolina Rocha <carolina@defora.org>"
 
 #: ../src/locker.c:1864 ../src/locker.c:1868
 msgid "Error"
