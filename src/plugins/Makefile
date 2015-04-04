@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)debug.so $(OBJDIR)openmoko.so $(OBJDIR)panel.so $(OBJDIR)suspend.so $(OBJDIR)systray.so $(OBJDIR)template.so
+TARGETS	= $(OBJDIR)debug.so $(OBJDIR)openmoko.so $(OBJDIR)suspend.so $(OBJDIR)systray.so $(OBJDIR)template.so
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -34,13 +34,6 @@ openmoko_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)openmoko.so: $(openmoko_OBJS)
 	$(CCSHARED) -o $(OBJDIR)openmoko.so $(openmoko_OBJS) $(openmoko_LDFLAGS)
 
-panel_OBJS = $(OBJDIR)panel.o
-panel_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS) `pkg-config --cflags Panel libDesktop`
-panel_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `pkg-config --libs Panel libDesktop`
-
-$(OBJDIR)panel.so: $(panel_OBJS)
-	$(CCSHARED) -o $(OBJDIR)panel.so $(panel_OBJS) $(panel_LDFLAGS)
-
 suspend_OBJS = $(OBJDIR)suspend.o
 suspend_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 suspend_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
@@ -68,9 +61,6 @@ $(OBJDIR)debug.o: debug.c ../../include/Locker.h
 $(OBJDIR)openmoko.o: openmoko.c ../../include/Locker.h
 	$(CC) $(openmoko_CFLAGS) -o $(OBJDIR)openmoko.o -c openmoko.c
 
-$(OBJDIR)panel.o: panel.c ../../include/Locker.h
-	$(CC) $(panel_CFLAGS) -o $(OBJDIR)panel.o -c panel.c
-
 $(OBJDIR)suspend.o: suspend.c ../../include/Locker.h
 	$(CC) $(suspend_CFLAGS) -o $(OBJDIR)suspend.o -c suspend.c
 
@@ -81,7 +71,7 @@ $(OBJDIR)template.o: template.c ../../include/Locker.h
 	$(CC) $(template_CFLAGS) -o $(OBJDIR)template.o -c template.c
 
 clean:
-	$(RM) -- $(debug_OBJS) $(openmoko_OBJS) $(panel_OBJS) $(suspend_OBJS) $(systray_OBJS) $(template_OBJS)
+	$(RM) -- $(debug_OBJS) $(openmoko_OBJS) $(suspend_OBJS) $(systray_OBJS) $(template_OBJS)
 
 distclean: clean
 	$(RM) -- $(TARGETS)
@@ -90,15 +80,12 @@ install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
 	$(INSTALL) -m 0755 $(OBJDIR)openmoko.so $(DESTDIR)$(LIBDIR)/Locker/plugins/openmoko.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
-	$(INSTALL) -m 0755 $(OBJDIR)panel.so $(DESTDIR)$(LIBDIR)/Locker/plugins/panel.so
-	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
 	$(INSTALL) -m 0755 $(OBJDIR)suspend.so $(DESTDIR)$(LIBDIR)/Locker/plugins/suspend.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Locker/plugins
 	$(INSTALL) -m 0755 $(OBJDIR)systray.so $(DESTDIR)$(LIBDIR)/Locker/plugins/systray.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/plugins/openmoko.so
-	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/plugins/panel.so
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/plugins/suspend.so
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Locker/plugins/systray.so
 
