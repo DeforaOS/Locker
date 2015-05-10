@@ -53,7 +53,8 @@ typedef struct _SliderTheme
 /* constants */
 static const SliderTheme _slider_themes[] =
 {
-	{ "security", "stock_lock", "stock_lock-open" }
+	{ "security", "stock_lock", "stock_lock-open" },
+	{ "smiley", "face-sad", "face-smile" }
 };
 
 
