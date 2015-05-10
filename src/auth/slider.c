@@ -42,6 +42,20 @@ typedef struct _LockerAuth
 	GtkWidget * scale;
 } Slider;
 
+typedef struct _SliderTheme
+{
+	char const * name;
+	char const * icon1;
+	char const * icon2;
+} SliderTheme;
+
+
+/* constants */
+static const SliderTheme _slider_themes[] =
+{
+	{ "security", "stock_lock", "stock_lock-open" }
+};
+
 
 /* prototypes */
 /* plug-in */
@@ -98,7 +112,7 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 	hbox = gtk_hbox_new(FALSE, 4);
 #endif
 	/* left image */
-	widget = gtk_image_new_from_icon_name("stock_lock",
+	widget = gtk_image_new_from_icon_name(_slider_themes[0].icon1,
 			GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_misc_set_alignment(GTK_MISC(widget), 1.0, 0.5);
 	gtk_misc_set_padding(GTK_MISC(widget), 0, 96);
@@ -117,7 +131,7 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 				_slider_on_scale_value_changed), slider);
 	gtk_box_pack_start(GTK_BOX(hbox), slider->scale, FALSE, TRUE, 0);
 	/* right image */
-	widget = gtk_image_new_from_icon_name("stock_lock-open",
+	widget = gtk_image_new_from_icon_name(_slider_themes[0].icon2,
 			GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
 	gtk_misc_set_padding(GTK_MISC(widget), 0, 96);
