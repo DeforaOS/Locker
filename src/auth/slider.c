@@ -55,6 +55,8 @@ static const SliderTheme _slider_themes[] =
 {
 	{ "changes", "changes-prevent", "changes-allow" },
 	{ "dialog", "dialog-error", "dialog-information" },
+	{ "emblem", "emblem-important", "emblem-default" },
+	{ "filesystem", "emblem-readonly", "emblem-shared" },
 	{ "security", "stock_lock", "stock_lock-open" },
 	{ "smiley", "face-sad", "face-smile" },
 	{ "user", "user-idle", "user-available" }
