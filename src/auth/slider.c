@@ -53,6 +53,8 @@ typedef struct _SliderTheme
 /* constants */
 static const SliderTheme _slider_themes[] =
 {
+	{ "changes", "changes-prevent", "changes-allow" },
+	{ "dialog", "dialog-error", "dialog-information" },
 	{ "security", "stock_lock", "stock_lock-open" },
 	{ "smiley", "face-sad", "face-smile" }
 };
