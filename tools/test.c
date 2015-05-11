@@ -26,14 +26,14 @@
 #include "../src/locker.h"
 #include "../config.h"
 
+#ifndef PROGNAME
+# define PROGNAME	"locker-test"
+#endif
 #ifndef PREFIX
 # define PREFIX		"/usr/local"
 #endif
 #ifndef LIBDIR
 # define LIBDIR		PREFIX "/lib"
-#endif
-#ifndef PROGNAME
-# define PROGNAME	"locker-test"
 #endif
 
 
@@ -285,7 +285,7 @@ static Config * _test_config(void)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: locker-test [-d][-r][-w width][-h height] demo\n"
+	fputs("Usage: " PROGNAME " [-d][-r][-w width][-h height] demo\n"
 "  -d	Display the demo as a desktop window\n"
 "  -r	Display the demo on the root window\n"
 "  -w	Set the width of the test window\n"
