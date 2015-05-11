@@ -42,6 +42,13 @@
 /* Logo */
 /* private */
 /* types */
+typedef struct _LogoTheme
+{
+	char const * name;
+	char const * background;
+	char const * logo;
+} LogoTheme;
+
 typedef struct _LogoWindow
 {
 	GdkWindow * window;
@@ -63,6 +70,16 @@ typedef struct _LockerDemo
 	int scroll;
 	int opacity;
 } Logo;
+
+
+/* constants */
+static const LogoTheme _logo_themes[] =
+{
+	{ "gnome", DATADIR "/pixmaps/backgrounds/gnome/background-default.jpg",
+		DATADIR "/icons/gnome/256x256/places/start-here.png" },
+	{ "custom", NULL, NULL }
+};
+#define LOGO_THEME_DEFAULT 0
 
 
 /* prototypes */
@@ -124,7 +141,7 @@ static Logo * _logo_init(LockerDemoHelper * helper)
 			== NULL)
 	{
 		helper->error(NULL, "No background configured", 1);
-		p = DATADIR "/pixmaps/backgrounds/gnome/background-default.jpg";
+		p = _logo_themes[LOGO_THEME_DEFAULT].background;
 	}
 	if(p != NULL && (logo->background = gdk_pixbuf_new_from_file(p, &error))
 			== NULL)
@@ -137,7 +154,7 @@ static Logo * _logo_init(LockerDemoHelper * helper)
 	if((p = helper->config_get(helper->locker, "logo", "logo")) == NULL)
 	{
 		helper->error(NULL, "No logo configured", 1);
-		p = DATADIR "/icons/gnome/256x256/places/start-here.png";
+		p = _logo_themes[LOGO_THEME_DEFAULT].logo;
 	}
 	if((logo->logo = gdk_pixbuf_new_from_file(p, &error)) == NULL)
 	{
