@@ -43,8 +43,14 @@ struct _Locker
 {
 	char * name;
 	Config * config;
+
+	/* demo */
 	LockerDemoDefinition * dplugin;
 	LockerDemo * demo;
+
+	/* auth */
+	LockerAuthDefinition * aplugin;
+	LockerAuth * auth;
 
 	/* widgets */
 	GtkWidget * variable;
@@ -54,10 +60,11 @@ struct _Locker
 
 /* prototypes */
 static int _test(int desktop, int root, int width, int height,
-		char const * demo);
+		char const * demo, char const * auth);
 static int _usage(void);
 
 /* helpers */
+static int _test_helper_action(Locker * locker, LockerAction action);
 static char const * _test_helper_config_get(Locker * locker,
 		char const * section, char const * variable);
 static int _test_helper_config_set(Locker * locker, char const * section,
@@ -76,12 +83,14 @@ static void _test_on_stop(gpointer data);
 static Config * _test_config(void);
 
 static int _test(int desktop, int root, int width, int height,
-		char const * demo)
+		char const * demo, char const * auth)
 {
 	int ret = 0;
 	Locker * locker;
-	LockerDemoHelper helper;
-	Plugin * plugin;
+	LockerDemoHelper dhelper;
+	Plugin * dplugin;
+	LockerAuthHelper ahelper;
+	Plugin * aplugin;
 	GtkWidget * window;
 	GtkWidget * dwindow = NULL;
 	GdkWindow * wwindow;
@@ -99,12 +108,12 @@ static int _test(int desktop, int root, int width, int height,
 		return error_set_print(PROGNAME, 1, "%s", strerror(errno));
 	}
 	locker->config = _test_config();
-	/* helper */
-	helper.locker = locker;
-	helper.error = _test_helper_error;
-	helper.config_get = _test_helper_config_get;
-	helper.config_set = _test_helper_config_set;
-	if((plugin = plugin_new(LIBDIR, PACKAGE, "demos", demo)) == NULL)
+	/* demo plug-in */
+	dhelper.locker = locker;
+	dhelper.error = _test_helper_error;
+	dhelper.config_get = _test_helper_config_get;
+	dhelper.config_set = _test_helper_config_set;
+	if((dplugin = plugin_new(LIBDIR, PACKAGE, "demos", demo)) == NULL)
 	{
 		if(locker->config != NULL)
 			config_delete(locker->config);
@@ -113,18 +122,43 @@ static int _test(int desktop, int root, int width, int height,
 		return error_set_print(PROGNAME, 1, "%s: %s", demo,
 				"Could not load demo plug-in");
 	}
-	if((locker->dplugin = plugin_lookup(plugin, "plugin")) == NULL
+	if((locker->dplugin = plugin_lookup(dplugin, "plugin")) == NULL
 			|| locker->dplugin->init == NULL
-			|| (locker->demo = locker->dplugin->init(&helper))
+			|| (locker->demo = locker->dplugin->init(&dhelper))
 			== NULL)
 	{
-		plugin_delete(plugin);
+		plugin_delete(dplugin);
 		if(locker->config != NULL)
 			config_delete(locker->config);
 		free(locker->name);
 		object_delete(locker);
 		return error_set_print(PROGNAME, 1, "%s: %s", demo,
 				"Could not initialize demo plug-in");
+	}
+	/* auth plug-in */
+	ahelper.locker = locker;
+	ahelper.error = _test_helper_error;
+	ahelper.action = _test_helper_action;
+	ahelper.config_get = _test_helper_config_get;
+	ahelper.config_set = _test_helper_config_set;
+	if(auth == NULL)
+	{
+		aplugin = NULL;
+		locker->aplugin = NULL;
+	}
+	else if((aplugin = plugin_new(LIBDIR, PACKAGE, "auth", auth)) == NULL)
+		error_set_print(PROGNAME, 1, "%s: %s", auth,
+				"Could not load auth plug-in");
+	else if((locker->aplugin = plugin_lookup(aplugin, "plugin")) == NULL
+			|| locker->aplugin->init == NULL
+			|| (locker->auth = locker->aplugin->init(&ahelper))
+			== NULL)
+	{
+		locker->aplugin = NULL;
+		plugin_delete(aplugin);
+		aplugin = NULL;
+		error_set_print(PROGNAME, 1, "%s: %s", auth,
+				"Could not initialize auth plug-in");
 	}
 	/* widgets */
 	/* toolbar */
@@ -189,6 +223,10 @@ static int _test(int desktop, int root, int width, int height,
 					GDK_WINDOW_TYPE_HINT_DESKTOP);
 		g_signal_connect(dwindow, "delete-event", G_CALLBACK(
 					_test_on_closex), NULL);
+		if(locker->auth != NULL
+				&& (widget = locker->aplugin->get_widget(
+						locker->auth)) != NULL)
+			gtk_container_add(GTK_CONTAINER(dwindow), widget);
 		gtk_widget_show_all(dwindow);
 #if GTK_CHECK_VERSION(2, 14, 0)
 		wwindow = gtk_widget_get_window(dwindow);
@@ -203,12 +241,16 @@ static int _test(int desktop, int root, int width, int height,
 	{
 		locker->dplugin->start(locker->demo);
 		gtk_main();
+		if(locker->aplugin != NULL && locker->aplugin->destroy != NULL)
+			locker->aplugin->destroy(locker->auth);
 		if(dwindow != NULL)
 			gtk_widget_destroy(dwindow);
 		gtk_widget_destroy(window);
 	}
+	if(aplugin != NULL)
+		plugin_delete(aplugin);
 	locker->dplugin->destroy(locker->demo);
-	plugin_delete(plugin);
+	plugin_delete(dplugin);
 	if(locker->config != NULL)
 		config_delete(locker->config);
 	free(locker->name);
@@ -253,6 +295,14 @@ static int _usage(void)
 
 
 /* helpers */
+/* test_helper_action */
+static int _test_helper_action(Locker * locker, LockerAction action)
+{
+	/* FIXME really implement */
+	return -1;
+}
+
+
 /* test_helper_config_get */
 static char const * _test_helper_config_get(Locker * locker,
 		char const * section, char const * variable)
@@ -355,6 +405,7 @@ static void _test_on_stop(gpointer data)
 int main(int argc, char * argv[])
 {
 	int o;
+	char const * auth = NULL;
 	int desktop = 0;
 	int root = 0;
 	int width = 640;
@@ -362,9 +413,12 @@ int main(int argc, char * argv[])
 	char const * demo = NULL;
 
 	gtk_init(&argc, &argv);
-	while((o = getopt(argc, argv, "drw:h:")) != -1)
+	while((o = getopt(argc, argv, "a:drw:h:")) != -1)
 		switch(o)
 		{
+			case 'a':
+				auth = optarg;
+				break;
 			case 'd':
 				desktop = 1;
 				root = 0;
@@ -385,5 +439,5 @@ int main(int argc, char * argv[])
 	if(width == 0 || height == 0 || optind + 1 != argc)
 		return _usage();
 	demo = argv[optind];
-	return (_test(desktop, root, width, height, demo) == 0) ? 2 : 0;
+	return (_test(desktop, root, width, height, demo, auth) == 0) ? 2 : 0;
 }
