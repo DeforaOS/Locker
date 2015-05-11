@@ -59,7 +59,8 @@ static const SliderTheme _slider_themes[] =
 	{ "filesystem", "emblem-readonly", "emblem-shared" },
 	{ "security", "stock_lock", "stock_lock-open" },
 	{ "smiley", "face-sad", "face-smile" },
-	{ "user", "user-idle", "user-available" }
+	{ "user", "user-idle", "user-available" },
+	{ "custom", NULL, NULL }
 };
 #define SLIDER_THEME_DEFAULT 0
 
