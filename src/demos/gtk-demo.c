@@ -77,6 +77,7 @@ typedef struct _LockerDemo
 	size_t windows_cnt;
 	guint source;
 	guint frame_num;
+	int cycle;
 	int scroll;
 } GtkDemo;
 
@@ -104,6 +105,7 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window);
 static void _gtkdemo_remove(GtkDemo * gtkdemo, GdkWindow * window);
 static void _gtkdemo_start(GtkDemo * gtkdemo);
 static void _gtkdemo_stop(GtkDemo * gtkdemo);
+static void _gtkdemo_cycle(GtkDemo * gtkdemo);
 
 /* callbacks */
 static gboolean _gtkdemo_on_idle(gpointer data);
@@ -124,7 +126,7 @@ LockerDemoDefinition plugin =
 	_gtkdemo_remove,
 	_gtkdemo_start,
 	_gtkdemo_stop,
-	NULL
+	_gtkdemo_cycle
 };
 
 
@@ -154,6 +156,7 @@ static GtkDemo * _gtkdemo_init(LockerDemoHelper * helper)
 	gtkdemo->windows_cnt = 0;
 	gtkdemo->source = 0;
 	gtkdemo->frame_num = 0;
+	gtkdemo->cycle = 1;
 	gtkdemo->scroll = 0;
 	return gtkdemo;
 }
@@ -300,6 +303,13 @@ static void _gtkdemo_stop(GtkDemo * gtkdemo)
 }
 
 
+/* gtkdemo_cycle */
+static void _gtkdemo_cycle(GtkDemo * gtkdemo)
+{
+	gtkdemo->cycle = -gtkdemo->cycle;
+}
+
+
 /* callbacks */
 /* gtkdemo_on_idle */
 static gboolean _gtkdemo_on_idle(gpointer data)
@@ -427,6 +437,7 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 
 		ang = 2.0 * G_PI * (double) (i - 1) / (GDI_COUNT - 1)
 			- f * 2.0 * G_PI;
+		ang = gtkdemo->cycle * ang;
 
 		iw = gdk_pixbuf_get_width(gtkdemo->images[i]);
 		ih = gdk_pixbuf_get_height(gtkdemo->images[i]);
