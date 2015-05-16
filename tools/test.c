@@ -232,6 +232,7 @@ static int _test(int desktop, int root, int width, int height,
 					GDK_WINDOW_TYPE_HINT_DESKTOP);
 		g_signal_connect(locker->window, "delete-event", G_CALLBACK(
 					_test_on_closex), NULL);
+		/* load the authentication plug-in (if specified) */
 		if(locker->auth != NULL
 				&& (widget = locker->aplugin->get_widget(
 						locker->auth)) != NULL)
