@@ -39,7 +39,9 @@ typedef struct _LockerAuth
 
 	/* widgets */
 	GtkWidget * widget;
+	GtkWidget * icon1;
 	GtkWidget * scale;
+	GtkWidget * icon2;
 } Slider;
 
 typedef struct _SliderTheme
@@ -60,7 +62,7 @@ static const SliderTheme _slider_themes[] =
 	{ "security", "stock_lock", "stock_lock-open" },
 	{ "smiley", "face-sad", "face-smile" },
 	{ "user", "user-idle", "user-available" },
-	{ "custom", NULL, NULL }
+	{ NULL, NULL, NULL }
 };
 #define SLIDER_THEME_DEFAULT 0
 
@@ -71,6 +73,9 @@ static Slider * _slider_init(LockerAuthHelper * helper);
 static void _slider_destroy(Slider * slider);
 static GtkWidget * _slider_get_widget(Slider * slider);
 static int _slider_action(Slider * slider, LockerAction action);
+
+/* useful */
+static int _slider_load(Slider * slider);
 
 /* callbacks */
 static void _slider_on_scale_value_changed(gpointer data);
@@ -101,7 +106,6 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 	Slider * slider;
 	GtkWidget * vbox;
 	GtkWidget * hbox;
-	GtkWidget * widget;
 
 	if((slider = object_new(sizeof(*slider))) == NULL)
 		return NULL;
@@ -119,13 +123,14 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 #else
 	hbox = gtk_hbox_new(FALSE, 4);
 #endif
+	slider->icon1 = NULL;
+	slider->scale = NULL;
+	slider->icon2 = NULL;
+	_slider_load(slider);
 	/* left image */
-	widget = gtk_image_new_from_icon_name(
-			_slider_themes[SLIDER_THEME_DEFAULT].icon1,
-			GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_misc_set_alignment(GTK_MISC(widget), 1.0, 0.5);
-	gtk_misc_set_padding(GTK_MISC(widget), 0, 96);
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_misc_set_alignment(GTK_MISC(slider->icon1), 1.0, 0.5);
+	gtk_misc_set_padding(GTK_MISC(slider->icon1), 0, 96);
+	gtk_box_pack_start(GTK_BOX(hbox), slider->icon1, TRUE, TRUE, 0);
 	/* scale */
 #if GTK_CHECK_VERSION(3, 0, 0)
 	slider->scale = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL,
@@ -140,12 +145,9 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 				_slider_on_scale_value_changed), slider);
 	gtk_box_pack_start(GTK_BOX(hbox), slider->scale, FALSE, TRUE, 0);
 	/* right image */
-	widget = gtk_image_new_from_icon_name(
-			_slider_themes[SLIDER_THEME_DEFAULT].icon2,
-			GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
-	gtk_misc_set_padding(GTK_MISC(widget), 0, 96);
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_misc_set_alignment(GTK_MISC(slider->icon2), 0.0, 0.5);
+	gtk_misc_set_padding(GTK_MISC(slider->icon2), 0, 96);
+	gtk_box_pack_start(GTK_BOX(hbox), slider->icon2, TRUE, TRUE, 0);
 	gtk_widget_show_all(hbox);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	return slider;
@@ -208,6 +210,45 @@ static int _slider_action(Slider * slider, LockerAction action)
 		default:
 			break;
 	}
+	return 0;
+}
+
+
+/* useful */
+/* slider_load */
+static int _slider_load(Slider * slider)
+{
+	LockerAuthHelper * helper = slider->helper;
+	size_t i = SLIDER_THEME_DEFAULT;
+	String const * p;
+
+	/* load the theme configured */
+	if((p = helper->config_get(helper->locker, "slider", "theme")) != NULL)
+		for(i = 0; _slider_themes[i].name != NULL; i++)
+			if(strcmp(_slider_themes[i].name, p) == 0)
+				break;
+	/* load the first icon */
+	if((p = _slider_themes[i].icon1) == NULL
+			&& (p = helper->config_get(helper->locker, "slider",
+					"icon1")) == NULL)
+		p = _slider_themes[SLIDER_THEME_DEFAULT].icon1;
+	if(slider->icon1 == NULL)
+		slider->icon1 = gtk_image_new_from_icon_name(p,
+				GTK_ICON_SIZE_LARGE_TOOLBAR);
+	else
+		gtk_image_set_from_icon_name(GTK_IMAGE(slider->icon1), p,
+				GTK_ICON_SIZE_LARGE_TOOLBAR);
+	/* load the second icon */
+	if((p = _slider_themes[i].icon2) == NULL
+			&& (p = helper->config_get(helper->locker, "slider",
+					"icon2")) == NULL)
+		p = _slider_themes[SLIDER_THEME_DEFAULT].icon2;
+	if(slider->icon2 == NULL)
+		slider->icon2 = gtk_image_new_from_icon_name(p,
+				GTK_ICON_SIZE_LARGE_TOOLBAR);
+	else
+		gtk_image_set_from_icon_name(GTK_IMAGE(slider->icon2), p,
+				GTK_ICON_SIZE_LARGE_TOOLBAR);
 	return 0;
 }
 
