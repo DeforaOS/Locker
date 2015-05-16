@@ -317,13 +317,16 @@ static int _test_helper_action(Locker * locker, LockerAction action)
 	switch(action)
 	{
 		case LOCKER_ACTION_CYCLE:
-			_test_on_cycle(locker);
+			if(locker->dplugin->cycle != NULL)
+				locker->dplugin->cycle(locker->demo);
 			break;
 		case LOCKER_ACTION_START:
-			_test_on_start(locker);
+			if(locker->dplugin->start != NULL)
+				locker->dplugin->start(locker->demo);
 			break;
 		case LOCKER_ACTION_STOP:
-			_test_on_stop(locker);
+			if(locker->dplugin->stop != NULL)
+				locker->dplugin->stop(locker->demo);
 			break;
 		case LOCKER_ACTION_UNLOCK:
 			widget = gtk_message_dialog_new_with_markup(
@@ -333,12 +336,12 @@ static int _test_helper_action(Locker * locker, LockerAction action)
 			gtk_window_set_title(GTK_WINDOW(widget), "Information");
 			gtk_dialog_run(GTK_DIALOG(widget));
 			gtk_widget_destroy(widget);
-			return 0;
+			break;
 		default:
 			/* FIXME really implement */
-			break;
+			return -1;
 	}
-	return -1;
+	return 0;
 }
 
 
@@ -446,8 +449,7 @@ static void _test_on_cycle(gpointer data)
 {
 	Locker * locker = data;
 
-	if(locker->dplugin->cycle != NULL)
-		locker->dplugin->cycle(locker->demo);
+	_test_helper_action(locker, LOCKER_ACTION_CYCLE);
 }
 
 
@@ -456,8 +458,7 @@ static void _test_on_start(gpointer data)
 {
 	Locker * locker = data;
 
-	if(locker->dplugin->start != NULL)
-		locker->dplugin->start(locker->demo);
+	_test_helper_action(locker, LOCKER_ACTION_START);
 }
 
 
@@ -466,8 +467,7 @@ static void _test_on_stop(gpointer data)
 {
 	Locker * locker = data;
 
-	if(locker->dplugin->stop != NULL)
-		locker->dplugin->stop(locker->demo);
+	_test_helper_action(locker, LOCKER_ACTION_STOP);
 }
 
 
