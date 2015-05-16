@@ -290,7 +290,9 @@ static Config * _test_config(void)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: " PROGNAME " [-d][-r][-w width][-h height] demo\n"
+	fputs("Usage: " PROGNAME " [-a authentication][-d][-r][-w width]"
+			"[-h height] demo\n"
+"  -a	Authentication plug-in to load\n"
 "  -d	Display the demo as a desktop window\n"
 "  -r	Display the demo on the root window\n"
 "  -w	Set the width of the test window\n"
