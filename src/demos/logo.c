@@ -96,7 +96,6 @@ static void _logo_stop(Logo * logo);
 static int _logo_load(Logo * logo);
 
 /* callbacks */
-static gboolean _logo_on_idle(gpointer data);
 static gboolean _logo_on_timeout(gpointer data);
 
 
@@ -217,27 +216,11 @@ static void _logo_remove(Logo * logo, GdkWindow * window)
 /* logo_start */
 static void _logo_start(Logo * logo)
 {
-	LockerDemoHelper * helper = logo->helper;
-	char const * p;
-
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
 #endif
-	/* settings */
-	/* scrolling */
-	logo->scroll = 0;
-	if((p = helper->config_get(helper->locker, "logo", "scroll")) != NULL)
-		logo->scroll = strtol(p, NULL, 10);
-	/* opacity */
-	logo->opacity = 255;
-	if((p = helper->config_get(helper->locker, "logo", "opacity")) != NULL)
-	{
-		logo->opacity = strtol(p, NULL, 10);
-		if(logo->opacity < 0 || logo->opacity > 255)
-			logo->opacity = 255;
-	}
 	if(logo->source == 0)
-		_logo_on_timeout(logo);
+		logo->source = g_idle_add(_logo_on_timeout, logo);
 }
 
 
@@ -302,22 +285,23 @@ static int _logo_load(Logo * logo)
 			g_object_unref(logo->logo);
 		logo->logo = pixbuf;
 	}
+	/* scrolling */
+	logo->scroll = 0;
+	if((p = helper->config_get(helper->locker, "logo", "scroll")) != NULL)
+		logo->scroll = strtol(p, NULL, 10);
+	/* opacity */
+	logo->opacity = 255;
+	if((p = helper->config_get(helper->locker, "logo", "opacity")) != NULL)
+	{
+		logo->opacity = strtol(p, NULL, 10);
+		if(logo->opacity < 0 || logo->opacity > 255)
+			logo->opacity = 255;
+	}
 	return ret;
 }
 
 
 /* callbacks */
-/* logo_on_idle */
-static gboolean _logo_on_idle(gpointer data)
-{
-	Logo * logo = data;
-
-	logo->source = g_timeout_add((logo->scroll != 0) ? 40 : 10000,
-			_logo_on_timeout, logo);
-	return FALSE;
-}
-
-
 /* logo_on_timeout */
 static void _timeout_window(Logo * logo, LogoWindow * window);
 
@@ -329,7 +313,8 @@ static gboolean _logo_on_timeout(gpointer data)
 	for(i = 0; i < logo->windows_cnt; i++)
 		_timeout_window(logo, &logo->windows[i]);
 	logo->frame_num += logo->scroll;
-	logo->source = g_idle_add(_logo_on_idle, logo);
+	logo->source = g_timeout_add((logo->scroll != 0) ? 40 : 10000,
+			_logo_on_timeout, logo);
 	return FALSE;
 }
 
