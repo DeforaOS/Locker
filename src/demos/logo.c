@@ -250,6 +250,7 @@ static void _logo_cycle(Logo * logo)
 
 
 /* useful */
+/* logo_load */
 static int _logo_load(Logo * logo)
 {
 	int ret = 0;
