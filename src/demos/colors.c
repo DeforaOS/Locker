@@ -97,8 +97,8 @@ static int _colors_add(Colors * colors, GdkWindow * window)
 {
 	GdkWindow ** p;
 
-	if((p = realloc(colors->windows, sizeof(*p) * (colors->windows_cnt + 1)))
-			== NULL)
+	if((p = realloc(colors->windows, sizeof(*p)
+					* (colors->windows_cnt + 1))) == NULL)
 		return -error_set_code(1, "%s", strerror(errno));
 	colors->windows = p;
 	colors->windows[colors->windows_cnt++] = window;
