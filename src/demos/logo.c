@@ -20,6 +20,7 @@
 #ifdef DEBUG
 # include <stdio.h>
 #endif
+#include <string.h>
 #include <time.h>
 #include <System.h>
 #include "Locker/demo.h"
@@ -77,7 +78,7 @@ static const LogoTheme _logo_themes[] =
 {
 	{ "gnome", DATADIR "/pixmaps/backgrounds/gnome/background-default.jpg",
 		DATADIR "/icons/gnome/256x256/places/start-here.png" },
-	{ "custom", NULL, NULL }
+	{ NULL, NULL, NULL }
 };
 #define LOGO_THEME_DEFAULT 0
 
@@ -257,13 +258,20 @@ static int _logo_load(Logo * logo)
 {
 	int ret = 0;
 	LockerDemoHelper * helper = logo->helper;
+	size_t i = LOGO_THEME_DEFAULT;
 	String const * p;
 	GdkPixbuf * pixbuf;
 	GError * error = NULL;
 
+	/* load the theme configured */
+	if((p = helper->config_get(helper->locker, "logo", "theme")) != NULL)
+		for(i = 0; _logo_themes[i].name != NULL; i++)
+			if(strcmp(_logo_themes[i].name, p) == 0)
+				break;
 	/* load the background */
-	if((p = helper->config_get(helper->locker, "logo", "background"))
-			== NULL)
+	if((p = _logo_themes[i].background) == NULL
+			&& (p = helper->config_get(helper->locker, "logo",
+					"background")) == NULL)
 		p = _logo_themes[LOGO_THEME_DEFAULT].background;
 	if((pixbuf = gdk_pixbuf_new_from_file(p, &error)) == NULL)
 	{
@@ -278,7 +286,9 @@ static int _logo_load(Logo * logo)
 		logo->background = pixbuf;
 	}
 	/* load the logo */
-	if((p = helper->config_get(helper->locker, "logo", "logo")) == NULL)
+	if((p = _logo_themes[i].logo) == NULL
+			&& (p = helper->config_get(helper->locker, "logo",
+					"logo")) == NULL)
 		p = _logo_themes[LOGO_THEME_DEFAULT].logo;
 	if((pixbuf = gdk_pixbuf_new_from_file(p, &error)) == NULL)
 	{
