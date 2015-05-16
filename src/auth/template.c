@@ -45,7 +45,7 @@ static int _template_action(Template * template, LockerAction action);
 LockerAuthDefinition plugin =
 {
 	"Template",
-	NULL,
+	"missing-image",
 	NULL,
 	_template_init,
 	_template_destroy,
