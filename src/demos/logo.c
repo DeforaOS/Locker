@@ -91,6 +91,9 @@ static void _logo_remove(Logo * logo, GdkWindow * window);
 static void _logo_start(Logo * logo);
 static void _logo_stop(Logo * logo);
 
+/* useful */
+static int _logo_load(Logo * logo);
+
 /* callbacks */
 static gboolean _logo_on_idle(gpointer data);
 static gboolean _logo_on_timeout(gpointer data);
@@ -121,8 +124,6 @@ LockerDemoDefinition plugin =
 static Logo * _logo_init(LockerDemoHelper * helper)
 {
 	Logo * logo;
-	char const * p;
-	GError * error = NULL;
 
 	if((logo = object_new(sizeof(*logo))) == NULL)
 		return NULL;
@@ -136,32 +137,9 @@ static Logo * _logo_init(LockerDemoHelper * helper)
 	logo->frame_num = 0;
 	logo->scroll = 0;
 	logo->opacity = 255;
-	/* load the background */
-	if((p = helper->config_get(helper->locker, "logo", "background"))
-			== NULL)
-	{
-		helper->error(NULL, "No background configured", 1);
-		p = _logo_themes[LOGO_THEME_DEFAULT].background;
-	}
-	if(p != NULL && (logo->background = gdk_pixbuf_new_from_file(p, &error))
-			== NULL)
-	{
-		helper->error(NULL, error->message, 1);
-		g_error_free(error);
-		error = NULL;
-	}
-	/* load the logo */
-	if((p = helper->config_get(helper->locker, "logo", "logo")) == NULL)
-	{
-		helper->error(NULL, "No logo configured", 1);
-		p = _logo_themes[LOGO_THEME_DEFAULT].logo;
-	}
-	if((logo->logo = gdk_pixbuf_new_from_file(p, &error)) == NULL)
-	{
-		helper->error(NULL, error->message, 1);
-		g_error_free(error);
-		error = NULL;
-	}
+	logo->background = NULL;
+	logo->logo = NULL;
+	_logo_load(logo);
 	return logo;
 }
 
@@ -271,6 +249,50 @@ static void _logo_stop(Logo * logo)
 	if(logo->source != 0)
 		g_source_remove(logo->source);
 	logo->source = 0;
+}
+
+
+/* useful */
+static int _logo_load(Logo * logo)
+{
+	int ret = 0;
+	LockerDemoHelper * helper = logo->helper;
+	String const * p;
+	GdkPixbuf * pixbuf;
+	GError * error = NULL;
+
+	/* load the background */
+	if((p = helper->config_get(helper->locker, "logo", "background"))
+			== NULL)
+		p = _logo_themes[LOGO_THEME_DEFAULT].background;
+	if((pixbuf = gdk_pixbuf_new_from_file(p, &error)) == NULL)
+	{
+		ret = -helper->error(NULL, error->message, 1);
+		g_error_free(error);
+		error = NULL;
+	}
+	else
+	{
+		if(logo->background != NULL)
+			g_object_unref(logo->background);
+		logo->background = pixbuf;
+	}
+	/* load the logo */
+	if((p = helper->config_get(helper->locker, "logo", "logo")) == NULL)
+		p = _logo_themes[LOGO_THEME_DEFAULT].logo;
+	if((pixbuf = gdk_pixbuf_new_from_file(p, &error)) == NULL)
+	{
+		ret = -helper->error(NULL, error->message, 1);
+		g_error_free(error);
+		error = NULL;
+	}
+	else
+	{
+		if(logo->logo != NULL)
+			g_object_unref(logo->logo);
+		logo->logo = pixbuf;
+	}
+	return ret;
 }
 
 
