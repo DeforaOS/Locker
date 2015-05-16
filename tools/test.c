@@ -53,6 +53,7 @@ struct _Locker
 	LockerAuth * auth;
 
 	/* widgets */
+	GtkWidget * window;
 	GtkWidget * variable;
 	GtkWidget * value;
 };
@@ -95,7 +96,6 @@ static int _test(int desktop, int root, int width, int height,
 	LockerAuthHelper ahelper;
 	Plugin * aplugin;
 	GtkWidget * window;
-	GtkWidget * dwindow = NULL;
 	GdkWindow * wwindow;
 	GtkWidget * vbox;
 	GtkWidget * hbox;
@@ -220,25 +220,28 @@ static int _test(int desktop, int root, int width, int height,
 	{
 		screen = gdk_screen_get_default();
 		wwindow = gdk_screen_get_root_window(screen);
+		locker->window = NULL;
 	}
 	else
 	{
-		dwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_default_size(GTK_WINDOW(dwindow), width, height);
+		locker->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_default_size(GTK_WINDOW(locker->window), width,
+				height);
 		if(desktop)
-			gtk_window_set_type_hint(GTK_WINDOW(dwindow),
+			gtk_window_set_type_hint(GTK_WINDOW(locker->window),
 					GDK_WINDOW_TYPE_HINT_DESKTOP);
-		g_signal_connect(dwindow, "delete-event", G_CALLBACK(
+		g_signal_connect(locker->window, "delete-event", G_CALLBACK(
 					_test_on_closex), NULL);
 		if(locker->auth != NULL
 				&& (widget = locker->aplugin->get_widget(
 						locker->auth)) != NULL)
-			gtk_container_add(GTK_CONTAINER(dwindow), widget);
-		gtk_widget_show_all(dwindow);
+			gtk_container_add(GTK_CONTAINER(locker->window),
+					widget);
+		gtk_widget_show_all(locker->window);
 #if GTK_CHECK_VERSION(2, 14, 0)
-		wwindow = gtk_widget_get_window(dwindow);
+		wwindow = gtk_widget_get_window(locker->window);
 #else
-		wwindow = dwindow->window;
+		wwindow = locker->window->window;
 #endif
 	}
 	if(locker->dplugin->add(locker->demo, wwindow) != 0)
@@ -250,8 +253,8 @@ static int _test(int desktop, int root, int width, int height,
 		gtk_main();
 		if(locker->aplugin != NULL && locker->aplugin->destroy != NULL)
 			locker->aplugin->destroy(locker->auth);
-		if(dwindow != NULL)
-			gtk_widget_destroy(dwindow);
+		if(locker->window != NULL)
+			gtk_widget_destroy(locker->window);
 		gtk_widget_destroy(window);
 	}
 	if(aplugin != NULL)
@@ -307,7 +310,24 @@ static int _usage(void)
 /* test_helper_action */
 static int _test_helper_action(Locker * locker, LockerAction action)
 {
-	/* FIXME really implement */
+	GtkWidget * widget;
+	guint flags = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT;
+
+	switch(action)
+	{
+		case LOCKER_ACTION_UNLOCK:
+			widget = gtk_message_dialog_new_with_markup(
+					GTK_WINDOW(locker->window), flags,
+					GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
+					"%s", "Unlocked");
+			gtk_window_set_title(GTK_WINDOW(widget), "Information");
+			gtk_dialog_run(GTK_DIALOG(widget));
+			gtk_widget_destroy(widget);
+			return 0;
+		default:
+			/* FIXME really implement */
+			break;
+	}
 	return -1;
 }
 
