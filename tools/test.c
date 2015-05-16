@@ -315,6 +315,15 @@ static int _test_helper_action(Locker * locker, LockerAction action)
 
 	switch(action)
 	{
+		case LOCKER_ACTION_CYCLE:
+			_test_on_cycle(locker);
+			break;
+		case LOCKER_ACTION_START:
+			_test_on_start(locker);
+			break;
+		case LOCKER_ACTION_STOP:
+			_test_on_stop(locker);
+			break;
 		case LOCKER_ACTION_UNLOCK:
 			widget = gtk_message_dialog_new_with_markup(
 					GTK_WINDOW(locker->window), flags,
