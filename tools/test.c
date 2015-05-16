@@ -65,7 +65,9 @@ static int _usage(void);
 
 /* helpers */
 static int _test_helper_action(Locker * locker, LockerAction action);
-static char const * _test_helper_config_get(Locker * locker,
+static char const * _test_helper_config_get_auth(Locker * locker,
+		char const * section, char const * variable);
+static char const * _test_helper_config_get_demo(Locker * locker,
 		char const * section, char const * variable);
 static int _test_helper_config_set(Locker * locker, char const * section,
 		char const * variable, char const * value);
@@ -112,7 +114,7 @@ static int _test(int desktop, int root, int width, int height,
 	/* demo plug-in */
 	dhelper.locker = locker;
 	dhelper.error = _test_helper_error;
-	dhelper.config_get = _test_helper_config_get;
+	dhelper.config_get = _test_helper_config_get_demo;
 	dhelper.config_set = _test_helper_config_set;
 	if((dplugin = plugin_new(LIBDIR, PACKAGE, "demos", demo)) == NULL)
 	{
@@ -140,7 +142,7 @@ static int _test(int desktop, int root, int width, int height,
 	ahelper.locker = locker;
 	ahelper.error = _test_helper_error;
 	ahelper.action = _test_helper_action;
-	ahelper.config_get = _test_helper_config_get;
+	ahelper.config_get = _test_helper_config_get_auth;
 	ahelper.config_set = _test_helper_config_set;
 	if(auth == NULL)
 	{
@@ -310,8 +312,30 @@ static int _test_helper_action(Locker * locker, LockerAction action)
 }
 
 
-/* test_helper_config_get */
-static char const * _test_helper_config_get(Locker * locker,
+/* test_helper_config_get_auth */
+static char const * _test_helper_config_get_auth(Locker * locker,
+		char const * section, char const * variable)
+{
+	char const * ret;
+	String * s = NULL;
+
+	if(locker->config == NULL)
+	{
+		error_set_code(1, "%s", "Configuration not available");
+		return NULL;
+	}
+	if(section != NULL
+			&& (s = string_new_append("auth::", section, NULL))
+			== NULL)
+		return NULL;
+	ret = config_get(locker->config, s, variable);
+	string_delete(s);
+	return ret;
+}
+
+
+/* test_helper_config_get_demo */
+static char const * _test_helper_config_get_demo(Locker * locker,
 		char const * section, char const * variable)
 {
 	char const * ret;
