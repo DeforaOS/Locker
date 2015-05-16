@@ -74,6 +74,7 @@ static int _test_helper_error(Locker * locker, char const * message, int ret);
 /* callbacks */
 static gboolean _test_on_closex(void);
 static void _test_on_apply(gpointer data);
+static void _test_on_cycle(gpointer data);
 static void _test_on_start(gpointer data);
 static void _test_on_stop(gpointer data);
 
@@ -186,6 +187,10 @@ static int _test(int desktop, int root, int width, int height,
 	gtk_container_add(GTK_CONTAINER(hbox), button);
 	button = gtk_button_new_with_label("Stop");
 	g_signal_connect_swapped(button, "clicked", G_CALLBACK(_test_on_stop),
+			locker);
+	gtk_container_add(GTK_CONTAINER(hbox), button);
+	button = gtk_button_new_with_label("Cycle");
+	g_signal_connect_swapped(button, "clicked", G_CALLBACK(_test_on_cycle),
 			locker);
 	gtk_container_add(GTK_CONTAINER(hbox), button);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
@@ -380,14 +385,24 @@ static gboolean _test_on_closex(void)
 }
 
 
+/* test_on_cycle */
+static void _test_on_cycle(gpointer data)
+{
+	Locker * locker = data;
+
+	if(locker->dplugin->cycle != NULL)
+		locker->dplugin->cycle(locker->demo);
+}
+
+
 /* test_on_start */
 static void _test_on_start(gpointer data)
 {
 	Locker * locker = data;
 
-	locker->dplugin->start(locker->demo);
+	if(locker->dplugin->start != NULL)
+		locker->dplugin->start(locker->demo);
 }
-
 
 
 /* test_on_stop */
@@ -395,7 +410,8 @@ static void _test_on_stop(gpointer data)
 {
 	Locker * locker = data;
 
-	locker->dplugin->stop(locker->demo);
+	if(locker->dplugin->stop != NULL)
+		locker->dplugin->stop(locker->demo);
 }
 
 

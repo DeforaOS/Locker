@@ -91,6 +91,7 @@ static int _logo_add(Logo * logo, GdkWindow * window);
 static void _logo_remove(Logo * logo, GdkWindow * window);
 static void _logo_start(Logo * logo);
 static void _logo_stop(Logo * logo);
+static void _logo_cycle(Logo * logo);
 
 /* useful */
 static int _logo_load(Logo * logo);
@@ -113,7 +114,7 @@ LockerDemoDefinition plugin =
 	_logo_remove,
 	_logo_start,
 	_logo_stop,
-	NULL
+	_logo_cycle
 };
 
 
@@ -233,6 +234,18 @@ static void _logo_stop(Logo * logo)
 	if(logo->source != 0)
 		g_source_remove(logo->source);
 	logo->source = 0;
+}
+
+
+/* logo_cycle */
+static void _logo_cycle(Logo * logo)
+{
+	/* cycle only when not scrolling */
+	if(logo->scroll != 0)
+		return;
+	if(logo->source != 0)
+		g_source_remove(logo->source);
+	logo->source = g_idle_add(_logo_on_timeout, logo);
 }
 
 
