@@ -232,6 +232,8 @@ static int _password_action(Password * password, LockerAction action)
 			password->source = g_timeout_add(30000,
 					_password_on_timeout, password);
 			break;
+		case LOCKER_ACTION_ACTIVATE:
+		case LOCKER_ACTION_CYCLE:
 		case LOCKER_ACTION_START:
 			gtk_widget_hide(password->widget);
 			break;
