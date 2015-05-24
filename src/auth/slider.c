@@ -200,13 +200,16 @@ static int _slider_action(Slider * slider, LockerAction action)
 			slider->source = 0;
 			slider->locked = TRUE;
 			break;
-		case LOCKER_ACTION_START:
 		case LOCKER_ACTION_UNLOCK:
+			slider->locked = FALSE;
+			/* fallback */
+		case LOCKER_ACTION_ACTIVATE:
+		case LOCKER_ACTION_CYCLE:
+		case LOCKER_ACTION_START:
 			gtk_widget_hide(slider->widget);
 			if(slider->source != 0)
 				g_source_remove(slider->source);
 			slider->source = 0;
-			slider->locked = FALSE;
 			break;
 		default:
 			break;
