@@ -166,11 +166,9 @@ static Password * _password_init(LockerAuthHelper * helper)
 	gtk_box_pack_start(GTK_BOX(hbox2), password->button, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, TRUE, 0);
 	/* wrong */
-	password->wrong = gtk_label_new(_("Wrong password!"));
+	password->wrong = gtk_label_new("");
 	gtk_widget_modify_fg(password->wrong, GTK_STATE_NORMAL, &red);
 	gtk_widget_modify_font(password->wrong, bold);
-	/* FIXME always show but display the current error instead */
-	gtk_widget_set_no_show_all(password->wrong, TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), password->wrong, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, TRUE, 0);
 	/* right padding (centering) */
@@ -284,7 +282,7 @@ static void _password_on_password_activate(gpointer data)
 	gtk_entry_set_text(GTK_ENTRY(password->password), "");
 	helper->error(NULL, _("Authentication failed"), 1);
 	gtk_widget_grab_focus(password->password);
-	gtk_widget_show(password->wrong);
+	gtk_label_set_text(GTK_LABEL(password->wrong), _("Wrong password!"));
 	password->source = g_timeout_add(3000, _password_on_password_wrong,
 			password);
 }
@@ -296,7 +294,7 @@ static gboolean _password_on_password_wrong(gpointer data)
 	Password * password = data;
 
 	password->source = 0;
-	gtk_widget_hide(password->wrong);
+	gtk_label_set_text(GTK_LABEL(password->wrong), "");
 	gtk_widget_set_sensitive(password->password, TRUE);
 	gtk_widget_set_sensitive(password->button, TRUE);
 	gtk_entry_set_text(GTK_ENTRY(password->password), "");
