@@ -185,8 +185,10 @@ static int _slider_action(Slider * slider, LockerAction action)
 			slider->source = 0;
 			if(slider->locked)
 			{
-				gtk_widget_show(slider->widget);
+				gtk_range_set_value(GTK_RANGE(slider->scale),
+						0.0);
 				gtk_widget_grab_focus(slider->scale);
+				gtk_widget_show(slider->widget);
 				slider->source = g_timeout_add(3000,
 						_slider_on_timeout, slider);
 			}
