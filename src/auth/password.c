@@ -83,7 +83,9 @@ static Password * _password_init(LockerAuthHelper * helper)
 	PangoFontDescription * bold;
 	const GdkColor white = { 0x0, 0xffff, 0xffff, 0xffff };
 	const GdkColor red = { 0x0, 0xffff, 0x0000, 0x0000 };
+	GtkWidget * vbox;
 	GtkWidget * hbox;
+	GtkWidget * hbox2;
 	GtkWidget * widget;
 	char buf[256];
 	struct passwd * pw;
@@ -100,9 +102,28 @@ static Password * _password_init(LockerAuthHelper * helper)
 #else
 	password->widget = gtk_vbox_new(FALSE, 4);
 #endif
-	/* centering */
+	/* top padding (centering) */
 	widget = gtk_label_new(NULL);
 	gtk_box_pack_start(GTK_BOX(password->widget), widget, TRUE, TRUE, 0);
+	/* dialog */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
+	hbox = gtk_hbox_new(FALSE, 4);
+#endif
+	/* left padding (centering) */
+	widget = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	/* authentication icon */
+	widget = gtk_image_new_from_stock(GTK_STOCK_DIALOG_AUTHENTICATION,
+			GTK_ICON_SIZE_DIALOG);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0.5, 0.0);
+	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
+	vbox = gtk_vbox_new(FALSE, 4);
+#endif
 	/* hostname */
 	if(gethostname(buf, sizeof(buf)) != 0)
 		snprintf(buf, sizeof(buf), "%s", "DeforaOS " PACKAGE);
@@ -111,7 +132,7 @@ static Password * _password_init(LockerAuthHelper * helper)
 	widget = gtk_label_new(buf);
 	gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &white);
 	gtk_widget_modify_font(widget, bold);
-	gtk_box_pack_start(GTK_BOX(password->widget), widget, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	/* screen */
 	if((pw = getpwuid(getuid())) != NULL)
 		username = pw->pw_name;
@@ -122,43 +143,41 @@ static Password * _password_init(LockerAuthHelper * helper)
 			: _("This screen is locked"), username);
 	widget = gtk_label_new(buf);
 	gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &white);
-	gtk_box_pack_start(GTK_BOX(password->widget), widget, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	/* prompt */
 	widget = gtk_label_new(_("Enter password: "));
 	gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &white);
-	gtk_box_pack_start(GTK_BOX(password->widget), widget, FALSE, TRUE, 0);
-#if GTK_CHECK_VERSION(3, 0, 0)
-	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-	hbox = gtk_hbox_new(FALSE, 4);
-#endif
-	/* left padding (centering) */
-	widget = gtk_label_new(NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	/* entry */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
+	hbox2 = gtk_hbox_new(FALSE, 4);
+#endif
 	password->password = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(password->password), FALSE);
 	g_signal_connect_swapped(password->password, "activate", G_CALLBACK(
 				_password_on_password_activate), password);
-	gtk_box_pack_start(GTK_BOX(hbox), password->password, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox2), password->password, FALSE, TRUE, 0);
 	/* button */
 	password->button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	g_signal_connect_swapped(password->button, "clicked", G_CALLBACK(
 				_password_on_password_activate), password);
-	gtk_box_pack_start(GTK_BOX(hbox), password->button, FALSE, TRUE, 0);
-	/* right padding (centering) */
-	widget = gtk_label_new(NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(password->widget), hbox, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox2), password->button, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, TRUE, 0);
 	/* wrong */
 	password->wrong = gtk_label_new(_("Wrong password!"));
 	gtk_widget_modify_fg(password->wrong, GTK_STATE_NORMAL, &red);
 	gtk_widget_modify_font(password->wrong, bold);
 	/* FIXME always show but display the current error instead */
 	gtk_widget_set_no_show_all(password->wrong, TRUE);
-	gtk_box_pack_start(GTK_BOX(password->widget), password->wrong, FALSE,
-			TRUE, 0);
-	/* centering */
+	gtk_box_pack_start(GTK_BOX(vbox), password->wrong, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, TRUE, 0);
+	/* right padding (centering) */
+	widget = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(password->widget), hbox, FALSE, TRUE, 0);
+	/* bottom padding (centering) */
 	widget = gtk_label_new(NULL);
 	gtk_box_pack_start(GTK_BOX(password->widget), widget, TRUE, TRUE, 0);
 	gtk_widget_show_all(password->widget);
