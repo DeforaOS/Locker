@@ -42,7 +42,7 @@ typedef struct _LockerAuth
 	GtkWidget * widget;
 	GtkWidget * password;
 	GtkWidget * button;
-	GtkWidget * wrong;
+	GtkWidget * error;
 } Password;
 
 
@@ -55,8 +55,8 @@ static int _password_action(Password * password, LockerAction action);
 
 /* callbacks */
 static void _password_on_password_activate(gpointer data);
-static gboolean _password_on_password_wrong(gpointer data);
 static gboolean _password_on_timeout(gpointer data);
+static gboolean _password_on_timeout_clear(gpointer data);
 
 
 /* public */
@@ -165,11 +165,11 @@ static Password * _password_init(LockerAuthHelper * helper)
 				_password_on_password_activate), password);
 	gtk_box_pack_start(GTK_BOX(hbox2), password->button, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, TRUE, 0);
-	/* wrong */
-	password->wrong = gtk_label_new("");
-	gtk_widget_modify_fg(password->wrong, GTK_STATE_NORMAL, &red);
-	gtk_widget_modify_font(password->wrong, bold);
-	gtk_box_pack_start(GTK_BOX(vbox), password->wrong, FALSE, TRUE, 0);
+	/* error */
+	password->error = gtk_label_new("");
+	gtk_widget_modify_fg(password->error, GTK_STATE_NORMAL, &red);
+	gtk_widget_modify_font(password->error, bold);
+	gtk_box_pack_start(GTK_BOX(vbox), password->error, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, TRUE, 0);
 	/* right padding (centering) */
 	widget = gtk_label_new(NULL);
@@ -282,25 +282,9 @@ static void _password_on_password_activate(gpointer data)
 	gtk_entry_set_text(GTK_ENTRY(password->password), "");
 	helper->error(NULL, _("Authentication failed"), 1);
 	gtk_widget_grab_focus(password->password);
-	gtk_label_set_text(GTK_LABEL(password->wrong), _("Wrong password!"));
-	password->source = g_timeout_add(3000, _password_on_password_wrong,
+	gtk_label_set_text(GTK_LABEL(password->error), _("Wrong password!"));
+	password->source = g_timeout_add(3000, _password_on_timeout_clear,
 			password);
-}
-
-
-/* password_on_password_wrong */
-static gboolean _password_on_password_wrong(gpointer data)
-{
-	Password * password = data;
-
-	password->source = 0;
-	gtk_label_set_text(GTK_LABEL(password->wrong), "");
-	gtk_widget_set_sensitive(password->password, TRUE);
-	gtk_widget_set_sensitive(password->button, TRUE);
-	gtk_entry_set_text(GTK_ENTRY(password->password), "");
-	gtk_widget_hide(password->widget);
-	password->helper->action(password->helper->locker, LOCKER_ACTION_START);
-	return FALSE;
 }
 
 
@@ -309,10 +293,26 @@ static gboolean _password_on_timeout(gpointer data)
 {
 	Password * password = data;
 
-	gtk_entry_set_text(GTK_ENTRY(password->password), _("Timed out"));
+	gtk_label_set_text(GTK_LABEL(password->error), _("Timed out"));
 	gtk_widget_set_sensitive(password->password, FALSE);
 	gtk_widget_set_sensitive(password->button, FALSE);
-	password->source = g_timeout_add(3000, _password_on_password_wrong,
+	password->source = g_timeout_add(3000, _password_on_timeout_clear,
 			password);
+	return FALSE;
+}
+
+
+/* password_on_timeout_clear */
+static gboolean _password_on_timeout_clear(gpointer data)
+{
+	Password * password = data;
+
+	password->source = 0;
+	gtk_label_set_text(GTK_LABEL(password->error), "");
+	gtk_widget_set_sensitive(password->password, TRUE);
+	gtk_widget_set_sensitive(password->button, TRUE);
+	gtk_entry_set_text(GTK_ENTRY(password->password), "");
+	gtk_widget_hide(password->widget);
+	password->helper->action(password->helper->locker, LOCKER_ACTION_START);
 	return FALSE;
 }
