@@ -78,8 +78,10 @@ static int _test_helper_error(Locker * locker, char const * message, int ret);
 static gboolean _test_on_closex(void);
 static void _test_on_apply(gpointer data);
 static void _test_on_cycle(gpointer data);
+static void _test_on_lock(gpointer data);
 static void _test_on_start(gpointer data);
 static void _test_on_stop(gpointer data);
+static void _test_on_unlock(gpointer data);
 
 
 /* functions */
@@ -154,6 +156,9 @@ static int _test(int desktop, int root, int width, int height,
 				"Could not load auth plug-in");
 	else if((locker->aplugin = plugin_lookup(aplugin, "plugin")) == NULL
 			|| locker->aplugin->init == NULL
+			|| locker->aplugin->destroy == NULL
+			|| locker->aplugin->get_widget == NULL
+			|| locker->aplugin->action == NULL
 			|| (locker->auth = locker->aplugin->init(&ahelper))
 			== NULL)
 	{
@@ -193,6 +198,14 @@ static int _test(int desktop, int root, int width, int height,
 	gtk_container_add(GTK_CONTAINER(hbox), button);
 	button = gtk_button_new_with_label("Cycle");
 	g_signal_connect_swapped(button, "clicked", G_CALLBACK(_test_on_cycle),
+			locker);
+	gtk_container_add(GTK_CONTAINER(hbox), button);
+	button = gtk_button_new_with_label("Lock");
+	g_signal_connect_swapped(button, "clicked", G_CALLBACK(_test_on_lock),
+			locker);
+	gtk_container_add(GTK_CONTAINER(hbox), button);
+	button = gtk_button_new_with_label("Unlock");
+	g_signal_connect_swapped(button, "clicked", G_CALLBACK(_test_on_unlock),
 			locker);
 	gtk_container_add(GTK_CONTAINER(hbox), button);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
@@ -319,16 +332,33 @@ static int _test_helper_action(Locker * locker, LockerAction action)
 		case LOCKER_ACTION_CYCLE:
 			if(locker->dplugin->cycle != NULL)
 				locker->dplugin->cycle(locker->demo);
+			if(locker->aplugin->action != NULL)
+				locker->aplugin->action(locker->auth,
+						LOCKER_ACTION_CYCLE);
+			break;
+		case LOCKER_ACTION_LOCK:
+			if(locker->aplugin->action != NULL)
+				locker->aplugin->action(locker->auth,
+						LOCKER_ACTION_LOCK);
 			break;
 		case LOCKER_ACTION_START:
 			if(locker->dplugin->start != NULL)
 				locker->dplugin->start(locker->demo);
+			if(locker->aplugin->action != NULL)
+				locker->aplugin->action(locker->auth,
+						LOCKER_ACTION_START);
 			break;
 		case LOCKER_ACTION_STOP:
 			if(locker->dplugin->stop != NULL)
 				locker->dplugin->stop(locker->demo);
+			if(locker->aplugin->action != NULL)
+				locker->aplugin->action(locker->auth,
+						LOCKER_ACTION_DEACTIVATE);
 			break;
 		case LOCKER_ACTION_UNLOCK:
+			if(locker->aplugin->action != NULL)
+				locker->aplugin->action(locker->auth,
+						LOCKER_ACTION_UNLOCK);
 			widget = gtk_message_dialog_new_with_markup(
 					GTK_WINDOW(locker->window), flags,
 					GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
@@ -453,6 +483,15 @@ static void _test_on_cycle(gpointer data)
 }
 
 
+/* test_on_lock */
+static void _test_on_lock(gpointer data)
+{
+	Locker * locker = data;
+
+	_test_helper_action(locker, LOCKER_ACTION_LOCK);
+}
+
+
 /* test_on_start */
 static void _test_on_start(gpointer data)
 {
@@ -468,6 +507,15 @@ static void _test_on_stop(gpointer data)
 	Locker * locker = data;
 
 	_test_helper_action(locker, LOCKER_ACTION_STOP);
+}
+
+
+/* test_on_unlock */
+static void _test_on_unlock(gpointer data)
+{
+	Locker * locker = data;
+
+	_test_helper_action(locker, LOCKER_ACTION_UNLOCK);
 }
 
 
