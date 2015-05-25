@@ -2181,7 +2181,6 @@ static GdkFilterReturn _filter_configure(Locker * locker)
 	size_t i;
 	GdkWindow * window;
 	GtkWidget ** p;
-	GdkColor black;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
@@ -2213,7 +2212,6 @@ static GdkFilterReturn _filter_configure(Locker * locker)
 		}
 	else if(i == locker->windows_cnt)
 	{
-		memset(&black, 0, sizeof(black));
 		/* add new windows */
 		if((p = realloc(locker->windows, sizeof(*p) * cnt)) == NULL)
 			/* XXX report the error */
