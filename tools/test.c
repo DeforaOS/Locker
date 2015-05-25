@@ -97,6 +97,7 @@ static int _test(int desktop, int root, int width, int height,
 	Plugin * dplugin;
 	LockerAuthHelper ahelper;
 	Plugin * aplugin;
+	GdkColor black;
 	GtkWidget * window;
 	GdkWindow * wwindow;
 	GtkWidget * vbox;
@@ -238,6 +239,8 @@ static int _test(int desktop, int root, int width, int height,
 	else
 	{
 		locker->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		memset(&black, 0, sizeof(black));
+		gtk_widget_modify_bg(locker->window, GTK_STATE_NORMAL, &black);
 		gtk_window_set_default_size(GTK_WINDOW(locker->window), width,
 				height);
 		if(desktop)
