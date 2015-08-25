@@ -6,10 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Locker 0.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-16 01:13+0100\n"
+"POT-Creation-Date: 2015-08-26 01:09+0200\n"
 "PO-Revision-Date: 2015-02-18 01:25+0100\n"
 "Last-Translator: Carolina Rocha <carolina@defora.org>\n"
 "Language-Team: Spanish\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -188,32 +189,32 @@ msgid ""
 "  -p\tAuthentication plug-in to load\n"
 msgstr ""
 
-#: ../src/auth/password.c:121
+#: ../src/auth/password.c:142
 #, c-format
 msgid "This screen is locked by %s"
 msgstr "Esta pantalla está bloqueada por %s"
 
-#: ../src/auth/password.c:122
+#: ../src/auth/password.c:143
 #, c-format
 msgid "This screen is locked"
 msgstr "Esta pantalla está bloqueada"
 
-#: ../src/auth/password.c:127
+#: ../src/auth/password.c:148
 msgid "Enter password: "
 msgstr "Introducir contraseña: "
 
-#: ../src/auth/password.c:154
-msgid "Wrong password!"
-msgstr "Contraseña incorrecta"
-
-#: ../src/auth/password.c:208 ../src/auth/password.c:252
+#: ../src/auth/password.c:225 ../src/auth/password.c:271
 msgid "No password was set"
 msgstr "No se ha establecido una contraseña"
 
-#: ../src/auth/password.c:266
+#: ../src/auth/password.c:285
 msgid "Authentication failed"
 msgstr "Falló la autenticación"
 
-#: ../src/auth/password.c:295
+#: ../src/auth/password.c:287
+msgid "Wrong password!"
+msgstr "Contraseña incorrecta"
+
+#: ../src/auth/password.c:298
 msgid "Timed out"
 msgstr "Tiempo de espera"
