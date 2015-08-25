@@ -26,7 +26,7 @@ msgstr "Preferencias de protector de pantalla"
 
 #: ../src/locker.c:475
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: ../src/locker.c:479
 msgid "Authentication"
@@ -63,53 +63,55 @@ msgstr "Plug-in: "
 
 #: ../src/locker.c:610
 msgid "Default"
-msgstr ""
+msgstr "Default"
 
 #: ../src/locker.c:611
 msgid "Do not blank"
-msgstr ""
+msgstr "No despejar la pantalla"
 
 #: ../src/locker.c:612
 msgid "Blank screen"
-msgstr ""
+msgstr "Despejar la pantalla"
 
 #: ../src/locker.c:624
 msgid "Enable screen saving"
-msgstr ""
+msgstr "Activar protector de pantalla"
 
 #: ../src/locker.c:635
 msgid "After: "
-msgstr ""
+msgstr "Despues de: "
 
 #: ../src/locker.c:649
 msgid "Blanking: "
-msgstr ""
+msgstr "Despejar: "
 
 #: ../src/locker.c:674
 msgid "Energy saving"
-msgstr ""
+msgstr "Ahorrar energía"
 
 #: ../src/locker.c:684
 msgid "Enable DPMS"
-msgstr ""
+msgstr "Activar DPMS"
 
 #: ../src/locker.c:690
 msgid ""
 "DPMS manages the power supply of video monitors for computers through the "
 "graphics card"
 msgstr ""
+"DPMS administra el suministro de energía de monitores de video para "
+"computadoras a través de la tarjeta de gráficos"
 
 #: ../src/locker.c:702
 msgid "Standby: "
-msgstr ""
+msgstr "Standby: "
 
 #: ../src/locker.c:718
 msgid "Suspend: "
-msgstr ""
+msgstr "Suspender: "
 
 #: ../src/locker.c:734
 msgid "Off: "
-msgstr ""
+msgstr "Apagar: "
 
 #: ../src/locker.c:781
 msgid "Enabled"
@@ -188,6 +190,9 @@ msgid ""
 "  -d\tDemo sub-system to load\n"
 "  -p\tAuthentication plug-in to load\n"
 msgstr ""
+"Usage: %s [-d demo][-p plug-in]\n"
+"  -d\tDemo subsistema a cargar\n"
+"  -p\tAutenticación plug-in a cargar\n"
 
 #: ../src/auth/password.c:142
 #, c-format
