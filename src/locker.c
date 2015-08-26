@@ -925,6 +925,7 @@ static void _preferences_on_cancel(gpointer data)
 static void _cancel_auth(Locker * locker, GtkListStore * store)
 {
 	char const * q;
+	gboolean active;
 	GtkIconTheme * theme;
 	GtkTreeIter iter;
 	GdkPixbuf * icon;
@@ -941,19 +942,16 @@ static void _cancel_auth(Locker * locker, GtkListStore * store)
 	gint size = 24;
 
 	if((q = config_get(locker->config, NULL, "lock")) != NULL)
-	{
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
-					locker->pr_alock), TRUE);
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_adelay),
 				strtol(q, NULL, 10));
-	}
 	else
-	{
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
-					locker->pr_alock), FALSE);
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(locker->pr_adelay),
 				0.0);
-	}
+	active = (q != NULL) ? TRUE : FALSE;
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(locker->pr_alock),
+			active);
+	gtk_widget_set_sensitive(locker->pr_adelay, active);
+	gtk_widget_set_sensitive(locker->pr_acombo, active);
 	theme = gtk_icon_theme_get_default();
 	gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &size, &size);
 	gtk_list_store_clear(store);
