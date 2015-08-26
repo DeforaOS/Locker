@@ -439,14 +439,10 @@ void locker_show_preferences(Locker * locker, gboolean show)
 {
 	if(locker->pr_window == NULL)
 		_preferences_window(locker);
-	if(locker->pr_window != NULL)
-	{
-		if(show)
-			gtk_window_present(GTK_WINDOW(locker->pr_window));
-		else
-			gtk_widget_hide(locker->pr_window);
-		return;
-	}
+	if(show)
+		gtk_window_present(GTK_WINDOW(locker->pr_window));
+	else
+		gtk_widget_hide(locker->pr_window);
 }
 
 static void _preferences_window(Locker * locker)
