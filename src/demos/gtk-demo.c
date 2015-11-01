@@ -66,7 +66,11 @@ typedef struct _GtkDemoWindow
 {
 	GdkWindow * window;
 	GdkPixbuf * frame;
+#if GTK_CHECK_VERSION(3, 0, 0)
+	cairo_t * cairo;
+#else
 	GdkPixmap * pixmap;
+#endif
 } GtkDemoWindow;
 
 typedef struct _LockerDemo
@@ -180,19 +184,19 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 {
 	int ret = 0;
 	GtkDemoWindow * p;
-#if GTK_CHECK_VERSION(3, 4, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
 	GdkRGBA color = { 0.0, 0.0, 0.0, 0.0 };
 #else
 	GdkColor color = { 0x0, 0x0, 0x0, 0x0 };
-#endif
 	GdkPixmap * pixmap;
+#endif
 	GdkPixbuf * background = gtkdemo->images[GDI_BACKGROUND];
 	GdkRectangle rect;
+	int width;
+	int height;
 #if !GTK_CHECK_VERSION(3, 0, 0)
 	int depth;
 #endif
-	int width;
-	int height;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() window=%p\n", __func__, (void *)window);
@@ -201,6 +205,7 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 						+ 1))) == NULL)
 		return -1;
 	gtkdemo->windows = p;
+	p = &gtkdemo->windows[gtkdemo->windows_cnt++];
 	gdk_window_get_geometry(window, &rect.x, &rect.y, &rect.width,
 			&rect.height
 #if !GTK_CHECK_VERSION(3, 0, 0)
@@ -217,8 +222,9 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 # endif
 #endif
 	/* set the default color */
-#if GTK_CHECK_VERSION(3, 4, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
 	gdk_window_set_background_rgba(window, &color);
+	p->cairo = gdk_cairo_create(window);
 #else
 	gdk_window_set_background(window, &color);
 #endif
@@ -226,20 +232,31 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 	width = (background != NULL) ? gdk_pixbuf_get_width(background) : 0;
 	height = (background != NULL) ? gdk_pixbuf_get_height(background) : 0;
 	if(width > 0 && height > 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
+	{
+		p->frame = gdk_pixbuf_new(GDK_COLORSPACE_RGB, 1, 8, rect.width,
+				rect.height);
+		gdk_pixbuf_copy_area(background, 0, 0, width, height, p->frame,
+				0, 0);
+		gdk_cairo_set_source_pixbuf(p->cairo, p->frame, 0, 0);
+		cairo_paint(p->cairo);
+	}
+	else
+		p->frame = NULL;
+#else
 	{
 		pixmap = gdk_pixmap_new(window, width, height, -1);
 		gdk_draw_pixbuf(pixmap, NULL, background, 0, 0, 0, 0, width,
 				height, GDK_RGB_DITHER_NONE, 0, 0);
 		gdk_window_set_back_pixmap(window, pixmap, FALSE);
 		gdk_pixmap_unref(pixmap);
+		gdk_window_clear(window);
+		p->pixmap = gdk_pixmap_new(window, rect.width, rect.width, -1);
 	}
-	gdk_window_clear(window);
-	gtkdemo->windows[gtkdemo->windows_cnt].window = window;
-	gtkdemo->windows[gtkdemo->windows_cnt].frame =
-		gdk_pixbuf_new(GDK_COLORSPACE_RGB, 1, 8, rect.width,
-				rect.height);
-	gtkdemo->windows[gtkdemo->windows_cnt++].pixmap
-		= gdk_pixmap_new(window, rect.width, rect.width, -1);
+	else
+		p->pixmap = NULL;
+#endif
+	p->window = window;
 	return ret;
 }
 
@@ -255,8 +272,12 @@ static void _gtkdemo_remove(GtkDemo * gtkdemo, GdkWindow * window)
 			gtkdemo->windows[i].window = NULL;
 			g_object_unref(gtkdemo->windows[i].frame);
 			gtkdemo->windows[i].frame = NULL;
+#if GTK_CHECK_VERSION(3, 0, 0)
+			cairo_destroy(gtkdemo->windows[i].cairo);
+#else
 			gdk_pixmap_unref(gtkdemo->windows[i].pixmap);
 			gtkdemo->windows[i].pixmap = NULL;
+#endif
 		}
 	/* FIXME reorganize the array and free memory */
 	for(i = 0; i < gtkdemo->windows_cnt; i++)
@@ -352,8 +373,8 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 	int height;
 #if !GTK_CHECK_VERSION(3, 0, 0)
 	int depth;
-#endif
 	GdkPixmap * pixmap;
+#endif
 	int j;
 #define CYCLE_LEN 60
 	double f;
@@ -378,11 +399,18 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 		g_object_unref(window->frame);
 		window->frame = gdk_pixbuf_new(GDK_COLORSPACE_RGB, 1, 8,
 				rect.width, rect.height);
+#if GTK_CHECK_VERSION(3, 0, 0)
+		cairo_destroy(window->cairo);
+		window->cairo = gdk_cairo_create(w);
+#else
 		gdk_pixmap_unref(window->pixmap);
 		window->pixmap = gdk_pixmap_new(w, rect.width, rect.width, -1);
+#endif
 	}
 	frame = window->frame;
+#if !GTK_CHECK_VERSION(3, 0, 0)
 	pixmap = window->pixmap;
+#endif
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() frame=%p\n", __func__, (void *)frame);
 #endif
@@ -469,8 +497,13 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 						? MAX(127, fabs(255 * fsin2pi))
 						: MAX(127, fabs(255 * fcos2pi))));
 	}
+#if GTK_CHECK_VERSION(3, 0, 0)
+	gdk_cairo_set_source_pixbuf(window->cairo, background, 0, 0);
+	cairo_paint(window->cairo);
+#else
 	gdk_draw_pixbuf(pixmap, NULL, frame, 0, 0, 0, 0, rect.width,
 			rect.height, GDK_RGB_DITHER_NONE, 0, 0);
 	gdk_window_set_back_pixmap(w, pixmap, FALSE);
 	gdk_window_clear(w);
+#endif
 }
