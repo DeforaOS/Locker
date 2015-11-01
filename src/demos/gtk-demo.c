@@ -494,7 +494,7 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 						: MAX(127, fabs(255 * fcos2pi))));
 	}
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gdk_cairo_set_source_pixbuf(window->cairo, background, 0, 0);
+	gdk_cairo_set_source_pixbuf(window->cairo, frame, 0, 0);
 	cairo_paint(window->cairo);
 #else
 	gdk_draw_pixbuf(window->pixmap, NULL, frame, 0, 0, 0, 0, rect.width,
