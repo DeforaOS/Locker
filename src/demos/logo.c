@@ -54,7 +54,11 @@ typedef struct _LogoWindow
 {
 	GdkWindow * window;
 	GdkPixbuf * frame;
+#if GTK_CHECK_VERSION(3, 0, 0)
+	cairo_t * cairo;
+#else
 	GdkPixmap * pixmap;
+#endif
 } LogoWindow;
 
 typedef struct _LockerDemo
@@ -178,7 +182,11 @@ static int _logo_add(Logo * logo, GdkWindow * window)
 #endif
 	logo->windows[logo->windows_cnt].window = window;
 	logo->windows[logo->windows_cnt].frame = NULL;
+#if GTK_CHECK_VERSION(3, 0, 0)
+	logo->windows[logo->windows_cnt++].cairo = NULL;
+#else
 	logo->windows[logo->windows_cnt++].pixmap = NULL;
+#endif
 	return 0;
 }
 
@@ -195,9 +203,15 @@ static void _logo_remove(Logo * logo, GdkWindow * window)
 			if(logo->windows[i].frame != NULL)
 				g_object_unref(logo->windows[i].frame);
 			logo->windows[i].frame = NULL;
+#if GTK_CHECK_VERSION(3, 0, 0)
+			if(logo->windows[i].cairo != NULL)
+				cairo_destroy(logo->windows[i].cairo);
+			logo->windows[i].cairo = NULL;
+#else
 			if(logo->windows[i].pixmap != NULL)
 				gdk_pixmap_unref(logo->windows[i].pixmap);
 			logo->windows[i].pixmap = NULL;
+#endif
 		}
 	/* FIXME reorganize the array and free memory */
 	for(i = 0; i < logo->windows_cnt; i++)
@@ -336,9 +350,10 @@ static void _timeout_window(Logo * logo, LogoWindow * window)
 {
 	GdkWindow * w;
 	GdkRectangle rect;
+#if !GTK_CHECK_VERSION(3, 0, 0)
 	int depth;
+#endif
 	GdkPixbuf * frame;
-	GdkPixmap * pixmap;
 	int width = 0;
 	int height = 0;
 	int i;
@@ -356,8 +371,12 @@ static void _timeout_window(Logo * logo, LogoWindow * window)
 
 	if((w = window->window) == NULL)
 		return;
-	gdk_window_get_geometry(w, &rect.x, &rect.y, &rect.width,
-			&rect.height, &depth);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	gdk_window_get_geometry(w, &rect.x, &rect.y, &rect.width, &rect.height);
+#else
+	gdk_window_get_geometry(w, &rect.x, &rect.y, &rect.width, &rect.height,
+			&depth);
+#endif
 	/* reallocate the frame and background if necessary */
 	if(window->frame == NULL
 			|| gdk_pixbuf_get_width(window->frame) != rect.width
@@ -367,12 +386,13 @@ static void _timeout_window(Logo * logo, LogoWindow * window)
 			g_object_unref(window->frame);
 		window->frame = gdk_pixbuf_new(GDK_COLORSPACE_RGB, 1, 8,
 				rect.width, rect.height);
+#if !GTK_CHECK_VERSION(3, 0, 0)
 		if(window->pixmap != NULL)
 			gdk_pixmap_unref(window->pixmap);
 		window->pixmap = gdk_pixmap_new(w, rect.width, rect.width, -1);
+#endif
 	}
 	frame = window->frame;
-	pixmap = window->pixmap;
 	gdk_pixbuf_fill(frame, black);
 	/* draw the background */
 	if(logo->background != NULL)
@@ -424,8 +444,13 @@ static void _timeout_window(Logo * logo, LogoWindow * window)
 				rect.width, rect.height, x, y,
 				1.0, 1.0, GDK_INTERP_NEAREST, logo->opacity);
 	}
-	gdk_draw_pixbuf(pixmap, NULL, frame, 0, 0, 0, 0, rect.width,
+#if GTK_CHECK_VERSION(3, 0, 0)
+	gdk_cairo_set_source_pixbuf(window->cairo, frame, 0, 0);
+	cairo_paint(window->cairo);
+#else
+	gdk_draw_pixbuf(window->pixmap, NULL, frame, 0, 0, 0, 0, rect.width,
 			rect.height, GDK_RGB_DITHER_NONE, 0, 0);
-	gdk_window_set_back_pixmap(w, pixmap, FALSE);
+	gdk_window_set_back_pixmap(w, window->pixmap, FALSE);
 	gdk_window_clear(w);
+#endif
 }
