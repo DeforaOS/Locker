@@ -373,7 +373,6 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 	int height;
 #if !GTK_CHECK_VERSION(3, 0, 0)
 	int depth;
-	GdkPixmap * pixmap;
 #endif
 	int j;
 #define CYCLE_LEN 60
@@ -408,9 +407,6 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 #endif
 	}
 	frame = window->frame;
-#if !GTK_CHECK_VERSION(3, 0, 0)
-	pixmap = window->pixmap;
-#endif
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() frame=%p\n", __func__, (void *)frame);
 #endif
@@ -501,9 +497,9 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 	gdk_cairo_set_source_pixbuf(window->cairo, background, 0, 0);
 	cairo_paint(window->cairo);
 #else
-	gdk_draw_pixbuf(pixmap, NULL, frame, 0, 0, 0, 0, rect.width,
+	gdk_draw_pixbuf(window->pixmap, NULL, frame, 0, 0, 0, 0, rect.width,
 			rect.height, GDK_RGB_DITHER_NONE, 0, 0);
-	gdk_window_set_back_pixmap(w, pixmap, FALSE);
+	gdk_window_set_back_pixmap(w, window->pixmap, FALSE);
 	gdk_window_clear(w);
 #endif
 }
