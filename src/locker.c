@@ -656,7 +656,11 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	/* DPMS: standby */
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 	widget = gtk_label_new(_("Standby: "));
+#if GTK_CHECK_VERSION(3, 0, 0)
+	g_object_set(widget, "halign", 0.0, NULL);
+#else
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
+#endif
 	gtk_size_group_add_widget(group, widget);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_gdpms1 = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
@@ -668,7 +672,11 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	/* DPMS: suspend */
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 	widget = gtk_label_new(_("Suspend: "));
+#if GTK_CHECK_VERSION(3, 0, 0)
+	g_object_set(widget, "halign", 0.0, NULL);
+#else
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
+#endif
 	gtk_size_group_add_widget(group, widget);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_gdpms2 = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
@@ -680,7 +688,11 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	/* DPMS: off */
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 	widget = gtk_label_new(_("Off: "));
+#if GTK_CHECK_VERSION(3, 0, 0)
+	g_object_set(widget, "halign", 0.0, NULL);
+#else
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
+#endif
 	gtk_size_group_add_widget(group, widget);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->pr_gdpms3 = gtk_spin_button_new_with_range(0.0, 3600.0, 1.0);
@@ -2001,7 +2013,11 @@ static gboolean _window_register_contained(Locker * locker, size_t primary,
 
 static void _locker_window_register(Locker * locker, size_t i)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+	GdkRGBA black;
+#else
 	GdkColor black;
+#endif
 	size_t primary;
 
 	primary = _locker_get_primary_monitor(locker);
@@ -2017,7 +2033,12 @@ static void _locker_window_register(Locker * locker, size_t i)
 			? TRUE : FALSE);
 	gtk_window_set_keep_above(GTK_WINDOW(locker->windows[i]), TRUE);
 	gtk_window_stick(GTK_WINDOW(locker->windows[i]));
+#if GTK_CHECK_VERSION(3, 0, 0)
+	gtk_widget_override_background_color(locker->windows[i],
+			GTK_STATE_NORMAL, &black);
+#else
 	gtk_widget_modify_bg(locker->windows[i], GTK_STATE_NORMAL, &black);
+#endif
 	g_signal_connect(locker->windows[i], "configure-event", G_CALLBACK(
 				_locker_on_configure), locker);
 	g_signal_connect_swapped(locker->windows[i], "delete-event",
