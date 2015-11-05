@@ -657,7 +657,7 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 	widget = gtk_label_new(_("Standby: "));
 #if GTK_CHECK_VERSION(3, 0, 0)
-	g_object_set(widget, "halign", 0.0, NULL);
+	g_object_set(widget, "halign", GTK_ALIGN_START, NULL);
 #else
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
 #endif
@@ -673,7 +673,7 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 	widget = gtk_label_new(_("Suspend: "));
 #if GTK_CHECK_VERSION(3, 0, 0)
-	g_object_set(widget, "halign", 0.0, NULL);
+	g_object_set(widget, "halign", GTK_ALIGN_START, NULL);
 #else
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
 #endif
@@ -689,7 +689,7 @@ static GtkWidget * _preferences_window_general(Locker * locker)
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 	widget = gtk_label_new(_("Off: "));
 #if GTK_CHECK_VERSION(3, 0, 0)
-	g_object_set(widget, "halign", 0.0, NULL);
+	g_object_set(widget, "halign", GTK_ALIGN_START, NULL);
 #else
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.0, 0.5);
 #endif
