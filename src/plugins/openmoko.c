@@ -160,7 +160,7 @@ static int _event_suspending(Openmoko * openmoko)
 	if((fd = open(apm, O_RDONLY)) < 0)
 	{
 		error_set("%s: %s", apm, strerror(errno));
-		helper->error(NULL, error_get(), 1);
+		helper->error(NULL, error_get(NULL), 1);
 		return 0;
 	}
 	errno = ENODATA;

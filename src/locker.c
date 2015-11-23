@@ -243,7 +243,7 @@ Locker * locker_new(char const * demo, char const * auth)
 
 	if((locker = object_new(sizeof(*locker))) == NULL)
 	{
-		_locker_error(NULL, error_get(), 1);
+		_locker_error(NULL, error_get(NULL), 1);
 		return NULL;
 	}
 	_new_helpers(locker);
@@ -277,7 +277,7 @@ Locker * locker_new(char const * demo, char const * auth)
 			|| (widget = _locker_auth_load(locker, auth)) == NULL
 			|| _new_xss(locker) != 0)
 	{
-		_locker_error(NULL, error_get(), 1);
+		_locker_error(NULL, error_get(NULL), 1);
 		locker_delete(locker);
 		return NULL;
 	}
@@ -1602,7 +1602,7 @@ static int _locker_config_load(Locker * locker)
 					NULL)) == NULL)
 		return -1;
 	if((ret = config_load(locker->config, filename)) != 0)
-		_locker_error(NULL, error_get(), ret);
+		_locker_error(NULL, error_get(NULL), ret);
 	string_delete(filename);
 	return ret;
 }
@@ -1622,7 +1622,7 @@ static int _locker_config_save(Locker * locker)
 		return -1;
 	sprintf(filename, "%s/%s", homedir, LOCKER_CONFIG_FILE);
 	if((ret = config_save(locker->config, filename)) != 0)
-		_locker_error(NULL, error_get(), 1);
+		_locker_error(NULL, error_get(NULL), 1);
 	free(filename);
 	return ret;
 }
@@ -1917,11 +1917,11 @@ static int _locker_plugin_load(Locker * locker, char const * plugin)
 	p = &locker->plugins[locker->plugins_cnt];
 	if((p->pplugin = plugin_new(LIBDIR, PACKAGE, "plugins", plugin))
 			== NULL)
-		return _locker_error(NULL, error_get(), 1);
+		return _locker_error(NULL, error_get(NULL), 1);
 	if((p->definition = plugin_lookup(p->pplugin, "plugin")) == NULL)
 	{
 		plugin_delete(p->pplugin);
-		return _locker_error(NULL, error_get(), 1);
+		return _locker_error(NULL, error_get(NULL), 1);
 	}
 	p->name = strdup(plugin);
 	if(p->definition->init == NULL || p->definition->destroy == NULL
@@ -1930,7 +1930,7 @@ static int _locker_plugin_load(Locker * locker, char const * plugin)
 	{
 		free(p->name);
 		plugin_delete(p->pplugin);
-		return _locker_error(NULL, error_get(), 1);
+		return _locker_error(NULL, error_get(NULL), 1);
 	}
 	locker->plugins_cnt++;
 	return 0;
