@@ -138,24 +138,18 @@ LockerDemoDefinition plugin =
 /* functions */
 /* plug-in */
 /* gtkdemo_init */
+static GdkPixbuf * _init_image(GtkDemo * gtkdemo, size_t i);
+
 static GtkDemo * _gtkdemo_init(LockerDemoHelper * helper)
 {
 	GtkDemo * gtkdemo;
 	size_t i;
-	GError * error = NULL;
 
 	if((gtkdemo = object_new(sizeof(*gtkdemo))) == NULL)
 		return NULL;
 	gtkdemo->helper = helper;
 	for(i = 0; i < GDI_COUNT; i++)
-		if((gtkdemo->images[i] = gdk_pixbuf_new_from_file(
-						_gtkdemo_images[i], &error))
-				== NULL)
-		{
-			helper->error(NULL, error->message, 1);
-			g_error_free(error);
-			error = NULL;
-		}
+		gtkdemo->images[i] = _init_image(gtkdemo, i);
 	gtkdemo->windows = NULL;
 	gtkdemo->windows_cnt = 0;
 	gtkdemo->source = 0;
@@ -163,6 +157,31 @@ static GtkDemo * _gtkdemo_init(LockerDemoHelper * helper)
 	gtkdemo->cycle = 1;
 	gtkdemo->scroll = 0;
 	return gtkdemo;
+}
+
+static GdkPixbuf * _init_image(GtkDemo * gtkdemo, size_t i)
+{
+	const unsigned int flags = GTK_ICON_LOOKUP_GENERIC_FALLBACK;
+	GdkPixbuf * pixbuf;
+	GtkIconTheme * icontheme;
+	GError * error = NULL;
+
+	if((pixbuf = gdk_pixbuf_new_from_file(_gtkdemo_images[i], &error))
+			!= NULL)
+		return pixbuf;
+	gtkdemo->helper->error(NULL, error->message, 1);
+	g_error_free(error);
+	if(i == GDI_BACKGROUND)
+		/* no background */
+		return NULL;
+	error = NULL;
+	icontheme = gtk_icon_theme_get_default();
+	if((pixbuf = gtk_icon_theme_load_icon(icontheme, "gtk-missing-image",
+					48, flags, &error)) != NULL)
+		return pixbuf;
+	gtkdemo->helper->error(NULL, error->message, 1);
+	g_error_free(error);
+	return NULL;
 }
 
 
