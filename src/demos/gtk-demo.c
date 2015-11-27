@@ -344,6 +344,10 @@ static gboolean _gtkdemo_on_idle(gpointer data)
 
 /* gtkdemo_on_timeout */
 static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window);
+static void _timeout_window_image(GtkDemo * gtkdemo, GtkDemoWindow * window,
+		double f, gint back_width, gint back_height, double xmid,
+		double ymid, double fsin2pi, double fcos2pi, double radius,
+		size_t i);
 
 static gboolean _gtkdemo_on_timeout(gpointer data)
 {
@@ -365,7 +369,6 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 	gint back_height = 0;
 	guint offset_x = 0;
 	guint offset_y = 0;
-	GdkPixbuf * frame;
 	GdkRectangle rect;
 	int src_x;
 	int src_y;
@@ -406,9 +409,9 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 		window->pixmap = gdk_pixmap_new(w, rect.width, rect.width, -1);
 #endif
 	}
-	frame = window->frame;
 #ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s() frame=%p\n", __func__, (void *)frame);
+	fprintf(stderr, "DEBUG: %s() frame=%p\n", __func__,
+			(void *)window->frame);
 #endif
 
 	if(background != NULL)
@@ -430,7 +433,7 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 		{
 			width = MIN(back_width - src_x, rect.width - i);
 			gdk_pixbuf_copy_area(background, src_x, src_y,
-					width, height, frame, i, j);
+					width, height, window->frame, i, j);
 			src_x = 0;
 		}
 		src_y = 0;
@@ -448,58 +451,64 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 	radius = MIN(xmid, ymid) / 2.0;
 
 	for(i = 1; i < GDI_COUNT; i++)
-	{
-		double ang;
-		int xpos, ypos;
-		int iw, ih;
-		double r;
-		GdkRectangle r1, r2, dest;
-		double k;
-
-		if(gtkdemo->images[i] == NULL)
-			continue;
-
-		ang = 2.0 * G_PI * (double) (i - 1) / (GDI_COUNT - 1)
-			- f * 2.0 * G_PI;
-		ang = gtkdemo->cycle * ang;
-
-		iw = gdk_pixbuf_get_width(gtkdemo->images[i]);
-		ih = gdk_pixbuf_get_height(gtkdemo->images[i]);
-
-		r = radius + (radius / 3.0) * fsin2pi;
-
-		xpos = floor (xmid + r * cos (ang) - iw / 2.0 + 0.5);
-		ypos = floor (ymid + r * sin (ang) - ih / 2.0 + 0.5);
-
-		k = (i & 1) ? fsin2pi : fcos2pi;
-		k = 2.0 * k * k;
-		k = MAX (0.25, k);
-
-		r1.x = xpos;
-		r1.y = ypos;
-		r1.width = iw * k;
-		r1.height = ih * k;
-
-		r2.x = 0;
-		r2.y = 0;
-		r2.width = back_width;
-		r2.height = back_height;
-
-		if(gdk_rectangle_intersect(&r1, &r2, &dest))
-			gdk_pixbuf_composite(gtkdemo->images[i], frame,
-					dest.x, dest.y, dest.width,
-					dest.height, xpos, ypos, k, k,
-					GDK_INTERP_NEAREST, ((i & 1)
-						? MAX(127, fabs(255 * fsin2pi))
-						: MAX(127, fabs(255 * fcos2pi))));
-	}
+		_timeout_window_image(gtkdemo, window, f, back_width,
+				back_height, xmid, ymid, fsin2pi, fcos2pi,
+				radius, i);
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gdk_cairo_set_source_pixbuf(window->cairo, frame, 0, 0);
+	gdk_cairo_set_source_pixbuf(window->cairo, window->frame, 0, 0);
 	cairo_paint(window->cairo);
 #else
-	gdk_draw_pixbuf(window->pixmap, NULL, frame, 0, 0, 0, 0, rect.width,
-			rect.height, GDK_RGB_DITHER_NONE, 0, 0);
+	gdk_draw_pixbuf(window->pixmap, NULL, window->frame, 0, 0, 0, 0,
+			rect.width, rect.height, GDK_RGB_DITHER_NONE, 0, 0);
 	gdk_window_set_back_pixmap(w, window->pixmap, FALSE);
 	gdk_window_clear(w);
 #endif
+}
+
+static void _timeout_window_image(GtkDemo * gtkdemo, GtkDemoWindow * window,
+		double f, gint back_width, gint back_height, double xmid,
+		double ymid, double fsin2pi, double fcos2pi, double radius,
+		size_t i)
+{
+	double ang;
+	int xpos, ypos;
+	int iw, ih;
+	double r;
+	GdkRectangle r1, r2, dest;
+	double k;
+
+	if(gtkdemo->images[i] == NULL)
+		return;
+
+	ang = 2.0 * G_PI * (double) (i - 1) / (GDI_COUNT - 1) - f * 2.0 * G_PI;
+	ang = gtkdemo->cycle * ang;
+
+	iw = gdk_pixbuf_get_width(gtkdemo->images[i]);
+	ih = gdk_pixbuf_get_height(gtkdemo->images[i]);
+
+	r = radius + (radius / 3.0) * fsin2pi;
+
+	xpos = floor (xmid + r * cos (ang) - iw / 2.0 + 0.5);
+	ypos = floor (ymid + r * sin (ang) - ih / 2.0 + 0.5);
+
+	k = (i & 1) ? fsin2pi : fcos2pi;
+	k = 2.0 * k * k;
+	k = MAX (0.25, k);
+
+	r1.x = xpos;
+	r1.y = ypos;
+	r1.width = iw * k;
+	r1.height = ih * k;
+
+	r2.x = 0;
+	r2.y = 0;
+	r2.width = back_width;
+	r2.height = back_height;
+
+	if(gdk_rectangle_intersect(&r1, &r2, &dest))
+		gdk_pixbuf_composite(gtkdemo->images[i], window->frame,
+				dest.x, dest.y, dest.width, dest.height,
+				xpos, ypos, k, k, GDK_INTERP_NEAREST, ((i & 1)
+					? MAX(127, fabs(255 * fsin2pi))
+					: MAX(127, fabs(255 * fcos2pi))));
 }
