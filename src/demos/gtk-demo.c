@@ -249,10 +249,8 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 		gdk_window_set_back_pixmap(window, pixmap, FALSE);
 		gdk_pixmap_unref(pixmap);
 		gdk_window_clear(window);
-		p->pixmap = gdk_pixmap_new(window, rect.width, rect.width, -1);
 	}
-	else
-		p->pixmap = NULL;
+	p->pixmap = gdk_pixmap_new(window, rect.width, rect.width, -1);
 #endif
 	p->window = window;
 	return ret;
