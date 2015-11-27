@@ -231,18 +231,16 @@ static int _gtkdemo_add(GtkDemo * gtkdemo, GdkWindow * window)
 	/* draw background */
 	width = (background != NULL) ? gdk_pixbuf_get_width(background) : 0;
 	height = (background != NULL) ? gdk_pixbuf_get_height(background) : 0;
+	p->frame = gdk_pixbuf_new(GDK_COLORSPACE_RGB, 1, 8, rect.width,
+			rect.height);
 	if(width > 0 && height > 0)
 #if GTK_CHECK_VERSION(3, 0, 0)
 	{
-		p->frame = gdk_pixbuf_new(GDK_COLORSPACE_RGB, 1, 8, rect.width,
-				rect.height);
 		gdk_pixbuf_copy_area(background, 0, 0, width, height, p->frame,
 				0, 0);
 		gdk_cairo_set_source_pixbuf(p->cairo, p->frame, 0, 0);
 		cairo_paint(p->cairo);
 	}
-	else
-		p->frame = NULL;
 #else
 	{
 		pixmap = gdk_pixmap_new(window, width, height, -1);
