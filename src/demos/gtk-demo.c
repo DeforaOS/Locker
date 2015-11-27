@@ -439,6 +439,8 @@ static void _timeout_window(GtkDemo * gtkdemo, GtkDemoWindow * window)
 			offset_y = gtkdemo->frame_num % back_height;
 		}
 	}
+	else
+		gdk_pixbuf_fill(window->frame, 0x000000ff);
 	src_y = offset_y;
 	for(j = 0; back_height > 0 && j < rect.height; j += height)
 	{
