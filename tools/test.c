@@ -97,7 +97,11 @@ static int _test(int desktop, int root, int width, int height,
 	Plugin * dplugin;
 	LockerAuthHelper ahelper;
 	Plugin * aplugin;
+#if GTK_CHECK_VERSION(3, 0, 0)
+	GdkRGBA black;
+#else
 	GdkColor black;
+#endif
 	GtkWidget * window;
 	GdkWindow * wwindow;
 	GtkWidget * vbox;
@@ -240,7 +244,12 @@ static int _test(int desktop, int root, int width, int height,
 	{
 		locker->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		memset(&black, 0, sizeof(black));
+#if GTK_CHECK_VERSION(3, 0, 0)
+		gtk_widget_override_background_color(locker->window,
+				GTK_STATE_NORMAL, &black);
+#else
 		gtk_widget_modify_bg(locker->window, GTK_STATE_NORMAL, &black);
+#endif
 		gtk_window_set_default_size(GTK_WINDOW(locker->window), width,
 				height);
 		if(desktop)
