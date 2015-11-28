@@ -128,8 +128,13 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 	slider->icon2 = NULL;
 	_slider_load(slider);
 	/* left image */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	g_object_set(slider->icon1, "halign", GTK_ALIGN_END,
+			"margin-bottom", 96, "margin-top", 96, NULL);
+#else
 	gtk_misc_set_alignment(GTK_MISC(slider->icon1), 1.0, 0.5);
 	gtk_misc_set_padding(GTK_MISC(slider->icon1), 0, 96);
+#endif
 	gtk_box_pack_start(GTK_BOX(hbox), slider->icon1, TRUE, TRUE, 0);
 	/* scale */
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -145,8 +150,13 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 				_slider_on_scale_value_changed), slider);
 	gtk_box_pack_start(GTK_BOX(hbox), slider->scale, FALSE, TRUE, 0);
 	/* right image */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	g_object_set(slider->icon2, "halign", GTK_ALIGN_START,
+			"margin-bottom", 96, "margin-top", 96, NULL);
+#else
 	gtk_misc_set_alignment(GTK_MISC(slider->icon2), 0.0, 0.5);
 	gtk_misc_set_padding(GTK_MISC(slider->icon2), 0, 96);
+#endif
 	gtk_box_pack_start(GTK_BOX(hbox), slider->icon2, TRUE, TRUE, 0);
 	gtk_widget_show_all(hbox);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
