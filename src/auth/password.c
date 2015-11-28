@@ -117,7 +117,11 @@ static Password * _password_init(LockerAuthHelper * helper)
 	/* authentication icon */
 	widget = gtk_image_new_from_stock(GTK_STOCK_DIALOG_AUTHENTICATION,
 			GTK_ICON_SIZE_DIALOG);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	g_object_set(widget, "valign", GTK_ALIGN_START, NULL);
+#else
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.5, 0.0);
+#endif
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 #if GTK_CHECK_VERSION(3, 0, 0)
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
