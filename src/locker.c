@@ -2412,9 +2412,14 @@ static void _locker_on_realize(GtkWidget * widget, gpointer data)
 	if(widget == locker->windows[primary])
 	{
 		window = gtk_widget_get_window(widget);
+		visual = gdk_window_get_visual(window);
+#if GTK_CHECK_VERSION(3, 0, 0)
+		gdk_window_get_geometry(window, &x, &y, &width, &height);
+		depth = gdk_visual_get_depth(visual);
+#else
 		gdk_window_get_geometry(window, &x, &y, &width, &height,
 				&depth);
-		visual = gdk_window_get_visual(window);
+#endif
 		XScreenSaverSetAttributes(GDK_DISPLAY_XDISPLAY(locker->display),
 				GDK_WINDOW_XID(window), x, y, width, height, 0,
 				depth, 0, GDK_VISUAL_XVISUAL(visual), 0, NULL);
