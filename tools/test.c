@@ -344,31 +344,36 @@ static int _test_helper_action(Locker * locker, LockerAction action)
 		case LOCKER_ACTION_CYCLE:
 			if(locker->dplugin->cycle != NULL)
 				locker->dplugin->cycle(locker->demo);
-			if(locker->aplugin->action != NULL)
+			if(locker->auth != NULL
+					&& locker->aplugin->action != NULL)
 				locker->aplugin->action(locker->auth,
 						LOCKER_ACTION_CYCLE);
 			break;
 		case LOCKER_ACTION_LOCK:
-			if(locker->aplugin->action != NULL)
+			if(locker->auth != NULL
+					&& locker->aplugin->action != NULL)
 				locker->aplugin->action(locker->auth,
 						LOCKER_ACTION_LOCK);
 			break;
 		case LOCKER_ACTION_START:
 			if(locker->dplugin->start != NULL)
 				locker->dplugin->start(locker->demo);
-			if(locker->aplugin->action != NULL)
+			if(locker->auth != NULL
+					&& locker->aplugin->action != NULL)
 				locker->aplugin->action(locker->auth,
 						LOCKER_ACTION_START);
 			break;
 		case LOCKER_ACTION_STOP:
 			if(locker->dplugin->stop != NULL)
 				locker->dplugin->stop(locker->demo);
-			if(locker->aplugin->action != NULL)
+			if(locker->auth != NULL
+					&& locker->aplugin->action != NULL)
 				locker->aplugin->action(locker->auth,
 						LOCKER_ACTION_DEACTIVATE);
 			break;
 		case LOCKER_ACTION_UNLOCK:
-			if(locker->aplugin->action != NULL)
+			if(locker->auth != NULL
+					&& locker->aplugin->action != NULL)
 				locker->aplugin->action(locker->auth,
 						LOCKER_ACTION_UNLOCK);
 			widget = gtk_message_dialog_new_with_markup(
