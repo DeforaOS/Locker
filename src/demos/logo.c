@@ -183,7 +183,7 @@ static int _logo_add(Logo * logo, GdkWindow * window)
 	logo->windows[logo->windows_cnt].window = window;
 	logo->windows[logo->windows_cnt].frame = NULL;
 #if GTK_CHECK_VERSION(3, 0, 0)
-	logo->windows[logo->windows_cnt++].cairo = NULL;
+	logo->windows[logo->windows_cnt++].cairo = gdk_cairo_create(window);
 #else
 	logo->windows[logo->windows_cnt++].pixmap = NULL;
 #endif
