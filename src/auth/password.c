@@ -135,7 +135,7 @@ static Password * _password_init(LockerAuthHelper * helper)
 		buf[sizeof(buf) - 1] = '\0';
 	widget = gtk_label_new(buf);
 	gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &white);
-	gtk_widget_modify_font(widget, bold);
+	gtk_widget_override_font(widget, bold);
 	gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	/* screen */
 	if((pw = getpwuid(getuid())) != NULL)
@@ -172,7 +172,7 @@ static Password * _password_init(LockerAuthHelper * helper)
 	/* error */
 	password->error = gtk_label_new("");
 	gtk_widget_modify_fg(password->error, GTK_STATE_NORMAL, &red);
-	gtk_widget_modify_font(password->error, bold);
+	gtk_widget_override_font(password->error, bold);
 	gtk_box_pack_start(GTK_BOX(vbox), password->error, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, TRUE, 0);
 	/* right padding (centering) */
