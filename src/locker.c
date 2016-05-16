@@ -1741,11 +1741,13 @@ static void _locker_demo_start(Locker * locker)
 /* locker_demo_stop */
 static void _locker_demo_stop(Locker * locker)
 {
+#if GTK_CHECK_VERSION(2, 14, 0) && !GTK_CHECK_VERSION(3, 0, 0)
 	GdkWindow * window;
+#endif
 
 	if(locker->ddefinition != NULL && locker->ddefinition->stop != NULL)
 		locker->ddefinition->stop(locker->demo);
-#if GTK_CHECK_VERSION(2, 14, 0)
+#if GTK_CHECK_VERSION(2, 14, 0) && !GTK_CHECK_VERSION(3, 0, 0)
 	if(locker->windows[0] != NULL
 			&& (window = gtk_widget_get_window(locker->windows[0]))
 			!= NULL)
