@@ -160,7 +160,7 @@ static void _logo_destroy(Logo * logo)
 static int _logo_add(Logo * logo, GdkWindow * window)
 {
 	LogoWindow * p;
-#if GTK_CHECK_VERSION(3, 4, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
 	GdkRGBA color = { 0.0, 0.0, 0.0, 0.0 };
 #else
 	GdkColor color = { 0x0, 0x0, 0x0, 0x0 };
@@ -174,7 +174,7 @@ static int _logo_add(Logo * logo, GdkWindow * window)
 		return -1;
 	logo->windows = p;
 	/* set the default color */
-#if GTK_CHECK_VERSION(3, 4, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
 	gdk_window_set_background_rgba(window, &color);
 #else
 	gdk_window_set_background(window, &color);
