@@ -82,8 +82,8 @@ static Password * _password_init(LockerAuthHelper * helper)
 {
 	Password * password;
 	PangoFontDescription * bold;
-	const GdkColor white = { 0x0, 0xffff, 0xffff, 0xffff };
-	const GdkColor red = { 0x0, 0xffff, 0x0000, 0x0000 };
+	const GdkRGBA white = { 1.0, 1.0, 1.0, 1.0 };
+	const GdkRGBA red = { 1.0, 0.0, 0.0, 1.0 };
 	GtkWidget * vbox;
 	GtkWidget * hbox;
 	GtkWidget * hbox2;
@@ -135,7 +135,7 @@ static Password * _password_init(LockerAuthHelper * helper)
 	else
 		buf[sizeof(buf) - 1] = '\0';
 	widget = gtk_label_new(buf);
-	gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &white);
+	gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &white);
 	gtk_widget_override_font(widget, bold);
 	gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	/* screen */
@@ -147,11 +147,11 @@ static Password * _password_init(LockerAuthHelper * helper)
 			? _("This screen is locked by %s")
 			: _("This screen is locked"), username);
 	widget = gtk_label_new(buf);
-	gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &white);
+	gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &white);
 	gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	/* prompt */
 	widget = gtk_label_new(_("Enter password: "));
-	gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &white);
+	gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &white);
 	gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	/* entry */
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -172,7 +172,7 @@ static Password * _password_init(LockerAuthHelper * helper)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, TRUE, 0);
 	/* error */
 	password->error = gtk_label_new("");
-	gtk_widget_modify_fg(password->error, GTK_STATE_NORMAL, &red);
+	gtk_widget_override_color(password->error, GTK_STATE_FLAG_NORMAL, &red);
 	gtk_widget_override_font(password->error, bold);
 	gtk_box_pack_start(GTK_BOX(vbox), password->error, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, TRUE, 0);
