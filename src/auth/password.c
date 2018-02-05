@@ -15,7 +15,6 @@
 
 
 
-#include <System.h>
 #include <unistd.h>
 #include <pwd.h>
 #ifdef __linux__
@@ -24,6 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libintl.h>
+#include <System.h>
+#include <Desktop.h>
 #include "Locker.h"
 #include "../../config.h"
 #define _(string) gettext(string)
