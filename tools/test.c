@@ -482,7 +482,7 @@ static void _test_on_apply(gpointer data)
 	sprintf(p, "%s%s", section, locker->name);
 	q = gtk_entry_get_text(GTK_ENTRY(locker->variable));
 	r = gtk_entry_get_text(GTK_ENTRY(locker->value));
-	if(_test_helper_config_set(locker, "demo::logo", q, r) != 0)
+	if(_test_helper_config_set(locker, p, q, r) != 0)
 		error_print(PROGNAME);
 	else
 		_test_on_reload(locker);
