@@ -154,6 +154,14 @@ static Logo * _logo_init(LockerDemoHelper * helper)
 /* logo_destroy */
 static void _logo_destroy(Logo * logo)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+	size_t i;
+
+	for(i = logo->windows_cnt; i > 0; i--)
+		if(logo->windows[i - 1].window != NULL)
+			_logo_remove(logo, logo->windows[i - 1].window);
+#endif
+	free(logo->windows);
 	object_delete(logo);
 }
 
