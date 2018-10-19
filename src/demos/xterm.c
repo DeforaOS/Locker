@@ -72,6 +72,7 @@ LockerDemoDefinition plugin =
 	NULL,
 	_xterm_init,
 	_xterm_destroy,
+	NULL,
 	_xterm_add,
 	_xterm_remove,
 	_xterm_start,

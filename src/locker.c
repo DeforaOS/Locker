@@ -181,6 +181,7 @@ static char const * _locker_demo_config_get(Locker * locker,
 static int _locker_demo_config_set(Locker * locker, char const * section,
 		char const * variable, char const * value);
 static int _locker_demo_load(Locker * locker, char const * demo);
+static void _locker_demo_reload(Locker * locker);
 static void _locker_demo_start(Locker * locker);
 static void _locker_demo_stop(Locker * locker);
 static void _locker_demo_unload(Locker * locker);
@@ -1292,6 +1293,7 @@ static int _locker_action_deactivate(Locker * locker);
 static int _locker_action_disable(Locker * locker);
 static int _locker_action_enable(Locker * locker);
 static int _locker_action_lock(Locker * locker);
+static int _locker_action_reload(Locker * locker);
 static int _locker_action_start(Locker * locker);
 static int _locker_action_stop(Locker * locker);
 static int _locker_action_suspend(Locker * locker);
@@ -1392,6 +1394,15 @@ static int _locker_action_lock(Locker * locker)
 {
 	_locker_action_activate(locker);
 	return _locker_lock(locker, 1);
+}
+
+static int _locker_action_reload(Locker * locker)
+{
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: %s()\n", __func__);
+#endif
+	_locker_demo_reload(locker);
+	return 0;
 }
 
 static int _locker_action_start(Locker * locker)
@@ -1727,6 +1738,14 @@ static int _locker_demo_load(Locker * locker, char const * demo)
 			locker->ddefinition->add(locker->demo, window);
 	}
 	return 0;
+}
+
+
+/* locker_demo_reload */
+static void _locker_demo_reload(Locker * locker)
+{
+	if(locker->ddefinition != NULL && locker->ddefinition->reload != NULL)
+		locker->ddefinition->reload(locker->demo);
 }
 
 

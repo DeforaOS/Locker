@@ -126,6 +126,7 @@ LockerDemoDefinition plugin =
 	NULL,
 	_gtkdemo_init,
 	_gtkdemo_destroy,
+	NULL,
 	_gtkdemo_add,
 	_gtkdemo_remove,
 	_gtkdemo_start,

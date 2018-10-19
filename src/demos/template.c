@@ -35,6 +35,7 @@ typedef struct _LockerDemo
 /* plug-in */
 static Template * _template_init(LockerDemoHelper * helper);
 static void _template_destroy(Template * template);
+static void _template_reload(Template * template);
 static int _template_add(Template * template, GdkWindow * window);
 static void _template_remove(Template * template, GdkWindow * window);
 static void _template_start(Template * template);
@@ -52,6 +53,7 @@ LockerDemoDefinition plugin =
 	NULL,
 	_template_init,
 	_template_destroy,
+	NULL,
 	_template_add,
 	_template_remove,
 	_template_start,
@@ -79,6 +81,12 @@ static Template * _template_init(LockerDemoHelper * helper)
 static void _template_destroy(Template * template)
 {
 	object_delete(template);
+}
+
+
+/* template_reload */
+static void _template_reload(Template * template)
+{
 }
 
 

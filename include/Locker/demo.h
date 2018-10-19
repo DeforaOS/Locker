@@ -44,6 +44,7 @@ typedef const struct _LockerDemoDefinition
 	char const * description;
 	LockerDemo * (*init)(LockerDemoHelper * helper);
 	void (*destroy)(LockerDemo * demo);
+	void (*reload)(LockerDemo * demo);
 	int (*add)(LockerDemo * demo, GdkWindow * window);
 	void (*remove)(LockerDemo * demo, GdkWindow * window);
 	void (*start)(LockerDemo * demo);

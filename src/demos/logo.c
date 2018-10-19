@@ -91,6 +91,7 @@ static const LogoTheme _logo_themes[] =
 /* plug-in */
 static Logo * _logo_init(LockerDemoHelper * helper);
 static void _logo_destroy(Logo * logo);
+static void _logo_reload(Logo * logo);
 static int _logo_add(Logo * logo, GdkWindow * window);
 static void _logo_remove(Logo * logo, GdkWindow * window);
 static void _logo_start(Logo * logo);
@@ -114,6 +115,7 @@ LockerDemoDefinition plugin =
 	NULL,
 	_logo_init,
 	_logo_destroy,
+	_logo_reload,
 	_logo_add,
 	_logo_remove,
 	_logo_start,
@@ -153,6 +155,33 @@ static Logo * _logo_init(LockerDemoHelper * helper)
 static void _logo_destroy(Logo * logo)
 {
 	object_delete(logo);
+}
+
+
+/* logo_reload */
+static void _logo_reload(Logo * logo)
+{
+	LockerDemoHelper * helper = logo->helper;
+	char const * p;
+	int opacity;
+
+	/* FIXME implement the rest */
+	/* scrolling */
+	if((p = helper->config_get(helper->locker, "logo", "scroll")) != NULL)
+		logo->scroll = strtol(p, NULL, 10);
+	/* opacity */
+	if((p = helper->config_get(helper->locker, "logo", "opacity")) != NULL)
+	{
+		opacity = strtol(p, NULL, 10);
+		if(opacity >= 0 && opacity <= 255)
+			logo->opacity = opacity;
+	}
+	if(logo->source != 0)
+	{
+		g_source_remove(logo->source);
+		logo->source = 0;
+	}
+	logo->source = g_idle_add(_logo_on_timeout, logo);
 }
 
 
@@ -314,18 +343,9 @@ static int _logo_load(Logo * logo)
 			g_object_unref(logo->logo);
 		logo->logo = pixbuf;
 	}
-	/* scrolling */
 	logo->scroll = 0;
-	if((p = helper->config_get(helper->locker, "logo", "scroll")) != NULL)
-		logo->scroll = strtol(p, NULL, 10);
-	/* opacity */
 	logo->opacity = 255;
-	if((p = helper->config_get(helper->locker, "logo", "opacity")) != NULL)
-	{
-		logo->opacity = strtol(p, NULL, 10);
-		if(logo->opacity < 0 || logo->opacity > 255)
-			logo->opacity = 255;
-	}
+	_logo_reload(logo);
 	return ret;
 }
 

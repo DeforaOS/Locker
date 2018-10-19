@@ -59,6 +59,7 @@ LockerDemoDefinition plugin =
 	NULL,
 	_colors_init,
 	_colors_destroy,
+	NULL,
 	_colors_add,
 	_colors_remove,
 	_colors_start,

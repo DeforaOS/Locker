@@ -70,6 +70,7 @@ LockerDemoDefinition plugin =
 	NULL,
 	_xscreensaver_init,
 	_xscreensaver_destroy,
+	NULL,
 	_xscreensaver_add,
 	_xscreensaver_remove,
 	_xscreensaver_start,

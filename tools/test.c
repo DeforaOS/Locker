@@ -79,6 +79,7 @@ static gboolean _test_on_closex(void);
 static void _test_on_apply(gpointer data);
 static void _test_on_cycle(gpointer data);
 static void _test_on_lock(gpointer data);
+static void _test_on_reload(gpointer data);
 static void _test_on_start(gpointer data);
 static void _test_on_stop(gpointer data);
 static void _test_on_unlock(gpointer data);
@@ -355,6 +356,14 @@ static int _test_helper_action(Locker * locker, LockerAction action)
 				locker->aplugin->action(locker->auth,
 						LOCKER_ACTION_LOCK);
 			break;
+		case LOCKER_ACTION_RELOAD:
+			if(locker->dplugin->reload != NULL)
+				locker->dplugin->reload(locker->demo);
+			if(locker->auth != NULL
+					&& locker->aplugin->action != NULL)
+				locker->aplugin->action(locker->auth,
+						LOCKER_ACTION_RELOAD);
+			break;
 		case LOCKER_ACTION_START:
 			if(locker->dplugin->start != NULL)
 				locker->dplugin->start(locker->demo);
@@ -474,11 +483,7 @@ static void _test_on_apply(gpointer data)
 	if(_test_helper_config_set(locker, "demo::logo", q, r) != 0)
 		error_print(PROGNAME);
 	else
-	{
-		/* XXX really force a configuration reload */
-		_test_on_stop(locker);
-		_test_on_start(locker);
-	}
+		_test_on_reload(locker);
 	free(p);
 }
 
@@ -506,6 +511,15 @@ static void _test_on_lock(gpointer data)
 	Locker * locker = data;
 
 	_test_helper_action(locker, LOCKER_ACTION_LOCK);
+}
+
+
+/* test_on_reload */
+static void _test_on_reload(gpointer data)
+{
+	Locker * locker = data;
+
+	_test_helper_action(locker, LOCKER_ACTION_RELOAD);
 }
 
 
