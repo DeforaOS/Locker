@@ -458,6 +458,8 @@ static int _test_helper_config_set(Locker * locker, char const * section,
 /* test_helper_error */
 static int _test_helper_error(Locker * locker, char const * message, int ret)
 {
+	(void) locker;
+
 	return error_set_print(PROGNAME, ret, "%s", message);
 }
 
