@@ -1329,6 +1329,9 @@ static int _locker_action(Locker * locker, LockerAction action)
 		case LOCKER_ACTION_LOCK:
 			ret = _locker_action_lock(locker);
 			break;
+		case LOCKER_ACTION_RELOAD:
+			ret = _locker_action_reload(locker);
+			break;
 		case LOCKER_ACTION_SHOW_PREFERENCES:
 			locker_show_preferences(locker, TRUE);
 			ret = 0;
