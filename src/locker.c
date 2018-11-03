@@ -1195,12 +1195,15 @@ static void _preferences_on_plugins_toggled(GtkCellRendererToggle * renderer,
 static void _preferences_on_response(GtkWidget * widget, gint response,
 		gpointer data)
 {
+	Locker * locker = data;
+	(void) widget;
+
 	if(response == GTK_RESPONSE_OK)
-		_preferences_on_ok(data);
+		_preferences_on_ok(locker);
 	else if(response == GTK_RESPONSE_APPLY)
-		_preferences_on_apply(data);
+		_preferences_on_apply(locker);
 	else if(response == GTK_RESPONSE_CANCEL)
-		_preferences_on_cancel(data);
+		_preferences_on_cancel(locker);
 }
 
 
@@ -2029,8 +2032,7 @@ static int _locker_unlock(Locker * locker, int force)
 
 
 /* locker_window_register */
-static gboolean _window_register_contained(Locker * locker, size_t primary,
-		size_t i);
+static gboolean _window_register_contained(size_t primary, size_t i);
 
 static void _locker_window_register(Locker * locker, size_t i)
 {
@@ -2042,7 +2044,7 @@ static void _locker_window_register(Locker * locker, size_t i)
 	size_t primary;
 
 	primary = _locker_get_primary_monitor(locker);
-	if(_window_register_contained(locker, primary, i))
+	if(_window_register_contained(primary, i))
 	{
 		/* a clone was detected */
 		locker->windows[i] = NULL;
@@ -2072,8 +2074,7 @@ static void _locker_window_register(Locker * locker, size_t i)
 	_locker_on_configure(locker->windows[i], NULL, locker);
 }
 
-static gboolean _window_register_contained(Locker * locker, size_t primary,
-		size_t i)
+static gboolean _window_register_contained(size_t primary, size_t i)
 {
 	GdkScreen * screen;
 	size_t j;
@@ -2117,6 +2118,7 @@ static gboolean _locker_on_configure(GtkWidget * widget, GdkEvent * event,
 	size_t i;
 	GdkScreen * screen;
 	GdkRectangle rect;
+	(void) event;
 
 	/* detect the window affected */
 	for(i = 0; i < locker->windows_cnt; i++)
@@ -2145,6 +2147,7 @@ static GdkFilterReturn _locker_on_filter(GdkXEvent * xevent, GdkEvent * event,
 {
 	Locker * locker = data;
 	XEvent * xev = xevent;
+	(void) event;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() 0x%x 0x%x\n", __func__, xev->type,
@@ -2287,6 +2290,7 @@ static gboolean _locker_on_map_event(GtkWidget * widget, GdkEvent * event,
 	GdkDevice * pointer;
 	GdkDevice * keyboard;
 #endif
+	(void) event;
 
 	/* detect if this is the primary window */
 	primary = _locker_get_primary_monitor(locker);
