@@ -251,12 +251,17 @@ Locker * locker_new(char const * demo, char const * auth)
 	locker->source = 0;
 	locker->enabled = TRUE;
 	locker->locked = FALSE;
-	screen = gdk_screen_get_default();
-	locker->display = gdk_screen_get_display(screen);
-	locker->screen = gdk_x11_get_default_screen();
-	if((cnt = gdk_screen_get_n_monitors(screen)) < 1)
-		/* XXX assume at least one monitor */
+	locker->display = gdk_display_get_default();
+	screen = gdk_display_get_default_screen(locker->display);
+	locker->screen = gdk_x11_screen_get_screen_number(screen);
+	/* XXX assume at least one monitor */
+#if GTK_CHECK_VERSION(3, 22, 0)
+	if((cnt = gdk_display_get_n_monitors(screen)) < 1)
 		cnt = 1;
+#else
+	if((cnt = gdk_screen_get_n_monitors(screen)) < 1)
+		cnt = 1;
+#endif
 	if((locker->windows = malloc(sizeof(*locker->windows) * cnt)) != NULL)
 		for(i = 0; i < cnt; i++)
 			locker->windows[i] = NULL;
@@ -1214,7 +1219,17 @@ static void _preferences_on_response(GtkWidget * widget, gint response,
 static size_t _locker_get_primary_monitor(Locker * locker)
 {
 	int primary;
-#if GTK_CHECK_VERSION(2, 20, 0)
+#if GTK_CHECK_VERSION(3, 22, 0)
+	GdkMonitor * monitor;
+	size_t i;
+
+	for(i = 0; i < gdk_display_get_n_monitors(locker->display); i++)
+		if((monitor = gdk_display_get_monitor(locker->display, i))
+				!= NULL
+				&& gdk_monitor_is_primary(monitor))
+			return i;
+	primary = 0;
+#elif GTK_CHECK_VERSION(2, 20, 0)
 	GdkScreen * screen;
 
 	screen = gdk_display_get_default_screen(locker->display);
@@ -2035,7 +2050,8 @@ static int _locker_unlock(Locker * locker, int force)
 
 
 /* locker_window_register */
-static gboolean _window_register_contained(size_t primary, size_t i);
+static gboolean _window_register_contained(Locker * locker, size_t primary,
+		size_t i);
 
 static void _locker_window_register(Locker * locker, size_t i)
 {
@@ -2047,7 +2063,7 @@ static void _locker_window_register(Locker * locker, size_t i)
 	size_t primary;
 
 	primary = _locker_get_primary_monitor(locker);
-	if(_window_register_contained(primary, i))
+	if(_window_register_contained(locker, primary, i))
 	{
 		/* a clone was detected */
 		locker->windows[i] = NULL;
@@ -2077,22 +2093,41 @@ static void _locker_window_register(Locker * locker, size_t i)
 	_locker_on_configure(locker->windows[i], NULL, locker);
 }
 
-static gboolean _window_register_contained(size_t primary, size_t i)
+static gboolean _window_register_contained(Locker * locker, size_t primary,
+		size_t i)
 {
-	GdkScreen * screen;
 	size_t j;
 	GdkRectangle irect;
 	GdkRectangle jrect;
+#if GTK_CHECK_VERSION(3, 22, 0)
+	GdkMonitor * monitor;
+#else
+	GdkScreen * screen;
+	(void) locker;
+#endif
 
 	/* obtain the monitor geometry */
+#if GTK_CHECK_VERSION(3, 22, 0)
+	if((monitor = gdk_display_get_monitor(locker->display, i)) == NULL)
+		return FALSE;
+	gdk_monitor_get_geometry(monitor, &irect);
+#else
 	screen = gdk_screen_get_default();
 	gdk_screen_get_monitor_geometry(screen, i, &irect);
+#endif
 	for(j = 0; j < i; j++)
 	{
 		if(j == primary)
 			continue;
 		/* compare with previous monitors */
+#if GTK_CHECK_VERSION(3, 22, 0)
+		if((monitor = gdk_display_get_monitor(locker->display, j))
+				== NULL)
+			continue;
+		gdk_monitor_get_geometry(monitor, &jrect);
+#else
 		gdk_screen_get_monitor_geometry(screen, j, &jrect);
+#endif
 		if(irect.x >= jrect.x && irect.y >= jrect.y
 				&& ((irect.x + irect.width)
 					<= (jrect.x + jrect.width))
@@ -2119,7 +2154,11 @@ static gboolean _locker_on_configure(GtkWidget * widget, GdkEvent * event,
 {
 	Locker * locker = data;
 	size_t i;
+#if GTK_CHECK_VERSION(3, 22, 0)
+	GdkMonitor * monitor;
+#else
 	GdkScreen * screen;
+#endif
 	GdkRectangle rect;
 	(void) event;
 
@@ -2130,8 +2169,15 @@ static gboolean _locker_on_configure(GtkWidget * widget, GdkEvent * event,
 	if(i == locker->windows_cnt)
 		return FALSE;
 	/* configure the window */
+#if GTK_CHECK_VERSION(3, 22, 0)
+	if((monitor = gdk_display_get_monitor(locker->display, i)) == NULL)
+		/* XXX report the error */
+		return FALSE;
+	gdk_monitor_get_geometry(monitor, &rect);
+#else
 	screen = gdk_screen_get_default();
 	gdk_screen_get_monitor_geometry(screen, i, &rect);
+#endif
 	gtk_window_move(GTK_WINDOW(locker->windows[i]), rect.x, rect.y);
 	gtk_window_resize(GTK_WINDOW(locker->windows[i]), rect.width,
 			rect.height);
@@ -2166,7 +2212,9 @@ static GdkFilterReturn _locker_on_filter(GdkXEvent * xevent, GdkEvent * event,
 
 static GdkFilterReturn _filter_configure(Locker * locker)
 {
+#if !GTK_CHECK_VERSION(3, 22, 0)
 	GdkScreen * screen;
+#endif
 	size_t cnt;
 	size_t i;
 	GdkWindow * window;
@@ -2175,10 +2223,15 @@ static GdkFilterReturn _filter_configure(Locker * locker)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
 #endif
+	/* XXX assume at least one monitor */
+#if GTK_CHECK_VERSION(3, 22, 0)
+	if((cnt = gdk_display_get_n_monitors(locker->display)) < 1)
+		cnt = 1;
+#else
 	screen = gdk_screen_get_default();
 	if((cnt = gdk_screen_get_n_monitors(screen)) < 1)
-		/* XXX assume at least one monitor */
 		cnt = 1;
+#endif
 	for(i = 0; i < locker->windows_cnt && i < cnt; i++)
 		if(locker->windows[i] == NULL)
 			_locker_window_register(locker, i);
