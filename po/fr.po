@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Locker 0.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-19 20:54+0200\n"
+"POT-Creation-Date: 2018-12-29 23:51+0100\n"
 "PO-Revision-Date: 2011-10-17 16:32+0200\n"
 "Last-Translator: Pierre Pronchery <khorben@defora.org>\n"
 "Language-Team: French\n"
@@ -16,84 +16,84 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../src/locker.c:376
+#: ../src/locker.c:381
 msgid "Could not register as screensaver"
 msgstr "Impossible de déclarer l'économiseur d'écran"
 
-#: ../src/locker.c:456
+#: ../src/locker.c:461
 msgid "Screensaver preferences"
 msgstr "Préférences de l'économiseur d'écran"
 
-#: ../src/locker.c:472
+#: ../src/locker.c:477
 msgid "General"
 msgstr "Générales"
 
-#: ../src/locker.c:476
+#: ../src/locker.c:481
 msgid "Authentication"
 msgstr "Authentification"
 
-#: ../src/locker.c:480
+#: ../src/locker.c:485
 msgid "Demos"
 msgstr "Démos"
 
-#: ../src/locker.c:484
+#: ../src/locker.c:489
 msgid "Plug-ins"
 msgstr "Greffons"
 
-#: ../src/locker.c:505
+#: ../src/locker.c:510
 msgid "Lock the screen automatically"
 msgstr "Verrouiller l'écran automatiquement"
 
-#: ../src/locker.c:511
+#: ../src/locker.c:516
 msgid "Lock after "
 msgstr "Verrouiller au bout de "
 
-#: ../src/locker.c:516 ../src/locker.c:609 ../src/locker.c:670
-#: ../src/locker.c:686 ../src/locker.c:702
+#: ../src/locker.c:521 ../src/locker.c:614 ../src/locker.c:675
+#: ../src/locker.c:691 ../src/locker.c:707
 msgid " second(s)"
 msgstr " seconde(s)"
 
-#: ../src/locker.c:521
+#: ../src/locker.c:526
 msgid "Method: "
 msgstr "Méthode : "
 
-#: ../src/locker.c:552
+#: ../src/locker.c:557
 msgid "Plug-in: "
 msgstr "Greffon : "
 
-#: ../src/locker.c:587
+#: ../src/locker.c:592
 msgid "Default"
 msgstr "Par défaut"
 
-#: ../src/locker.c:588
+#: ../src/locker.c:593
 msgid "Do not blank"
 msgstr "Ne pas effacer"
 
-#: ../src/locker.c:589
+#: ../src/locker.c:594
 msgid "Blank screen"
 msgstr "Effacer l'écran"
 
-#: ../src/locker.c:597
+#: ../src/locker.c:602
 msgid "Enable screen saving"
 msgstr "Activer l'économisation d'écran"
 
-#: ../src/locker.c:604
+#: ../src/locker.c:609
 msgid "After: "
 msgstr "Au bout de : "
 
-#: ../src/locker.c:614
+#: ../src/locker.c:619
 msgid "Blanking: "
 msgstr "Mode : "
 
-#: ../src/locker.c:639
+#: ../src/locker.c:644
 msgid "Energy saving"
 msgstr "Gestion d'énergie"
 
-#: ../src/locker.c:645
+#: ../src/locker.c:650
 msgid "Enable DPMS"
 msgstr "Activer DPMS"
 
-#: ../src/locker.c:651
+#: ../src/locker.c:656
 msgid ""
 "DPMS manages the power supply of video monitors for computers through the "
 "graphics card"
@@ -101,39 +101,39 @@ msgstr ""
 "DPMS gère l'alimentation électrique des écrans d'ordinateur à travers la "
 "carte graphique"
 
-#: ../src/locker.c:659
+#: ../src/locker.c:664
 msgid "Standby: "
 msgstr "Veille : "
 
-#: ../src/locker.c:675
+#: ../src/locker.c:680
 msgid "Suspend: "
 msgstr "Suspendre : "
 
-#: ../src/locker.c:691
+#: ../src/locker.c:696
 msgid "Off: "
 msgstr "Éteindre : "
 
-#: ../src/locker.c:738
+#: ../src/locker.c:743
 msgid "Enabled"
 msgstr "Activé"
 
-#: ../src/locker.c:748
+#: ../src/locker.c:753
 msgid "Name"
 msgstr "Nom"
 
-#: ../src/locker.c:995
+#: ../src/locker.c:1000
 msgid "Disabled"
 msgstr "Désactivé"
 
-#: ../src/locker.c:1269
+#: ../src/locker.c:1287
 msgid "Screensaver for the DeforaOS desktop"
 msgstr "Économiseur d'écran pour l'environnement DeforaOS"
 
-#: ../src/locker.c:1274
+#: ../src/locker.c:1292
 msgid "translator-credits"
 msgstr "Pierre Pronchery <khorben@defora.org>"
 
-#: ../src/locker.c:1839 ../src/locker.c:1843
+#: ../src/locker.c:1860 ../src/locker.c:1864
 msgid "Error"
 msgstr "Erreur"
 
