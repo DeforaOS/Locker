@@ -2481,6 +2481,7 @@ static void _locker_on_realize(GtkWidget * widget, gpointer data)
 	int height;
 	int depth;
 	GdkVisual * visual;
+	int i;
 
 #if GTK_CHECK_VERSION(2, 14, 0)
 	window = gtk_widget_get_window(widget);
@@ -2501,8 +2502,15 @@ static void _locker_on_realize(GtkWidget * widget, gpointer data)
 		gdk_window_get_geometry(window, &x, &y, &width, &height,
 				&depth);
 #endif
+		gdk_x11_display_error_trap_push(locker->display);
 		XScreenSaverSetAttributes(GDK_DISPLAY_XDISPLAY(locker->display),
 				GDK_WINDOW_XID(window), x, y, width, height, 0,
 				depth, 0, GDK_VISUAL_XVISUAL(visual), 0, NULL);
+		if((i = gdk_x11_display_error_trap_pop(locker->display)) != 0)
+		{
+			error_set_code(i, "%s",
+					"Could not set screensaver attributes");
+			_locker_error(NULL, error_get(NULL), i);
+		}
 	}
 }
