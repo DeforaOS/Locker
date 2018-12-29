@@ -256,7 +256,7 @@ Locker * locker_new(char const * demo, char const * auth)
 	locker->screen = gdk_x11_screen_get_screen_number(screen);
 	/* XXX assume at least one monitor */
 #if GTK_CHECK_VERSION(3, 22, 0)
-	if((cnt = gdk_display_get_n_monitors(screen)) < 1)
+	if((cnt = gdk_display_get_n_monitors(locker->display)) < 1)
 		cnt = 1;
 #else
 	if((cnt = gdk_screen_get_n_monitors(screen)) < 1)
