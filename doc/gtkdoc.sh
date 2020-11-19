@@ -25,6 +25,7 @@
 
 
 #variables
+CONFIGSH="${0%/gtkdoc.sh}/../config.sh"
 PREFIX="/usr/local"
 PROGNAME="gtkdoc.sh"
 #executables
@@ -41,7 +42,7 @@ RM="rm -f"
 RMDIR="rmdir"
 TOUCH="touch"
 
-[ -f "../config.sh" ] && . "../config.sh"
+[ -f "$CONFIGSH" ] && . "$CONFIGSH"
 
 
 #functions
@@ -61,6 +62,22 @@ _error()
 }
 
 
+#gtkdoc_fixxref
+_gtkdoc_fixxref()
+{
+	module="$1"
+	moduledir="$2"
+	htmldir="$3"
+	outputdir="$4"
+
+	(cd "$outputdir" &&
+		$DEBUG $GTKDOC_FIXXREF \
+				--module="$module" \
+				--module-dir="$moduledir" \
+				--html-dir="$htmldir")	|| exit 2
+}
+
+
 #gtkdoc_mkdb
 _gtkdoc_mkdb()
 {
@@ -72,6 +89,19 @@ _gtkdoc_mkdb()
 		$DEBUG $GTKDOC_MKDB --module="$module" \
 				--output-dir="$outputdir" \
 				--output-format="xml" --tmpl-dir="tmpl")
+}
+
+
+#gtkdoc_mkhtml
+_gtkdoc_mkhtml()
+{
+	module="$1"
+	path="$2"
+	driver="$3"
+	outputdir="$4"
+
+	(cd "$outputdir" &&
+		$DEBUG $GTKDOC_MKHTML --path "$path" "$module" "$driver")
 }
 
 
@@ -184,13 +214,16 @@ while [ $# -gt 0 ]; do
 			output="${OBJDIR}gtkdoc/html"
 			$DEBUG $MKDIR -- "$output"		|| exit 2
 			driver="$MODULE-docs.xml"
-			if [ -n "$OBJDIR" ]; then
-				$DEBUG $CP -- "gtkdoc/$driver" "${OBJDIR}gtkdoc" \
-								|| exit 2
-			fi
-			(cd "$output" &&
-				$DEBUG $GTKDOC_MKHTML "$MODULE" \
-					"../$driver")
+			oldpath="$PWD"
+			[ -n "$OBJDIR" ] && for file in \
+				"gtkdoc/$driver" \
+				"gtkdoc/xml/gtkdocentities.ent"; do
+				[ -f "$file" ] || continue
+				$DEBUG $CP -- "$file" \
+						"${OBJDIR}$file" || exit 2
+			done
+			_gtkdoc_mkhtml "$MODULE" "${oldpath%/*}" "../$driver" \
+					"$output"
 			#detect when gtk-doc is not available
 			res=$?
 			if [ $res -eq 127 ]; then
@@ -201,11 +234,7 @@ while [ $# -gt 0 ]; do
 				exit 2
 			fi
 			output="${OBJDIR}gtkdoc"
-			(cd "$output" &&
-				$DEBUG $GTKDOC_FIXXREF \
-					--module="$MODULE" \
-					--module-dir="html" \
-					--html-dir="$instdir")	|| exit 2
+			_gtkdoc_fixxref "$MODULE" "html" "$instdir" "$output"
 			;;
 		gtkdoc/tmpl.stamp)
 			output="tmpl"
