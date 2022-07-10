@@ -186,8 +186,11 @@ static int _event_suspending(Openmoko * openmoko)
 		error_set("%s: %s", apm, strerror(errno));
 	close(fd);
 	return (charging != 0) ? -1 : 0;
-#endif
+#else
+	(void) openmoko;
+
 	return 0;
+#endif
 }
 
 
