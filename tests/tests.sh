@@ -31,6 +31,9 @@
 PROGNAME="tests.sh"
 #executables
 DATE="date"
+ECHO="echo"
+UNAME="uname"
+[ $($UNAME -s) != "Darwin" ] || ECHO="/bin/echo"
 
 
 #functions
@@ -40,7 +43,7 @@ _fail()
 	test="$1"
 
 	shift
-	echo -n "$test:" 1>&2
+	$ECHO -n "$test:" 1>&2
 	(echo
 	echo "Testing: $OBJDIR$test" "$@"
 	"$OBJDIR$test" "$@") >> "$target" 2>&1
@@ -59,7 +62,7 @@ _test()
 	test="$1"
 
 	shift
-	echo -n "$test:" 1>&2
+	$ECHO -n "$test:" 1>&2
 	(echo
 	echo "Testing: $OBJDIR$test" "$@"
 	"$OBJDIR$test" "$@") >> "$target" 2>&1
