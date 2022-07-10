@@ -86,6 +86,8 @@ static void _debug_destroy(Debug * debug)
 /* debug_event */
 static int _debug_event(Debug * debug, LockerEvent event)
 {
+	(void) debug;
+
 	switch(event)
 	{
 		case LOCKER_EVENT_ACTIVATED:
