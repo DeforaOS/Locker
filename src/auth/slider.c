@@ -222,7 +222,7 @@ static int _slider_action(Slider * slider, LockerAction action)
 			break;
 		case LOCKER_ACTION_UNLOCK:
 			slider->locked = FALSE;
-			/* fallback */
+			/* fallthrough */
 		case LOCKER_ACTION_ACTIVATE:
 		case LOCKER_ACTION_CYCLE:
 		case LOCKER_ACTION_START:
