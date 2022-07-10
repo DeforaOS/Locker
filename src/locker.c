@@ -1231,7 +1231,7 @@ static size_t _locker_get_primary_monitor(Locker * locker)
 	int primary;
 #if GTK_CHECK_VERSION(3, 22, 0)
 	GdkMonitor * monitor;
-	size_t i;
+	int i;
 
 	for(i = 0; i < gdk_display_get_n_monitors(locker->display); i++)
 		if((monitor = gdk_display_get_monitor(locker->display, i))
