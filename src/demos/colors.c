@@ -143,6 +143,8 @@ static void _colors_remove(Colors * colors, GdkWindow * window)
 /* color_start */
 static void _colors_start(Colors * colors)
 {
+	(void) colors;
+
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
 #endif
@@ -153,6 +155,8 @@ static void _colors_start(Colors * colors)
 /* color_stop */
 static void _colors_stop(Colors * colors)
 {
+	(void) colors;
+
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
 #endif
