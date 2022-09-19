@@ -431,7 +431,7 @@ static void _timeout_window(Logo * logo, LogoWindow * window)
 #else
 		if(window->pixmap != NULL)
 			gdk_pixmap_unref(window->pixmap);
-		window->pixmap = gdk_pixmap_new(w, rect.width, rect.width, -1);
+		window->pixmap = gdk_pixmap_new(w, rect.width, rect.height, -1);
 #endif
 	}
 	frame = window->frame;
