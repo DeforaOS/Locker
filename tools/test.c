@@ -192,17 +192,9 @@ static int _test(int desktop, int root, int width, int height,
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	g_signal_connect(window, "delete-event", G_CALLBACK(_test_on_closex),
 			NULL);
-#if GTK_CHECK_VERSION(3, 0, 0)
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-	vbox = gtk_vbox_new(FALSE, 4);
-#endif
 	/* controls */
-#if GTK_CHECK_VERSION(3, 0, 0)
 	hbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-#else
-	hbox = gtk_hbutton_box_new();
-#endif
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(hbox), GTK_BUTTONBOX_START);
 	gtk_box_set_spacing(GTK_BOX(hbox), 4);
 	button = gtk_button_new_with_label("Start");
@@ -227,11 +219,7 @@ static int _test(int desktop, int root, int width, int height,
 	gtk_container_add(GTK_CONTAINER(hbox), button);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	/* configuration */
-#if GTK_CHECK_VERSION(3, 0, 0)
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-	hbox = gtk_hbox_new(FALSE, 4);
-#endif
 	widget = gtk_label_new("Configuration: ");
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
 	locker->variable = gtk_entry_new();

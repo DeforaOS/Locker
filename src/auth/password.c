@@ -108,20 +108,12 @@ static Password * _password_init(LockerAuthHelper * helper)
 	password->source = 0;
 	bold = pango_font_description_new();
 	pango_font_description_set_weight(bold, PANGO_WEIGHT_BOLD);
-#if GTK_CHECK_VERSION(3, 0, 0)
 	password->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-	password->widget = gtk_vbox_new(FALSE, 4);
-#endif
 	/* top padding (centering) */
 	widget = gtk_label_new(NULL);
 	gtk_box_pack_start(GTK_BOX(password->widget), widget, TRUE, TRUE, 0);
 	/* dialog */
-#if GTK_CHECK_VERSION(3, 0, 0)
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-	hbox = gtk_hbox_new(FALSE, 4);
-#endif
 	/* left padding (centering) */
 	widget = gtk_label_new(NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
@@ -134,11 +126,7 @@ static Password * _password_init(LockerAuthHelper * helper)
 	gtk_misc_set_alignment(GTK_MISC(widget), 0.5, 0.0);
 #endif
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, TRUE, 0);
-#if GTK_CHECK_VERSION(3, 0, 0)
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-	vbox = gtk_vbox_new(FALSE, 4);
-#endif
 	/* hostname */
 	if(gethostname(buf, sizeof(buf)) != 0)
 		snprintf(buf, sizeof(buf), "%s", "DeforaOS " PACKAGE);
@@ -164,11 +152,7 @@ static Password * _password_init(LockerAuthHelper * helper)
 	gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &white);
 	gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	/* entry */
-#if GTK_CHECK_VERSION(3, 0, 0)
 	hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-	hbox2 = gtk_hbox_new(FALSE, 4);
-#endif
 	password->password = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(password->password), FALSE);
 	g_signal_connect_swapped(password->password, "activate", G_CALLBACK(

@@ -122,17 +122,9 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 	slider->helper = helper;
 	slider->source = 0;
 	slider->locked = FALSE;
-#if GTK_CHECK_VERSION(3, 0, 0)
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-	vbox = gtk_vbox_new(FALSE, 4);
-#endif
 	slider->widget = vbox;
-#if GTK_CHECK_VERSION(3, 0, 0)
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-	hbox = gtk_hbox_new(FALSE, 4);
-#endif
 	slider->icon1 = NULL;
 	slider->scale = NULL;
 	slider->icon2 = NULL;
@@ -147,12 +139,8 @@ static Slider * _slider_init(LockerAuthHelper * helper)
 #endif
 	gtk_box_pack_start(GTK_BOX(hbox), slider->icon1, TRUE, TRUE, 0);
 	/* scale */
-#if GTK_CHECK_VERSION(3, 0, 0)
 	slider->scale = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL,
 			0.0, 100.0, 1.0);
-#else
-	slider->scale = gtk_hscale_new_with_range(0.0, 100.0, 1.0);
-#endif
 	gtk_range_set_value(GTK_RANGE(slider->scale), 0.0);
 	gtk_scale_set_draw_value(GTK_SCALE(slider->scale), FALSE);
 	gtk_widget_set_size_request(slider->scale, 240, -1);
