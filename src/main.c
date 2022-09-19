@@ -36,16 +36,16 @@
 
 /* constants */
 #ifndef PREFIX
-# define PREFIX		"/usr/local"
+# define PREFIX			"/usr/local"
 #endif
 #ifndef DATADIR
-# define DATADIR	PREFIX "/share"
+# define DATADIR		PREFIX "/share"
 #endif
 #ifndef LOCALEDIR
-# define LOCALEDIR	DATADIR "/locale"
+# define LOCALEDIR		DATADIR "/locale"
 #endif
-#ifndef PROGNAME
-# define PROGNAME	"locker"
+#ifndef PROGNAME_LOCKER
+# define PROGNAME_LOCKER	"locker"
 #endif
 
 
@@ -60,7 +60,7 @@ static int _usage(void);
 /* error */
 static int _error(char const * message, int ret)
 {
-	fputs(PROGNAME ": ", stderr);
+	fputs(PROGNAME_LOCKER ": ", stderr);
 	perror(message);
 	return ret;
 }
@@ -71,7 +71,7 @@ static int _usage(void)
 {
 	fprintf(stderr, _("Usage: %s [-d demo][-p plug-in]\n"
 "  -d	Demo sub-system to load\n"
-"  -p	Authentication plug-in to load\n"), PROGNAME);
+"  -p	Authentication plug-in to load\n"), PROGNAME_LOCKER);
 	return 1;
 }
 

@@ -56,8 +56,8 @@ static char const _license[] =
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
-#ifndef PROGNAME
-# define PROGNAME "locker"
+#ifndef PROGNAME_LOCKER
+# define PROGNAME_LOCKER "locker"
 #endif
 
 
@@ -1861,7 +1861,7 @@ static int _locker_error(Locker * locker, char const * message, int ret)
 
 	if(locker == NULL || _locker_is_locked(locker))
 	{
-		fprintf(stderr, "%s: %s\n", PROGNAME, message);
+		fprintf(stderr, "%s: %s\n", PROGNAME_LOCKER, message);
 		return ret;
 	}
 	dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR,
