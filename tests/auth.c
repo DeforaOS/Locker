@@ -33,7 +33,7 @@
 #include "Locker.h"
 
 /* constants */
-#define PROGNAME	"auth"
+#define PROGNAME_AUTH	"auth"
 
 
 /* private */
@@ -111,7 +111,7 @@ static int _auth(void)
 /* dlerror */
 static int _dlerror(char const * message, int ret)
 {
-	fputs(PROGNAME ": ", stderr);
+	fputs(PROGNAME_AUTH ": ", stderr);
 	fprintf(stderr, "%s: %s\n", message, dlerror());
 	return ret;
 }
@@ -120,7 +120,7 @@ static int _dlerror(char const * message, int ret)
 /* error */
 static int _error(char const * message, char const * error, int ret)
 {
-	fputs(PROGNAME ": ", stderr);
+	fputs(PROGNAME_AUTH ": ", stderr);
 	fprintf(stderr, "%s: %s\n", message, error);
 	return ret;
 }
@@ -129,7 +129,7 @@ static int _error(char const * message, char const * error, int ret)
 /* perror */
 static int _perror(char const * message, int ret)
 {
-	fputs(PROGNAME ": ", stderr);
+	fputs(PROGNAME_AUTH ": ", stderr);
 	perror(message);
 	return ret;
 }
