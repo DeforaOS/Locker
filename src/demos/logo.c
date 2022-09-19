@@ -425,7 +425,10 @@ static void _timeout_window(Logo * logo, LogoWindow * window)
 			g_object_unref(window->frame);
 		window->frame = gdk_pixbuf_new(GDK_COLORSPACE_RGB, 1, 8,
 				rect.width, rect.height);
-#if !GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
+		cairo_destroy(window->cairo);
+		window->cairo = gdk_cairo_create(window->window);
+#else
 		if(window->pixmap != NULL)
 			gdk_pixmap_unref(window->pixmap);
 		window->pixmap = gdk_pixmap_new(w, rect.width, rect.width, -1);
