@@ -36,14 +36,14 @@
 #include "../src/locker.h"
 #include "../config.h"
 
-#ifndef PROGNAME
-# define PROGNAME	"locker-test"
+#ifndef PROGNAME_LOCKER_TEST
+# define PROGNAME_LOCKER_TEST	"locker-test"
 #endif
 #ifndef PREFIX
-# define PREFIX		"/usr/local"
+# define PREFIX			"/usr/local"
 #endif
 #ifndef LIBDIR
-# define LIBDIR		PREFIX "/lib"
+# define LIBDIR			PREFIX "/lib"
 #endif
 
 
@@ -122,11 +122,12 @@ static int _test(int desktop, int root, int width, int height,
 	GdkScreen * screen;
 
 	if((locker = object_new(sizeof(*locker))) == NULL)
-		return error_print(PROGNAME);
+		return error_print(PROGNAME_LOCKER_TEST);
 	if((locker->name = strdup(demo)) == NULL)
 	{
 		object_delete(locker);
-		return error_set_print(PROGNAME, 1, "%s", strerror(errno));
+		return error_set_print(PROGNAME_LOCKER_TEST, 1, "%s",
+				strerror(errno));
 	}
 	locker->config = _test_config();
 	/* demo plug-in */
@@ -140,7 +141,7 @@ static int _test(int desktop, int root, int width, int height,
 			config_delete(locker->config);
 		free(locker->name);
 		object_delete(locker);
-		return error_set_print(PROGNAME, 1, "%s: %s", demo,
+		return error_set_print(PROGNAME_LOCKER_TEST, 1, "%s: %s", demo,
 				"Could not load demo plug-in");
 	}
 	if((locker->dplugin = plugin_lookup(dplugin, "plugin")) == NULL
@@ -153,7 +154,7 @@ static int _test(int desktop, int root, int width, int height,
 			config_delete(locker->config);
 		free(locker->name);
 		object_delete(locker);
-		return error_set_print(PROGNAME, 1, "%s: %s", demo,
+		return error_set_print(PROGNAME_LOCKER_TEST, 1, "%s: %s", demo,
 				"Could not initialize demo plug-in");
 	}
 	/* auth plug-in */
@@ -168,7 +169,7 @@ static int _test(int desktop, int root, int width, int height,
 		locker->aplugin = NULL;
 	}
 	else if((aplugin = plugin_new(LIBDIR, PACKAGE, "auth", auth)) == NULL)
-		error_set_print(PROGNAME, 1, "%s: %s", auth,
+		error_set_print(PROGNAME_LOCKER_TEST, 1, "%s: %s", auth,
 				"Could not load auth plug-in");
 	else if((locker->aplugin = plugin_lookup(aplugin, "plugin")) == NULL
 			|| locker->aplugin->init == NULL
@@ -181,7 +182,7 @@ static int _test(int desktop, int root, int width, int height,
 		locker->aplugin = NULL;
 		plugin_delete(aplugin);
 		aplugin = NULL;
-		error_set_print(PROGNAME, 1, "%s: %s", auth,
+		error_set_print(PROGNAME_LOCKER_TEST, 1, "%s: %s", auth,
 				"Could not initialize auth plug-in");
 	}
 	/* widgets */
@@ -282,7 +283,7 @@ static int _test(int desktop, int root, int width, int height,
 #endif
 	}
 	if(locker->dplugin->add(locker->demo, wwindow) != 0)
-		ret = error_set_print(PROGNAME, 1, "%s: %s", demo,
+		ret = error_set_print(PROGNAME_LOCKER_TEST, 1, "%s: %s", demo,
 				"Could not add window");
 	else
 	{
@@ -318,12 +319,12 @@ static Config * _test_config(void)
 	if((filename = string_new_append(homedir, "/", LOCKER_CONFIG_FILE,
 					NULL)) == NULL)
 	{
-		error_print(PROGNAME);
+		error_print(PROGNAME_LOCKER_TEST);
 		return config;
 	}
 	if(config_load(config, filename) != 0)
 		/* we can ignore errors */
-		error_print(PROGNAME);
+		error_print(PROGNAME_LOCKER_TEST);
 	string_delete(filename);
 	return config;
 }
@@ -332,8 +333,8 @@ static Config * _test_config(void)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: " PROGNAME " [-a authentication][-d][-r][-w width]"
-			"[-h height] demo\n"
+	fputs("Usage: " PROGNAME_LOCKER_TEST " [-a authentication][-d][-r]"
+			"[-w width][-h height] demo\n"
 "  -a	Authentication plug-in to load\n"
 "  -d	Display the demo as a desktop window\n"
 "  -r	Display the demo on the root window\n"
@@ -470,7 +471,7 @@ static int _test_helper_error(Locker * locker, char const * message, int ret)
 {
 	(void) locker;
 
-	return error_set_print(PROGNAME, ret, "%s", message);
+	return error_set_print(PROGNAME_LOCKER_TEST, ret, "%s", message);
 }
 
 
@@ -486,14 +487,14 @@ static void _test_on_apply(gpointer data)
 
 	if((p = malloc(sizeof(section) + strlen(locker->name))) == NULL)
 	{
-		error_set_print(PROGNAME, 1, "%s", strerror(errno));
+		error_set_print(PROGNAME_LOCKER_TEST, 1, "%s", strerror(errno));
 		return;
 	}
 	sprintf(p, "%s%s", section, locker->name);
 	q = gtk_entry_get_text(GTK_ENTRY(locker->variable));
 	r = gtk_entry_get_text(GTK_ENTRY(locker->value));
 	if(_test_helper_config_set(locker, p, q, r) != 0)
-		error_print(PROGNAME);
+		error_print(PROGNAME_LOCKER_TEST);
 	else
 		_test_on_reload(locker);
 	free(p);
