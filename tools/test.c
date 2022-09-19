@@ -309,23 +309,13 @@ static int _test(int desktop, int root, int width, int height,
 static Config * _test_config(void)
 {
 	Config * config;
-	char const * homedir;
-	String * filename;
 
 	if((config = config_new()) == NULL)
 		return NULL;
-	if((homedir = getenv("HOME")) == NULL)
-		homedir = g_get_home_dir();
-	if((filename = string_new_append(homedir, "/", LOCKER_CONFIG_FILE,
-					NULL)) == NULL)
-	{
-		error_print(PROGNAME_LOCKER_TEST);
-		return config;
-	}
-	if(config_load(config, filename) != 0)
+	if(config_load_preferences(config, LOCKER_CONFIG_VENDOR, PACKAGE,
+				LOCKER_CONFIG_FILE) != 0)
 		/* we can ignore errors */
 		error_print(PROGNAME_LOCKER_TEST);
-	string_delete(filename);
 	return config;
 }
 

@@ -29,12 +29,14 @@
 # define LOCKER_LOCKER_H
 
 # include "../include/Locker.h"
+# include "../config.h"
 
 
 /* Locker */
 /* public */
 /* constants */
-# define LOCKER_CONFIG_FILE	".locker"
+# define LOCKER_CONFIG_VENDOR	"DeforaOS/" VENDOR
+# define LOCKER_CONFIG_FILE	"Locker.conf"
 
 
 /* functions */

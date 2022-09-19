@@ -1635,17 +1635,10 @@ static void _locker_auth_unload(Locker * locker)
 static int _locker_config_load(Locker * locker)
 {
 	int ret;
-	char const * homedir;
-	char * filename;
 
-	if((homedir = getenv("HOME")) == NULL)
-		homedir = g_get_home_dir();
-	if((filename = string_new_append(homedir, "/", LOCKER_CONFIG_FILE,
-					NULL)) == NULL)
-		return -1;
-	if((ret = config_load(locker->config, filename)) != 0)
+	if((ret = config_load_preferences(locker->config, LOCKER_CONFIG_VENDOR,
+					PACKAGE, LOCKER_CONFIG_FILE)) != 0)
 		_locker_error(NULL, error_get(NULL), ret);
-	string_delete(filename);
 	return ret;
 }
 
@@ -1654,18 +1647,11 @@ static int _locker_config_load(Locker * locker)
 static int _locker_config_save(Locker * locker)
 {
 	int ret;
-	char const * homedir;
-	char * filename;
 
-	if((homedir = getenv("HOME")) == NULL)
-		homedir = g_get_home_dir();
-	if((filename = malloc(strlen(homedir) + sizeof(LOCKER_CONFIG_FILE) + 1))
-			== NULL)
-		return -1;
-	sprintf(filename, "%s/%s", homedir, LOCKER_CONFIG_FILE);
-	if((ret = config_save(locker->config, filename)) != 0)
+	if((ret = config_save_preferences_user(locker->config,
+					LOCKER_CONFIG_VENDOR, PACKAGE,
+					LOCKER_CONFIG_FILE)) != 0)
 		_locker_error(NULL, error_get(NULL), 1);
-	free(filename);
 	return ret;
 }
 
