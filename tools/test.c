@@ -70,7 +70,7 @@ struct _Locker
 
 
 /* prototypes */
-static int _test(int desktop, int root, int width, int height,
+static int _test(int desktop, int fullscreen, int root, int width, int height,
 		char const * demo, char const * auth);
 static int _usage(void);
 
@@ -99,7 +99,7 @@ static void _test_on_unlock(gpointer data);
 /* test */
 static Config * _test_config(void);
 
-static int _test(int desktop, int root, int width, int height,
+static int _test(int desktop, int fullscreen, int root, int width, int height,
 		char const * demo, char const * auth)
 {
 	int ret = 0;
@@ -255,6 +255,8 @@ static int _test(int desktop, int root, int width, int height,
 		if(desktop)
 			gtk_window_set_type_hint(GTK_WINDOW(locker->window),
 					GDK_WINDOW_TYPE_HINT_DESKTOP);
+		else if(fullscreen)
+			gtk_window_fullscreen(GTK_WINDOW(locker->window));
 		g_signal_connect(locker->window, "delete-event", G_CALLBACK(
 					_test_on_closex), NULL);
 		/* load the authentication plug-in (if specified) */
@@ -311,10 +313,11 @@ static Config * _test_config(void)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: " PROGNAME_LOCKER_TEST " [-a authentication][-d][-r]"
+	fputs("Usage: " PROGNAME_LOCKER_TEST " [-a authentication][-d|-f|-r]"
 			"[-w width][-h height] demo\n"
 "  -a	Authentication plug-in to load\n"
 "  -d	Display the demo as a desktop window\n"
+"  -f	Display the demo as a fullscreen window\n"
 "  -r	Display the demo on the root window\n"
 "  -w	Set the width of the test window\n"
 "  -h	Set the height of the test window\n", stderr);
@@ -419,6 +422,7 @@ static char const * _test_helper_config_get_demo(Locker * locker,
 	char const * ret;
 	String * s = NULL;
 
+	fprintf(stderr, "DEBUG: %s(\"%s\", \"%s\")\n", __func__, section, variable);
 	if(locker->config == NULL)
 	{
 		error_set_code(1, "%s", "Configuration not available");
@@ -549,13 +553,14 @@ int main(int argc, char * argv[])
 	int o;
 	char const * auth = NULL;
 	int desktop = 0;
+	int fullscreen = 0;
 	int root = 0;
 	int width = 640;
 	int height = 480;
 	char const * demo = NULL;
 
 	gtk_init(&argc, &argv);
-	while((o = getopt(argc, argv, "a:drw:h:")) != -1)
+	while((o = getopt(argc, argv, "a:dfrw:h:")) != -1)
 		switch(o)
 		{
 			case 'a':
@@ -563,10 +568,17 @@ int main(int argc, char * argv[])
 				break;
 			case 'd':
 				desktop = 1;
+				fullscreen = 0;
+				root = 0;
+				break;
+			case 'f':
+				desktop = 0;
+				fullscreen = 1;
 				root = 0;
 				break;
 			case 'r':
 				desktop = 0;
+				fullscreen = 0;
 				root = 1;
 				break;
 			case 'w':
@@ -581,5 +593,6 @@ int main(int argc, char * argv[])
 	if(width == 0 || height == 0 || optind + 1 != argc)
 		return _usage();
 	demo = argv[optind];
-	return (_test(desktop, root, width, height, demo, auth) == 0) ? 2 : 0;
+	return (_test(desktop, fullscreen, root, width, height, demo, auth)
+			== 0) ? 2 : 0;
 }
